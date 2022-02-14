@@ -5,6 +5,24 @@
     <string name="yes">Oui</string>
     <string name="no">Non</string>
 
+    <string name="start">Jouer !</string>
+    <string name="round_title">Manche %s : %s !</string>
+    <string name="describe">Décrire</string>
+    <string name="word">Un mot</string>
+    <string name="mime">Mimer</string>
+    <string name="finished">Terminée</string>
+    <string name="team_x_plays">L\'équipe %s joue !</string>
+    <string name="team_x">Équipe %s</string>
+    <string name="team_1">Équipe 1</string>
+    <string name="team_2">Équipe 2</string>
+    <string name="new_game">Nouvelle partie !</string>
+    <plurals name="words_found_count">
+        <item quantity="zero">%s mot trouvé</item>
+        <item quantity="one">%s mot trouvé</item>
+        <item quantity="other">%s mots trouvés</item>
+    </plurals>
+    <string name="next_round">Manche suivante</string>
+
     <string name="category_actions">Actions</string>
     <string name="category_activities">Sports - Hobbies - Jeux</string>
     <string name="category_anatomy">Anatomie</string>
@@ -19,4 +37,7 @@
     <string name="category_food">Nourriture</string>
     <string name="category_nature">Nature</string>
     <string name="category_vehicles">Véhicules</string>
+
+    <string name="score_total">Total</string>
+    <string name="score_round">Manche</string>
 </resources>

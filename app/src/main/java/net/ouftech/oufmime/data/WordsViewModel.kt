@@ -3,6 +3,9 @@ package net.ouftech.oufmime.data
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
@@ -12,6 +15,13 @@ import java.io.IOException
 class WordsViewModel : ViewModel() {
 
     private var repository: WordsRepository? = null
+    var currentTeam by mutableStateOf(1)
+    var currentRound by mutableStateOf(1)
+    var team1TotalScore by mutableStateOf(0)
+    var team1CurrentRoundScore by mutableStateOf(0)
+    var team2TotalScore by mutableStateOf(0)
+    var team2CurrentRoundScore by mutableStateOf(0)
+
 
     fun init(application: Application) {
         if (repository == null) {

@@ -4,16 +4,17 @@ import android.app.AlertDialog
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.colorResource
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import net.ouftech.oufmime.data.WordsViewModel
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
-import androidx.activity.viewModels
+import net.ouftech.oufmime.ui.views.RoundStartView
 
 class MainActivity : ComponentActivity() {
 
@@ -25,12 +26,20 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             OufMimeTheme {
+                val navController = rememberNavController()
                 // A surface container using the "background" color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = colorResource(id = R.color.colorPrimary)
                 ) {
-                    Greeting("Android")
+                    NavHost(navController = navController, startDestination = ROUND_START_VIEW) {
+                        composable(ROUND_START_VIEW) {
+                            RoundStartView(viewModel) {
+                                viewModel.team1TotalScore =
+                                    viewModel.team1TotalScore + 1 // TODO Switch screen instead
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -43,17 +52,11 @@ class MainActivity : ComponentActivity() {
             .setNegativeButton(R.string.no) { dialogInterface, _ -> dialogInterface.cancel() }
             .show()
     }
-}
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    OufMimeTheme {
-        Greeting("Android")
+    companion object {
+        const val WELCOME_SCREEN = "welcome"
+        const val ROUND_START_VIEW = "roundStart"
+        const val ROUND_END_SCREEN = "roundEnd"
+        const val TURN_END_SCREEN = "turnEnd"
     }
 }
