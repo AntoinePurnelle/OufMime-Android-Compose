@@ -10,11 +10,18 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import net.ouftech.oufmime.data.WordsViewModel
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
+import androidx.activity.viewModels
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: WordsViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.init(application)
+
         setContent {
             OufMimeTheme {
                 // A surface container using the "background" color from the theme
