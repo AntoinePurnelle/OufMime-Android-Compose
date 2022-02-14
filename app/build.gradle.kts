@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "net.ouftech.oufmime"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 31
         versionCode = 1
         versionName = "1.0"

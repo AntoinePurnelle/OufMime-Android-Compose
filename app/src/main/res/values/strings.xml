@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">OufMime!</string>
 
+    <string name="quit">Quitter l\'app ?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+
     <string name="category_actions">Actions</string>
     <string name="category_activities">Sports - Hobbies - Jeux</string>
     <string name="category_anatomy">Anatomie</string>
