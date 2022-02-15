@@ -43,4 +43,7 @@
 
     <string name="found">Trouvés</string>
     <string name="missed">Manqués</string>
+
+    <string name="next">Suivant</string>
+
 </resources>

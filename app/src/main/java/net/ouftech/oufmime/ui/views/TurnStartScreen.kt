@@ -31,7 +31,7 @@ fun TurnStartScreen(
         )
 
         Text(
-            stringResource(id = R.string.round_title, viewModel.currentRound, roundName),
+            text = stringResource(id = R.string.round_title, viewModel.currentRound, roundName),
             color = White,
             fontSize = 50.sp,
             textAlign = TextAlign.Center

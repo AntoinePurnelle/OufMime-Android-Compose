@@ -65,11 +65,12 @@ fun FullScreenColumn(
 @Composable
 fun FullWidthRow(
     modifier: Modifier = Modifier,
+    arrangement: Arrangement.Horizontal = Arrangement.SpaceEvenly,
     content: @Composable RowScope.() -> Unit
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = arrangement,
         verticalAlignment = Alignment.CenterVertically,
         content = content
     )

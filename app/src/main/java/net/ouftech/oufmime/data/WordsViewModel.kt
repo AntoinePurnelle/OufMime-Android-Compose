@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -25,9 +26,9 @@ class WordsViewModel : ViewModel() {
             arrayOf(mutableListOf(), mutableListOf(), mutableListOf())
         )
 
-    private var wordsToPlay = mutableListOf<Word>()
-    private var wordsMissedInRound = mutableListOf<Word>()
-    private var wordsPlayedInTurn = mutableListOf<Pair<Word, Boolean>>()
+    private var wordsToPlay = mutableStateListOf<Word>()
+    private var wordsMissedInRound = mutableStateListOf<Word>()
+    var wordsPlayedInTurn = mutableStateListOf<Pair<Word, Boolean>>()
 
     var currentWord by mutableStateOf<Word?>(null)
 
@@ -101,8 +102,8 @@ class WordsViewModel : ViewModel() {
             turnDuration = duration
             Log.d("GameManager", "Selected Words (${words.size}) $words")
 
-            currentRound = 1
-            currentTeam = 1
+            currentRound = 0
+            currentTeam = 0
 
             teamWords = arrayOf(
                 arrayOf(mutableListOf(), mutableListOf(), mutableListOf()),
@@ -114,8 +115,9 @@ class WordsViewModel : ViewModel() {
     }
 
     fun initRound() {
-        wordsToPlay = words.shuffled().toMutableList()
-        wordsMissedInRound = mutableListOf()
+        wordsToPlay.clear()
+        wordsToPlay.addAll(words.shuffled())
+        wordsMissedInRound = mutableStateListOf()
         Log.d(
             "GameManager",
             "Starting round $currentRound - Words to Play (${wordsToPlay.size}): $wordsToPlay"
@@ -123,7 +125,7 @@ class WordsViewModel : ViewModel() {
     }
 
     fun initTurn() {
-        wordsPlayedInTurn = mutableListOf()
+        wordsPlayedInTurn = mutableStateListOf()
         currentWord = wordsToPlay.firstOrNull()
     }
 
@@ -145,6 +147,12 @@ class WordsViewModel : ViewModel() {
         currentTeam = if (currentTeam == 0) 1 else 0
 
         Log.d("GameManager", "Turned finished and saved")
+    }
+
+    fun changeValueInPlayedWords(word: Pair<Word, Boolean>) {
+        wordsPlayedInTurn.indexOf(word)
+        wordsPlayedInTurn[wordsPlayedInTurn.indexOf(word)] =
+            Pair(first = word.first, second = !word.second)
     }
 
     fun hasMoreWords() = wordsToPlay.size > 0

@@ -33,7 +33,7 @@ fun HeaderView(
         ScoreBoardView(
             topLabel = stringResource(id = R.string.score_total),
             topScore = team1TotalScore,
-            bottomLabel = stringResource(id = R.string.score_total),
+            bottomLabel = stringResource(id = R.string.score_round),
             bottomScore = team1CurrentRoundScore
         )
 

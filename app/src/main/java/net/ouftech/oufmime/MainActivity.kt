@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
                             WelcomeScreen {
                                 viewModel.initGame(
                                     categories = Categories.values().map { it.toString() },
-                                    wordsCount = 5, // TODO pick from settings
+                                    wordsCount = 10, // TODO pick from settings
                                     duration = 40000L // TODO pick from settings
                                 )
 
@@ -67,7 +67,6 @@ class MainActivity : ComponentActivity() {
                                 onWordPlayed = { found ->
                                     viewModel.playWord(found)
                                     if (!viewModel.hasMoreWords()) {
-                                        viewModel.finishTurn()
                                         navController.navigate(TURN_END_SCREEN)
                                     }
                                 }
@@ -75,7 +74,16 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(TURN_END_SCREEN) {
-                            TurnEndScreen()
+                            TurnEndScreen(
+                                wordsPlayed = viewModel.wordsPlayedInTurn,
+                                onWordChange = { changedWord ->
+                                    viewModel.changeValueInPlayedWords(changedWord)
+                                },
+                                onNextClick = {
+                                    viewModel.finishTurn()
+                                    navController.navigate(TURN_START_SCREEN)
+                                }
+                            )
                         }
                     }
                 }

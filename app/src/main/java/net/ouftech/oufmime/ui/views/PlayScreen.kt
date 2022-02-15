@@ -133,7 +133,9 @@ fun Timer(value: Int, maxValue: Int) {
 @Preview(showBackground = true, backgroundColor = 0xFFFF6F00)
 @Composable
 fun TimerPreview() {
-    Timer(20, 40)
+    OufMimeTheme {
+        Timer(20, 40)
+    }
 }
 
 @Composable
