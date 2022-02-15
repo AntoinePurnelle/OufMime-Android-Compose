@@ -40,4 +40,7 @@
 
     <string name="score_total">Total</string>
     <string name="score_round">Manche</string>
+
+    <string name="found">Trouvés</string>
+    <string name="missed">Manqués</string>
 </resources>

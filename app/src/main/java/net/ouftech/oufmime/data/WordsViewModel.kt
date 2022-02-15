@@ -15,12 +15,8 @@ import java.io.IOException
 class WordsViewModel : ViewModel() {
 
     private var repository: WordsRepository? = null
-    var currentTeam by mutableStateOf(1)
-    var currentRound by mutableStateOf(1)
-    var team1TotalScore by mutableStateOf(0)
-    var team1CurrentRoundScore by mutableStateOf(0)
-    var team2TotalScore by mutableStateOf(0)
-    var team2CurrentRoundScore by mutableStateOf(0)
+    var currentTeam by mutableStateOf(0)
+    var currentRound by mutableStateOf(0)
     var words = mutableListOf<Word>()
     private var turnDuration by mutableStateOf(40000L)
     var teamWords: Array<Array<MutableList<Word>>> =
@@ -31,7 +27,9 @@ class WordsViewModel : ViewModel() {
 
     private var wordsToPlay = mutableListOf<Word>()
     private var wordsMissedInRound = mutableListOf<Word>()
-    private var wordsPlayedInTurn = mutableListOf<Word>()
+    private var wordsPlayedInTurn = mutableListOf<Pair<Word, Boolean>>()
+
+    var currentWord by mutableStateOf<Word?>(null)
 
     // region Startup
 
@@ -126,11 +124,39 @@ class WordsViewModel : ViewModel() {
 
     fun initTurn() {
         wordsPlayedInTurn = mutableListOf()
+        currentWord = wordsToPlay.firstOrNull()
+    }
+
+    fun playWord(found: Boolean) {
+        wordsPlayedInTurn.add(Pair(wordsToPlay.removeFirst(), found))
+
+        Log.d("GameManager", "Word played ${wordsPlayedInTurn.last()}")
+
+        currentWord = wordsToPlay.firstOrNull()
+    }
+
+    fun finishTurn() {
+        // Add all the words that were found in the Team Round List
+        teamWords[currentTeam][currentRound].addAll(wordsPlayedInTurn.filter { it.second }
+            .map { pair -> pair.first })
+        // Add all the words that were missed in the Missed List
+        wordsToPlay.addAll(wordsPlayedInTurn.filter { !it.second }.map { pair -> pair.first })
+
+        currentTeam = if (currentTeam == 0) 1 else 0
+
+        Log.d("GameManager", "Turned finished and saved")
     }
 
     fun hasMoreWords() = wordsToPlay.size > 0
 
-    fun getCurrentWord() = wordsToPlay.first()
+    fun getWordsFoundInTurnCount() = wordsPlayedInTurn.count { it.second }
+    fun getWordsMissedInTurnCount() = wordsPlayedInTurn.count { !it.second }
+
+
+    fun getTeam1RoundScore() = teamWords[0][currentRound].size
+    fun getTeam1TotalScore() = teamWords[0].sumOf { it.size }
+    fun getTeam2RoundScore() = teamWords[1][currentRound].size
+    fun getTeam2TotalScore() = teamWords[1].sumOf { it.size }
 
     // endregion Game
 }

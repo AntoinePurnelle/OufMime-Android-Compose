@@ -10,13 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
+import net.ouftech.oufmime.ui.theme.Primary
 
 @Composable
 fun HeaderView(
@@ -26,11 +26,16 @@ fun HeaderView(
     team2CurrentRoundScore: Int = 0,
 ) {
     Row(
-        Modifier.background(color = colorResource(id = R.color.colorPrimary)),
+        Modifier.background(color = Primary),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ScoreBoardView(team1TotalScore, team1CurrentRoundScore)
+        ScoreBoardView(
+            topLabel = stringResource(id = R.string.score_total),
+            topScore = team1TotalScore,
+            bottomLabel = stringResource(id = R.string.score_total),
+            bottomScore = team1CurrentRoundScore
+        )
 
         Spacer(modifier = Modifier.width(8.dp))
 
@@ -41,7 +46,12 @@ fun HeaderView(
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        ScoreBoardView(team2TotalScore, team2CurrentRoundScore)
+        ScoreBoardView(
+            topLabel = stringResource(id = R.string.score_total),
+            topScore = team2TotalScore,
+            bottomLabel = stringResource(id = R.string.score_round),
+            bottomScore = team2CurrentRoundScore
+        )
     }
 }
 
@@ -55,8 +65,10 @@ fun HeaderPreview() {
 
 @Composable
 fun ScoreBoardView(
-    totalScore: Int = 0,
-    currentRoundScore: Int = 0
+    topLabel: String,
+    topScore: Int = 0,
+    bottomLabel: String,
+    bottomScore: Int = 0
 ) {
     Column(
         modifier = Modifier
@@ -68,10 +80,13 @@ fun ScoreBoardView(
             )
             .padding(8.dp)
     ) {
-        ScoreLineView(scoreName = stringResource(id = R.string.score_total), score = totalScore)
         ScoreLineView(
-            scoreName = stringResource(id = R.string.score_round),
-            score = currentRoundScore
+            scoreName = topLabel,
+            score = topScore
+        )
+        ScoreLineView(
+            scoreName = bottomLabel,
+            score = bottomScore
         )
     }
 }
@@ -80,7 +95,7 @@ fun ScoreBoardView(
 @Composable
 fun ScoreBoardPreview() {
     OufMimeTheme {
-        ScoreBoardView(10, 5)
+        ScoreBoardView("Total", 10, "Round", 5)
     }
 }
 
