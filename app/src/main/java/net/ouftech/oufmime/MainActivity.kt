@@ -12,9 +12,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import net.ouftech.oufmime.data.Categories
 import net.ouftech.oufmime.data.WordsViewModel
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
-import net.ouftech.oufmime.ui.views.RoundStartView
+import net.ouftech.oufmime.ui.views.TurnStartScreen
+import net.ouftech.oufmime.ui.views.WelcomeScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -32,11 +34,21 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = colorResource(id = R.color.colorPrimary)
                 ) {
-                    NavHost(navController = navController, startDestination = ROUND_START_VIEW) {
-                        composable(ROUND_START_VIEW) {
-                            RoundStartView(viewModel) {
-                                viewModel.team1TotalScore =
-                                    viewModel.team1TotalScore + 1 // TODO Switch screen instead
+                    NavHost(navController = navController, startDestination = WELCOME_SCREEN) {
+                        composable(WELCOME_SCREEN) {
+                            WelcomeScreen {
+                                viewModel.initGame(
+                                    categories = Categories.values().map { it.toString() },
+                                    wordsCount = 40,
+                                    duration = 40000L
+                                )
+                                navController.navigate(TURN_START_SCREEN)
+                            }
+                        }
+
+                        composable(TURN_START_SCREEN) {
+                            TurnStartScreen(viewModel) {
+                                viewModel.initTurn()
                             }
                         }
                     }
@@ -55,8 +67,8 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val WELCOME_SCREEN = "welcome"
-        const val ROUND_START_VIEW = "roundStart"
-        const val ROUND_END_SCREEN = "roundEnd"
+        const val TURN_START_SCREEN = "turnStart"
         const val TURN_END_SCREEN = "turnEnd"
+        const val SCOREBOARD_SCREEN = "scoreboard"
     }
 }

@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,9 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,7 +21,7 @@ import net.ouftech.oufmime.data.WordsViewModel
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
 
 @Composable
-fun RoundStartView(
+fun TurnStartScreen(
     viewModel: WordsViewModel,
     onStartClick: () -> Unit
 ) {
@@ -58,27 +54,17 @@ fun RoundStartView(
             textAlign = TextAlign.Center
         )
 
-        Button(
+        SizedButton(
             onClick = onStartClick,
-            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorAccent))
-        ) {
-            Text(
-                stringResource(
-                    id = R.string.team_x_plays,
-                    viewModel.currentTeam
-                ).toUpperCase(Locale.current),
-                color = White,
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center
-            )
-        }
+            text = stringResource(id = R.string.team_x_plays, viewModel.currentTeam)
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun RoundStartPreview() {
+fun TurnStartPreview() {
     OufMimeTheme {
-        RoundStartView(WordsViewModel()) {}
+        TurnStartScreen(WordsViewModel()) {}
     }
 }

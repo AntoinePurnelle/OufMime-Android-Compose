@@ -21,7 +21,19 @@ class WordsViewModel : ViewModel() {
     var team1CurrentRoundScore by mutableStateOf(0)
     var team2TotalScore by mutableStateOf(0)
     var team2CurrentRoundScore by mutableStateOf(0)
+    var words = mutableListOf<Word>()
+    private var turnDuration by mutableStateOf(40000L)
+    var teamWords: Array<Array<MutableList<Word>>> =
+        arrayOf(
+            arrayOf(mutableListOf(), mutableListOf(), mutableListOf()),
+            arrayOf(mutableListOf(), mutableListOf(), mutableListOf())
+        )
 
+    private var wordsToPlay = mutableListOf<Word>()
+    private var wordsMissedInRound = mutableListOf<Word>()
+    private var wordsPlayedInTurn = mutableListOf<Word>()
+
+    // region Startup
 
     fun init(application: Application) {
         if (repository == null) {
@@ -80,4 +92,45 @@ class WordsViewModel : ViewModel() {
         }
         return jsonString
     }
+
+    // endregion Startup
+
+    // region Game
+
+    fun initGame(categories: List<String>, wordsCount: Int, duration: Long) {
+        runBlocking {
+            words = repository!!.getRandomWordsInCategories(categories, wordsCount).toMutableList()
+            turnDuration = duration
+            Log.d("GameManager", "Selected Words (${words.size}) $words")
+
+            currentRound = 1
+            currentTeam = 1
+
+            teamWords = arrayOf(
+                arrayOf(mutableListOf(), mutableListOf(), mutableListOf()),
+                arrayOf(mutableListOf(), mutableListOf(), mutableListOf())
+            )
+
+            initRound()
+        }
+    }
+
+    fun initRound() {
+        wordsToPlay = words.shuffled().toMutableList()
+        wordsMissedInRound = mutableListOf()
+        Log.d(
+            "GameManager",
+            "Starting round $currentRound - Words to Play (${wordsToPlay.size}): $wordsToPlay"
+        )
+    }
+
+    fun initTurn() {
+        wordsPlayedInTurn = mutableListOf()
+    }
+
+    fun hasMoreWords() = wordsToPlay.size > 0
+
+    fun getCurrentWord() = wordsToPlay.first()
+
+    // endregion Game
 }
