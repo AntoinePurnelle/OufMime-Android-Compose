@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +52,7 @@ fun PlayScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(200.dp)
                 .background(color = White, shape = RoundedCornerShape(8.dp))
                 .padding(16.dp),
             contentAlignment = Alignment.Center
@@ -60,8 +62,14 @@ fun PlayScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 currentWord?.let {
-                    Text(text = currentWord.word, color = Accent, fontSize = 60.sp)
                     Text(
+                        text = currentWord.word,
+                        color = Accent,
+                        fontSize = 40.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        modifier = Modifier.padding(top = 8.dp),
                         text = stringResource(id = currentWord.category.resId),
                         color = AccentTransparent,
                         fontSize = 20.sp

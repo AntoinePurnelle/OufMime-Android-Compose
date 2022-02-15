@@ -17,17 +17,17 @@ fun TurnStartScreen(
     onStartClick: () -> Unit
 ) {
     val roundName = when (viewModel.currentRound) {
-        1 -> stringResource(id = R.string.describe)
-        2 -> stringResource(id = R.string.word)
+        0 -> stringResource(id = R.string.describe)
+        1 -> stringResource(id = R.string.word)
         else -> stringResource(id = R.string.mime)
     }
 
     FullScreenColumn {
         HeaderView(
-            viewModel.getTeam1TotalScore(),
-            viewModel.getTeam1RoundScore(),
-            viewModel.getTeam2TotalScore(),
-            viewModel.getTeam2RoundScore()
+            viewModel.getTeamTotalScore(0),
+            viewModel.getTeamRoundScore(0, viewModel.currentRound),
+            viewModel.getTeamTotalScore(1),
+            viewModel.getTeamRoundScore(1, viewModel.currentRound)
         )
 
         Text(

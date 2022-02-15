@@ -26,7 +26,7 @@ class WordsViewModel : ViewModel() {
             arrayOf(mutableListOf(), mutableListOf(), mutableListOf())
         )
 
-    private var wordsToPlay = mutableStateListOf<Word>()
+    var wordsToPlay = mutableStateListOf<Word>()
     private var wordsMissedInRound = mutableStateListOf<Word>()
     var wordsPlayedInTurn = mutableStateListOf<Pair<Word, Boolean>>()
 
@@ -117,7 +117,7 @@ class WordsViewModel : ViewModel() {
     fun initRound() {
         wordsToPlay.clear()
         wordsToPlay.addAll(words.shuffled())
-        wordsMissedInRound = mutableStateListOf()
+        wordsMissedInRound.clear()
         Log.d(
             "GameManager",
             "Starting round $currentRound - Words to Play (${wordsToPlay.size}): $wordsToPlay"
@@ -160,11 +160,10 @@ class WordsViewModel : ViewModel() {
     fun getWordsFoundInTurnCount() = wordsPlayedInTurn.count { it.second }
     fun getWordsMissedInTurnCount() = wordsPlayedInTurn.count { !it.second }
 
+    fun getTeamRoundScore(team: Int, round: Int) =
+        if (currentRound < round) -1 else teamWords[team][round].size
 
-    fun getTeam1RoundScore() = teamWords[0][currentRound].size
-    fun getTeam1TotalScore() = teamWords[0].sumOf { it.size }
-    fun getTeam2RoundScore() = teamWords[1][currentRound].size
-    fun getTeam2TotalScore() = teamWords[1].sumOf { it.size }
+    fun getTeamTotalScore(team: Int) = teamWords[team].sumOf { it.size }
 
     // endregion Game
 }

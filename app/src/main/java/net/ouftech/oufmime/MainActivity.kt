@@ -15,10 +15,7 @@ import net.ouftech.oufmime.data.Categories
 import net.ouftech.oufmime.data.WordsViewModel
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
 import net.ouftech.oufmime.ui.theme.Primary
-import net.ouftech.oufmime.ui.views.PlayScreen
-import net.ouftech.oufmime.ui.views.TurnEndScreen
-import net.ouftech.oufmime.ui.views.TurnStartScreen
-import net.ouftech.oufmime.ui.views.WelcomeScreen
+import net.ouftech.oufmime.ui.views.*
 
 class MainActivity : ComponentActivity() {
 
@@ -81,9 +78,27 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onNextClick = {
                                     viewModel.finishTurn()
-                                    navController.navigate(TURN_START_SCREEN)
+
+                                    if (viewModel.hasMoreWords())
+                                        navController.navigate(TURN_START_SCREEN)
+                                    else
+                                        navController.navigate(SCOREBOARD_SCREEN)
                                 }
                             )
+                        }
+
+                        composable(SCOREBOARD_SCREEN) {
+                            ScoreboardScreen(viewModel = viewModel, onNextClick = {
+                                with(viewModel) {
+                                    if (currentRound == 2) {
+                                        navController.navigate(WELCOME_SCREEN)
+                                    } else {
+                                        currentRound++
+                                        initRound()
+                                        navController.navigate(TURN_START_SCREEN)
+                                    }
+                                }
+                            })
                         }
                     }
                 }
