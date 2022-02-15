@@ -38,8 +38,7 @@ class MainActivity : ComponentActivity() {
                             WelcomeScreen {
                                 viewModel.initGame(
                                     categories = Categories.values().map { it.toString() },
-                                    wordsCount = 10, // TODO pick from settings
-                                    duration = 40000L // TODO pick from settings
+                                    duration = 10000L // TODO pick from settings
                                 )
 
                                 navController.navigate(TURN_START_SCREEN)
@@ -58,14 +57,16 @@ class MainActivity : ComponentActivity() {
                             PlayScreen(
                                 foundWordsCount = viewModel.getWordsFoundInTurnCount(),
                                 missedWordsCount = viewModel.getWordsMissedInTurnCount(),
-                                timerValue = 22, // TODO Real Values
-                                timerMaxValue = 40, // TODO Real Values
+                                timerMaxValue = viewModel.timerTotalTime,
                                 currentWord = viewModel.currentWord,
                                 onWordPlayed = { found ->
                                     viewModel.playWord(found)
                                     if (!viewModel.hasMoreWords()) {
                                         navController.navigate(TURN_END_SCREEN)
                                     }
+                                },
+                                onFinishTurn = {
+                                    navController.navigate(TURN_END_SCREEN)
                                 }
                             )
                         }

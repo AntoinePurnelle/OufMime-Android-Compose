@@ -1,5 +1,6 @@
 package net.ouftech.oufmime.ui.views
 
+import android.os.CountDownTimer
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -9,7 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,17 +27,40 @@ import androidx.compose.ui.unit.sp
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories
 import net.ouftech.oufmime.data.Word
+import net.ouftech.oufmime.ext.playSound
 import net.ouftech.oufmime.ui.theme.*
 
 @Composable
 fun PlayScreen(
     foundWordsCount: Int,
     missedWordsCount: Int,
-    timerValue: Int,
-    timerMaxValue: Int,
+    timerMaxValue: Long,
     currentWord: Word?,
-    onWordPlayed: (Boolean) -> Unit
+    onWordPlayed: (Boolean) -> Unit,
+    onFinishTurn: () -> Unit
 ) {
+    var currentTimerValue by remember { mutableStateOf(timerMaxValue + 1000L) }
+    lateinit var timer: CountDownTimer
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = null) {
+        timer = object : CountDownTimer(currentTimerValue, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                currentTimerValue -= 1000L
+
+                if (currentTimerValue == 4000L) {
+                    context.playSound(R.raw.timer)
+                }
+            }
+
+            override fun onFinish() {
+                onFinishTurn()
+            }
+        }
+
+        timer.start()
+    }
+
     // TODO Sounds
     FullScreenColumn {
         FullWidthRow {
@@ -46,7 +71,7 @@ fun PlayScreen(
                 bottomScore = missedWordsCount
             )
 
-            Timer(timerValue, timerMaxValue) // TODO Use timer
+            Timer(currentTimerValue, timerMaxValue)
         }
 
         Box(
@@ -84,13 +109,19 @@ fun PlayScreen(
                 color = Green,
                 imageVector = Icons.Default.Check,
                 contentDescription = stringResource(id = R.string.found),
-                onCLick = { onWordPlayed(true) }
+                onCLick = {
+                    onWordPlayed(true)
+                    context.playSound(R.raw.word_ok)
+                }
             )
             AnswerButton(
                 color = Red,
                 imageVector = Icons.Default.Close,
                 contentDescription = stringResource(id = R.string.missed),
-                onCLick = { onWordPlayed(false) }
+                onCLick = {
+                    onWordPlayed(false)
+                    context.playSound(R.raw.word_wrong)
+                }
             )
         }
     }
@@ -102,15 +133,15 @@ fun PlayScreenPreview() {
     PlayScreen(
         foundWordsCount = 5,
         missedWordsCount = 2,
-        timerValue = 15,
-        timerMaxValue = 40,
+        timerMaxValue = 40000L,
         currentWord = Word("Squid", Categories.ANIMALS),
-        onWordPlayed = {}
+        onWordPlayed = {},
+        onFinishTurn = {}
     )
 }
 
 @Composable
-fun Timer(value: Int, maxValue: Int) {
+fun Timer(value: Long, maxValue: Long) {
     Box(
         modifier = Modifier.size(100.dp),
         contentAlignment = Alignment.Center
@@ -131,7 +162,7 @@ fun Timer(value: Int, maxValue: Int) {
         )
 
         Text(
-            text = value.toString(),
+            text = (value / 1000).toString(),
             color = Accent,
             fontSize = 60.sp
         )
@@ -142,7 +173,7 @@ fun Timer(value: Int, maxValue: Int) {
 @Composable
 fun TimerPreview() {
     OufMimeTheme {
-        Timer(20, 40)
+        Timer(20000L, 40000L)
     }
 }
 

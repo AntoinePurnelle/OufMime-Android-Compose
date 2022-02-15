@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories
 import net.ouftech.oufmime.data.Word
+import net.ouftech.oufmime.ext.playSound
 import net.ouftech.oufmime.ui.theme.Green
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
 import net.ouftech.oufmime.ui.theme.Red
@@ -35,6 +37,12 @@ fun TurnEndScreen(
     onWordChange: (Pair<Word, Boolean>) -> Unit,
     onNextClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = null) {
+        context.playSound(R.raw.times_up)
+    }
+
     FullScreenColumn {
         val wordsFoundCount = wordsPlayed.count { it.second }
 
@@ -51,15 +59,17 @@ fun TurnEndScreen(
             textAlign = TextAlign.Center
         )
 
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .padding(vertical = 16.dp)
-                .background(color = White)
-                .padding(4.dp)
-        ) {
-            items(wordsPlayed) { word ->
-                WordPlayedView(word = word, onClick = onWordChange)
+        if (wordsFoundCount > 0) {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 16.dp)
+                    .background(color = White)
+                    .padding(4.dp)
+            ) {
+                items(wordsPlayed) { word ->
+                    WordPlayedView(word = word, onClick = onWordChange)
+                }
             }
         }
 

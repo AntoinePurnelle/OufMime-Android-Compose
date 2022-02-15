@@ -1,1 +1,5 @@
 /build
+/src/main/res/raw/word_wrong_kb.mp3
+/src/main/res/raw/word_ok_kb.mp3
+/src/main/res/raw/times_up_kb.mp3
+/src/main/res/raw/timer_kb.mp3

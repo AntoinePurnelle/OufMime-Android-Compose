@@ -19,8 +19,7 @@ class WordsViewModel : ViewModel() {
     var currentTeam by mutableStateOf(0)
     var currentRound by mutableStateOf(0)
     var words = mutableListOf<Word>()
-    private var turnDuration by mutableStateOf(40000L)
-    var teamWords: Array<Array<MutableList<Word>>> =
+    private var teamWords: Array<Array<MutableList<Word>>> =
         arrayOf(
             arrayOf(mutableListOf(), mutableListOf(), mutableListOf()),
             arrayOf(mutableListOf(), mutableListOf(), mutableListOf())
@@ -31,6 +30,10 @@ class WordsViewModel : ViewModel() {
     var wordsPlayedInTurn = mutableStateListOf<Pair<Word, Boolean>>()
 
     var currentWord by mutableStateOf<Word?>(null)
+
+    var timerTotalTime by mutableStateOf(10000L)
+    var timerCurrentTime by mutableStateOf(timerTotalTime)
+    var wordsCount by mutableStateOf(10)
 
     // region Startup
 
@@ -96,10 +99,10 @@ class WordsViewModel : ViewModel() {
 
     // region Game
 
-    fun initGame(categories: List<String>, wordsCount: Int, duration: Long) {
+    fun initGame(categories: List<String>, duration: Long) {
         runBlocking {
             words = repository!!.getRandomWordsInCategories(categories, wordsCount).toMutableList()
-            turnDuration = duration
+            timerTotalTime = duration
             Log.d("GameManager", "Selected Words (${words.size}) $words")
 
             currentRound = 0
@@ -127,6 +130,7 @@ class WordsViewModel : ViewModel() {
     fun initTurn() {
         wordsPlayedInTurn = mutableStateListOf()
         currentWord = wordsToPlay.firstOrNull()
+        timerCurrentTime = timerTotalTime
     }
 
     fun playWord(found: Boolean) {
