@@ -12,19 +12,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import net.ouftech.oufmime.ui.theme.Accent
+import net.ouftech.oufmime.ui.theme.ButtonsTextSize
+import net.ouftech.oufmime.ui.theme.ButtonsTextSize.MEDIUM
+import net.ouftech.oufmime.ui.theme.Dimens
 import net.ouftech.oufmime.ui.theme.Primary
-import net.ouftech.oufmime.ui.views.ButtonsTextSize.MEDIUM
 
 @Composable
 fun SizedButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     text: String,
-    textSize: ButtonsTextSize = MEDIUM
+    textSize: ButtonsTextSize = MEDIUM,
+    dimens: Dimens
 ) {
     Button(
         modifier = modifier,
@@ -34,18 +35,11 @@ fun SizedButton(
         Text(
             text.toUpperCase(Locale.current),
             color = Color.White,
-            fontSize = textSize.value,
+            fontSize = dimens.buttonDimens[textSize]!!,
             textAlign = TextAlign.Center
         )
     }
 }
-
-enum class ButtonsTextSize(val value: TextUnit) {
-    SMALL(8.sp),
-    MEDIUM(16.sp),
-    BIG(32.sp)
-}
-
 @Composable
 fun FullScreenColumn(
     modifier: Modifier = Modifier,

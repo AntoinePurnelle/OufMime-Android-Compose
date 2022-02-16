@@ -2,6 +2,7 @@ package net.ouftech.oufmime.ui.views
 
 import android.media.MediaPlayer
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,17 +39,20 @@ fun PlayScreen(
     missedWordsCount: Int,
     timerMaxValue: Long,
     currentWord: Word?,
-    onWordPlayed: (Boolean) -> Unit,
+    dimens: Dimens,
+    onWordPlayed: (Boolean, Boolean) -> Unit,
     onFinishTurn: () -> Unit
 ) {
+    // Add -1000L to forgo initial tick
     var currentTimerValue by remember { mutableStateOf(timerMaxValue + 1000L) }
     lateinit var timer: CountDownTimer
     val context = LocalContext.current
     var lastSecondsMP: MediaPlayer? = null
 
     DisposableEffect(key1 = null) {
-        timer = object : CountDownTimer(currentTimerValue, 1000) {
+        timer = object : CountDownTimer(timerMaxValue, 1000) {
             override fun onTick(millisUntilFinished: Long) {
+                Log.d("Timer", "Time: $millisUntilFinished")
                 currentTimerValue -= 1000L
 
                 if (currentTimerValue == 4000L) {
@@ -56,6 +61,9 @@ fun PlayScreen(
             }
 
             override fun onFinish() {
+                currentTimerValue -= 1000L
+                // Add last non played word in list in case player didn't have the time to mark as found
+                onWordPlayed(false, true)
                 onFinishTurn()
             }
         }
@@ -63,30 +71,36 @@ fun PlayScreen(
         timer.start()
 
         onDispose {
-            lastSecondsMP?.stop()
+            try {
+                lastSecondsMP?.stop()
+            } catch (e: IllegalStateException) {
+                Log.w("PlayScreen", "Error while stopping MediaPlayer: $e")
+            }
+
             timer.cancel()
         }
     }
 
-    // TODO Sounds
     FullScreenColumn {
         FullWidthRow {
             ScoreBoardView(
                 topLabel = stringResource(id = R.string.found),
                 topScore = foundWordsCount,
                 bottomLabel = stringResource(id = R.string.missed),
-                bottomScore = missedWordsCount
+                bottomScore = missedWordsCount,
+                dimens = dimens
             )
 
-            Timer(currentTimerValue, timerMaxValue)
+            Timer(currentTimerValue, timerMaxValue, dimens)
         }
 
         Box(
             modifier = Modifier
+                .heightIn(min = 200.dp)
+                .widthIn(max = 800.dp)
                 .fillMaxWidth()
-                .height(200.dp)
                 .background(color = White, shape = RoundedCornerShape(8.dp))
-                .padding(16.dp),
+                .padding(dimens.paddingLarge),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -97,14 +111,14 @@ fun PlayScreen(
                     Text(
                         text = currentWord.word,
                         color = Accent,
-                        fontSize = 40.sp,
+                        fontSize = dimens.titleText,
                         textAlign = TextAlign.Center
                     )
                     Text(
                         modifier = Modifier.padding(top = 8.dp),
                         text = stringResource(id = currentWord.category.resId),
                         color = AccentTransparent,
-                        fontSize = 20.sp
+                        fontSize = dimens.subtitleText
                     )
                 }
 
@@ -116,8 +130,9 @@ fun PlayScreen(
                 color = Green,
                 imageVector = Icons.Default.Check,
                 contentDescription = stringResource(id = R.string.found),
+                dimens,
                 onCLick = {
-                    onWordPlayed(true)
+                    onWordPlayed(true, false)
                     context.playSound(R.raw.word_ok)
                 }
             )
@@ -125,8 +140,9 @@ fun PlayScreen(
                 color = Red,
                 imageVector = Icons.Default.Close,
                 contentDescription = stringResource(id = R.string.missed),
+                dimens,
                 onCLick = {
-                    onWordPlayed(false)
+                    onWordPlayed(false, false)
                     context.playSound(R.raw.word_wrong)
                 }
             )
@@ -134,30 +150,45 @@ fun PlayScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "Play - Phone", device = Devices.PIXEL_4)
 @Composable
-fun PlayScreenPreview() {
+fun PlayScreenPreviewPhone() {
     PlayScreen(
         foundWordsCount = 5,
         missedWordsCount = 2,
         timerMaxValue = 40000L,
         currentWord = Word("Squid", Categories.ANIMALS),
-        onWordPlayed = {},
+        dimens = MediumDimens,
+        onWordPlayed = { _, _ -> },
+        onFinishTurn = {}
+    )
+}
+
+@Preview(showBackground = true, name = "Play - Tablet", device = Devices.PIXEL_C)
+@Composable
+fun PlayScreenPreviewTablet() {
+    PlayScreen(
+        foundWordsCount = 5,
+        missedWordsCount = 2,
+        timerMaxValue = 40000L,
+        currentWord = Word("Squid", Categories.ANIMALS),
+        dimens = ExpandedDimens,
+        onWordPlayed = { _, _ -> },
         onFinishTurn = {}
     )
 }
 
 @Composable
-fun Timer(value: Long, maxValue: Long) {
+fun Timer(value: Long, maxValue: Long, dimens: Dimens) {
     Box(
-        modifier = Modifier.size(100.dp),
+        modifier = Modifier.size(dimens.timerSize),
         contentAlignment = Alignment.Center
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(2.dp)
-                .border(shape = CircleShape, color = TransparentWhite, width = 2.dp),
+                .padding(dimens.paddingXSmall)
+                .border(shape = CircleShape, color = TransparentWhite, width = dimens.borderMedium),
             color = Transparent
         ) {}
 
@@ -165,7 +196,7 @@ fun Timer(value: Long, maxValue: Long) {
             modifier = Modifier.fillMaxSize(),
             progress = value.toFloat() / maxValue,
             color = Accent,
-            strokeWidth = 6.dp
+            strokeWidth = dimens.timerStrokeWidth
         )
 
         Text(
@@ -176,11 +207,11 @@ fun Timer(value: Long, maxValue: Long) {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFF6F00)
+@Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Timer")
 @Composable
 fun TimerPreview() {
     OufMimeTheme {
-        Timer(20000L, 40000L)
+        Timer(20000L, 40000L, MediumDimens)
     }
 }
 
@@ -189,17 +220,18 @@ fun AnswerButton(
     color: Color,
     imageVector: ImageVector,
     contentDescription: String?,
+    dimens: Dimens,
     onCLick: () -> Unit
 ) {
     Button(
         modifier = Modifier
-            .size(100.dp)
+            .size(dimens.iconMedium)
             .clip(CircleShape),
         colors = ButtonDefaults.buttonColors(backgroundColor = color),
         onClick = onCLick
     ) {
         Icon(
-            modifier = Modifier.size(80.dp),
+            modifier = Modifier.size(dimens.iconSmall),
             imageVector = imageVector,
             contentDescription = contentDescription,
             tint = White

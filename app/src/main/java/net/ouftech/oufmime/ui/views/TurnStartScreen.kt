@@ -5,15 +5,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.WordsViewModel
+import net.ouftech.oufmime.ui.theme.Dimens
+import net.ouftech.oufmime.ui.theme.ExpandedDimens
+import net.ouftech.oufmime.ui.theme.MediumDimens
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
 
 @Composable
 fun TurnStartScreen(
     viewModel: WordsViewModel,
+    dimens: Dimens,
     onStartClick: () -> Unit
 ) {
     val roundName = when (viewModel.currentRound) {
@@ -27,27 +31,37 @@ fun TurnStartScreen(
             viewModel.getTeamTotalScore(0),
             viewModel.getTeamRoundScore(0, viewModel.currentRound),
             viewModel.getTeamTotalScore(1),
-            viewModel.getTeamRoundScore(1, viewModel.currentRound)
+            viewModel.getTeamRoundScore(1, viewModel.currentRound),
+            dimens
         )
 
         Text(
-            text = stringResource(id = R.string.round_title, viewModel.currentRound, roundName),
+            text = stringResource(id = R.string.round_title, viewModel.currentRound + 1, roundName),
             color = White,
-            fontSize = 50.sp,
+            fontSize = dimens.titleText,
             textAlign = TextAlign.Center
         )
 
         SizedButton(
             onClick = onStartClick,
-            text = stringResource(id = R.string.team_x_plays, viewModel.currentTeam)
+            text = stringResource(id = R.string.team_x_plays, viewModel.currentTeam + 1),
+            dimens = dimens
         )
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "TurnStart - Phone", device = Devices.PIXEL_4)
 @Composable
-fun TurnStartPreview() {
+fun TurnStartPreviewPhone() {
     OufMimeTheme {
-        TurnStartScreen(WordsViewModel()) {}
+        TurnStartScreen(WordsViewModel(), MediumDimens) {}
+    }
+}
+
+@Preview(showBackground = true, name = "TurnStart - Tablet", device = Devices.PIXEL_C)
+@Composable
+fun TurnStartPreviewTablet() {
+    OufMimeTheme {
+        TurnStartScreen(WordsViewModel(), ExpandedDimens) {}
     }
 }

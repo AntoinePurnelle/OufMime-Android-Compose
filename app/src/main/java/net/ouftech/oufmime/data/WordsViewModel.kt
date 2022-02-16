@@ -33,7 +33,7 @@ class WordsViewModel : ViewModel() {
 
     var timerTotalTime by mutableStateOf(10000L)
     var timerCurrentTime by mutableStateOf(timerTotalTime)
-    var wordsCount by mutableStateOf(10)
+    var wordsCount by mutableStateOf(5)
 
     // region Startup
 
@@ -133,12 +133,15 @@ class WordsViewModel : ViewModel() {
         timerCurrentTime = timerTotalTime
     }
 
-    fun playWord(found: Boolean) {
-        wordsPlayedInTurn.add(Pair(wordsToPlay.removeFirst(), found))
+    fun playWord(found: Boolean, timerEnded: Boolean) {
+        if (hasMoreWords()) {
+            wordsPlayedInTurn.add(Pair(wordsToPlay.removeFirst(), found))
 
-        Log.d("GameManager", "Word played ${wordsPlayedInTurn.last()}")
+            Log.d("GameManager", "Word played ${wordsPlayedInTurn.last()}")
 
-        currentWord = wordsToPlay.firstOrNull()
+            if (!timerEnded)
+                currentWord = wordsToPlay.firstOrNull()
+        }
     }
 
     fun finishTurn() {
