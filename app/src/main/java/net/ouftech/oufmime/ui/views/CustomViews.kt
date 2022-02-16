@@ -1,18 +1,23 @@
 package net.ouftech.oufmime.ui.views
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
+import net.ouftech.oufmime.R
 import net.ouftech.oufmime.ui.theme.Accent
 import net.ouftech.oufmime.ui.theme.ButtonsTextSize
 import net.ouftech.oufmime.ui.theme.ButtonsTextSize.MEDIUM
@@ -30,7 +35,7 @@ fun SizedButton(
     Button(
         modifier = modifier,
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(backgroundColor = Accent)
+        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
     ) {
         Text(
             text.toUpperCase(Locale.current),
@@ -40,6 +45,7 @@ fun SizedButton(
         )
     }
 }
+
 @Composable
 fun FullScreenColumn(
     modifier: Modifier = Modifier,
@@ -48,7 +54,6 @@ fun FullScreenColumn(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Primary)
             .padding(20.dp),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,4 +73,27 @@ fun FullWidthRow(
         verticalAlignment = Alignment.CenterVertically,
         content = content
     )
+}
+
+@Composable
+fun AppIcon(dimens: Dimens, inverted: Boolean) {
+    Box {
+        Spacer(
+            modifier = Modifier
+                .size(dimens.iconMedium)
+                .padding(dimens.paddingLarge)
+                .background(shape = CircleShape, color = if (inverted) Accent else Primary)
+        )
+        Image(
+            modifier = Modifier.size(dimens.iconMedium),
+            painter = painterResource(
+                id = if (inverted)
+                    R.drawable.ic_launcher_foreground_inverted
+                else
+                    R.drawable.ic_launcher_foreground
+            ),
+            contentDescription = "App Icon"
+        )
+    }
+
 }

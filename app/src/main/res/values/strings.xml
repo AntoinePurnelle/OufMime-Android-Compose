@@ -11,7 +11,9 @@
     <string name="word">Un mot</string>
     <string name="mime">Mimer</string>
     <string name="finished">Terminée</string>
-    <string name="team_x_plays">L\'équipe %s joue !</string>
+    <string name="team_x_plays">%s, jouez !</string>
+    <string name="team_blue">Les Bleus</string>
+    <string name="team_orange">Les Oranges</string>
     <string name="team_x">Équipe %s</string>
     <string name="team_1">Équipe 1</string>
     <string name="team_2">Équipe 2</string>

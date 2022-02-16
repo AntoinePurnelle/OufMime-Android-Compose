@@ -9,6 +9,7 @@ import net.ouftech.oufmime.ui.theme.ButtonsTextSize.*
 class Dimens(
     val bodyText: TextUnit = 16.sp,
     val titleText: TextUnit = 42.sp,
+    val bigTitleText: TextUnit = 64.sp,
     val subtitleText: TextUnit = 20.sp,
 
     val smallButtonText: TextUnit = 16.sp,
@@ -28,7 +29,7 @@ class Dimens(
     val borderMedium: Dp = 2.dp,
 
     val iconSmall: Dp = 100.dp,
-    val iconMedium: Dp = 120.dp,
+    val iconMedium: Dp = iconSmall,
 
     val timerSize: Dp = 100.dp,
     val timerStrokeWidth: Dp = 6.dp,
@@ -45,6 +46,7 @@ val MediumDimens = Dimens()
 val ExpandedDimens = Dimens(
     bodyText = 24.sp,
     titleText = 56.sp,
+    bigTitleText = 96.sp,
     subtitleText = 32.sp,
 
     smallButtonText = 24.sp,

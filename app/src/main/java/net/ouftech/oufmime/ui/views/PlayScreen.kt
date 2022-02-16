@@ -40,6 +40,7 @@ fun PlayScreen(
     timerMaxValue: Long,
     currentWord: Word?,
     dimens: Dimens,
+    invertColors: Boolean,
     onWordPlayed: (Boolean, Boolean) -> Unit,
     onFinishTurn: () -> Unit
 ) {
@@ -88,10 +89,11 @@ fun PlayScreen(
                 topScore = foundWordsCount,
                 bottomLabel = stringResource(id = R.string.missed),
                 bottomScore = missedWordsCount,
-                dimens = dimens
+                dimens = dimens,
+                color = White
             )
 
-            Timer(currentTimerValue, timerMaxValue, dimens)
+            Timer(currentTimerValue, timerMaxValue, dimens, invertColors)
         }
 
         Box(
@@ -159,6 +161,7 @@ fun PlayScreenPreviewPhone() {
         timerMaxValue = 40000L,
         currentWord = Word("Squid", Categories.ANIMALS),
         dimens = MediumDimens,
+        invertColors = false,
         onWordPlayed = { _, _ -> },
         onFinishTurn = {}
     )
@@ -173,17 +176,25 @@ fun PlayScreenPreviewTablet() {
         timerMaxValue = 40000L,
         currentWord = Word("Squid", Categories.ANIMALS),
         dimens = ExpandedDimens,
+        invertColors = false,
         onWordPlayed = { _, _ -> },
         onFinishTurn = {}
     )
 }
 
 @Composable
-fun Timer(value: Long, maxValue: Long, dimens: Dimens) {
+fun Timer(
+    value: Long,
+    maxValue: Long,
+    dimens: Dimens,
+    invertColors: Boolean
+) {
     Box(
         modifier = Modifier.size(dimens.timerSize),
         contentAlignment = Alignment.Center
     ) {
+        val color = if (invertColors) Primary else Accent
+
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -195,13 +206,13 @@ fun Timer(value: Long, maxValue: Long, dimens: Dimens) {
         CircularProgressIndicator(
             modifier = Modifier.fillMaxSize(),
             progress = value.toFloat() / maxValue,
-            color = Accent,
+            color = color,
             strokeWidth = dimens.timerStrokeWidth
         )
 
         Text(
             text = (value / 1000).toString(),
-            color = Accent,
+            color = color,
             fontSize = 60.sp
         )
     }
@@ -210,8 +221,8 @@ fun Timer(value: Long, maxValue: Long, dimens: Dimens) {
 @Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Timer")
 @Composable
 fun TimerPreview() {
-    OufMimeTheme {
-        Timer(20000L, 40000L, MediumDimens)
+    OufMimeTheme(invert = false) {
+        Timer(20000L, 40000L, MediumDimens, false)
     }
 }
 

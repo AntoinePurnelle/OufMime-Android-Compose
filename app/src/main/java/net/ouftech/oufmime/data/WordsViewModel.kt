@@ -7,17 +7,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
+import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories.*
+import net.ouftech.oufmime.ui.theme.Accent
+import net.ouftech.oufmime.ui.theme.Primary
 import java.io.IOException
 
 class WordsViewModel : ViewModel() {
 
     private var repository: WordsRepository? = null
-    var currentTeam by mutableStateOf(0)
+    var currentTeam by mutableStateOf(-1)
     var currentRound by mutableStateOf(0)
+    var currentRoundFinished by mutableStateOf(true)
     var words = mutableListOf<Word>()
     private var teamWords: Array<Array<MutableList<Word>>> =
         arrayOf(
@@ -118,6 +123,7 @@ class WordsViewModel : ViewModel() {
     }
 
     fun initRound() {
+        currentRoundFinished = false
         wordsToPlay.clear()
         wordsToPlay.addAll(words.shuffled())
         wordsMissedInRound.clear()
@@ -171,6 +177,18 @@ class WordsViewModel : ViewModel() {
         if (currentRound < round) -1 else teamWords[team][round].size
 
     fun getTeamTotalScore(team: Int) = teamWords[team].sumOf { it.size }
+
+    fun shouldInvertColors() = currentTeam == 0
+
+    fun getTeamColor(team: Int) = when (team) {
+        0 -> Accent
+        1 -> Primary
+        else -> White
+    }
+
+    fun getCurrentTeamColor() = if (!currentRoundFinished) getTeamColor(currentTeam) else White
+
+    fun getTeamNameId() = if (currentTeam == 0) R.string.team_blue else R.string.team_orange
 
     // endregion Game
 }

@@ -1,6 +1,5 @@
 package net.ouftech.oufmime.ui.views
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -9,11 +8,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.ui.theme.*
 
@@ -23,37 +23,41 @@ fun HeaderView(
     team1CurrentRoundScore: Int = 0,
     team2TotalScore: Int = 0,
     team2CurrentRoundScore: Int = 0,
-    dimens: Dimens
+    dimens: Dimens,
+    invertColors: Boolean
 ) {
     Row(
-        Modifier.background(color = Primary),
+        modifier = Modifier
+            .widthIn(max = 600.dp)
+            .background(shape = RoundedCornerShape(20), color = White)
+            .padding(horizontal = dimens.paddingLarge),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         ScoreBoardView(
+            modifier = Modifier.weight(1f),
             topLabel = stringResource(id = R.string.score_total),
             topScore = team1TotalScore,
             bottomLabel = stringResource(id = R.string.score_round),
             bottomScore = team1CurrentRoundScore,
-            dimens
+            dimens = dimens,
+            color = Accent
         )
 
         Spacer(modifier = Modifier.width(dimens.paddingSmall))
 
-        Image(
-            modifier = Modifier.size(dimens.iconMedium),
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "App Icon"
-        )
+        AppIcon(dimens = dimens, inverted = invertColors)
 
         Spacer(modifier = Modifier.width(dimens.paddingSmall))
 
         ScoreBoardView(
+            modifier = Modifier.weight(1f),
             topLabel = stringResource(id = R.string.score_total),
             topScore = team2TotalScore,
             bottomLabel = stringResource(id = R.string.score_round),
             bottomScore = team2CurrentRoundScore,
-            dimens
+            dimens = dimens,
+            color = Primary
         )
     }
 }
@@ -61,25 +65,27 @@ fun HeaderView(
 @Preview(showBackground = true, widthDp = 600)
 @Composable
 fun HeaderPreview() {
-    OufMimeTheme {
-        HeaderView(10, 5, 20, 10, MediumDimens)
+    OufMimeTheme(invert = false) {
+        HeaderView(10, 5, 20, 10, MediumDimens, invertColors = false)
     }
 }
 
 @Composable
 fun ScoreBoardView(
+    modifier: Modifier = Modifier,
     topLabel: String,
     topScore: Int = 0,
     bottomLabel: String,
     bottomScore: Int = 0,
-    dimens: Dimens
+    dimens: Dimens,
+    color: Color
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .width(dimens.simpleScoreBoardWidth)
             .border(
                 width = dimens.borderSmall,
-                color = White,
+                color = color,
                 shape = RoundedCornerShape(20)
             )
             .padding(dimens.paddingMedium)
@@ -87,12 +93,14 @@ fun ScoreBoardView(
         ScoreLineView(
             scoreName = topLabel,
             score = topScore,
-            dimens = dimens
+            dimens = dimens,
+            color = color
         )
         ScoreLineView(
             scoreName = bottomLabel,
             score = bottomScore,
-            dimens = dimens
+            dimens = dimens,
+            color = color
         )
     }
 }
@@ -100,16 +108,30 @@ fun ScoreBoardView(
 @Preview(showBackground = true, device = Devices.PIXEL_4)
 @Composable
 fun ScoreBoardPreviewPhone() {
-    OufMimeTheme {
-        ScoreBoardView("Total", 10, "Round", 5, MediumDimens)
+    OufMimeTheme(invert = false) {
+        ScoreBoardView(
+            topLabel = "Total",
+            topScore = 10,
+            bottomLabel = "Round",
+            bottomScore = 5,
+            dimens = MediumDimens,
+            color = Primary
+        )
     }
 }
 
 @Preview(showBackground = true, device = Devices.PIXEL_C)
 @Composable
 fun ScoreBoardPreviewTablet() {
-    OufMimeTheme {
-        ScoreBoardView("Total", 10, "Round", 5, ExpandedDimens)
+    OufMimeTheme(invert = false) {
+        ScoreBoardView(
+            topLabel = "Total",
+            topScore = 10,
+            bottomLabel = "Round",
+            bottomScore = 5,
+            dimens = ExpandedDimens,
+            color = Primary
+        )
     }
 }
 
@@ -117,21 +139,22 @@ fun ScoreBoardPreviewTablet() {
 fun ScoreLineView(
     scoreName: String,
     score: Int,
-    dimens: Dimens
+    dimens: Dimens,
+    color: Color
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = scoreName, color = White, fontSize = dimens.bodyText)
-        Text(text = score.toString(), color = White, fontSize = dimens.bodyText)
+        Text(text = scoreName, color = color, fontSize = dimens.bodyText)
+        Text(text = score.toString(), color = color, fontSize = dimens.bodyText)
     }
 }
 
 @Preview(showBackground = true, widthDp = 200)
 @Composable
 fun ScoreLinePreview() {
-    OufMimeTheme {
-        ScoreLineView("Total", 5, MediumDimens)
+    OufMimeTheme(invert = false) {
+        ScoreLineView("Total", 5, MediumDimens, Primary)
     }
 }

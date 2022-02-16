@@ -6,18 +6,16 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
-private val DarkColorPalette = darkColors(
-    primary = Primary,
-    primaryVariant = PrimaryDark,
-    secondary = Accent,
-    background = Primary,
+private val InvertColorPalette = darkColors(
+    primary = Accent,
+    primaryVariant = AccentTransparent,
+    secondary = Primary,
 )
 
 private val LightColorPalette = lightColors(
     primary = Primary,
     primaryVariant = PrimaryDark,
     secondary = Accent,
-    background = Primary,
 
     /* Other default colors to override
     background = Color.White,
@@ -30,9 +28,13 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun OufMimeTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
+fun OufMimeTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    invert: Boolean,
+    content: @Composable () -> Unit
+) {
+    val colors = if (invert) {
+        InvertColorPalette
     } else {
         LightColorPalette
     }

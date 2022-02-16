@@ -18,6 +18,7 @@ import net.ouftech.oufmime.ui.theme.OufMimeTheme
 fun TurnStartScreen(
     viewModel: WordsViewModel,
     dimens: Dimens,
+    invertColors: Boolean,
     onStartClick: () -> Unit
 ) {
     val roundName = when (viewModel.currentRound) {
@@ -32,7 +33,8 @@ fun TurnStartScreen(
             viewModel.getTeamRoundScore(0, viewModel.currentRound),
             viewModel.getTeamTotalScore(1),
             viewModel.getTeamRoundScore(1, viewModel.currentRound),
-            dimens
+            dimens,
+            invertColors = invertColors
         )
 
         Text(
@@ -44,7 +46,10 @@ fun TurnStartScreen(
 
         SizedButton(
             onClick = onStartClick,
-            text = stringResource(id = R.string.team_x_plays, viewModel.currentTeam + 1),
+            text = stringResource(
+                id = R.string.team_x_plays,
+                stringResource(id = viewModel.getTeamNameId())
+            ),
             dimens = dimens
         )
     }
@@ -53,15 +58,15 @@ fun TurnStartScreen(
 @Preview(showBackground = true, name = "TurnStart - Phone", device = Devices.PIXEL_4)
 @Composable
 fun TurnStartPreviewPhone() {
-    OufMimeTheme {
-        TurnStartScreen(WordsViewModel(), MediumDimens) {}
+    OufMimeTheme(invert = false) {
+        TurnStartScreen(WordsViewModel(), MediumDimens, false) {}
     }
 }
 
 @Preview(showBackground = true, name = "TurnStart - Tablet", device = Devices.PIXEL_C)
 @Composable
 fun TurnStartPreviewTablet() {
-    OufMimeTheme {
-        TurnStartScreen(WordsViewModel(), ExpandedDimens) {}
+    OufMimeTheme(invert = false) {
+        TurnStartScreen(WordsViewModel(), ExpandedDimens, false) {}
     }
 }

@@ -1,12 +1,12 @@
 package net.ouftech.oufmime.ui.views
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +35,8 @@ fun TurnEndScreen(
     dimens: Dimens,
     isExpandedScreen: Boolean,
     onWordChange: (Pair<Word, Boolean>) -> Unit,
-    onNextClick: () -> Unit
+    onNextClick: () -> Unit,
+    invertColors: Boolean
 ) {
     val context = LocalContext.current
 
@@ -48,7 +48,8 @@ fun TurnEndScreen(
 
         val scoreBoard = getTurnEndScoreboardView(
             wordsPlayed = wordsPlayed,
-            dimens = dimens
+            dimens = dimens,
+            invertColors = invertColors
         )
 
         if (isExpandedScreen) {
@@ -129,24 +130,22 @@ fun TabletTurnEndView(
 fun getTurnEndScoreboardView(
     wordsPlayed: List<Pair<Word, Boolean>>,
     dimens: Dimens,
+    invertColors: Boolean
 ): @Composable () -> Unit {
     val foundWordsCount = wordsPlayed.count { it.second }
     val missedWordsCount = wordsPlayed.count { !it.second }
 
     return {
         Column {
-            Image(
-                modifier = Modifier.size(dimens.iconMedium),
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentDescription = "App Icon"
-            )
+            AppIcon(dimens = dimens, inverted = invertColors)
 
             ScoreBoardView(
                 topLabel = stringResource(id = R.string.found),
                 topScore = foundWordsCount,
                 bottomLabel = stringResource(id = R.string.missed),
                 bottomScore = missedWordsCount,
-                dimens = dimens
+                dimens = dimens,
+                color = White
             )
         }
     }
@@ -162,7 +161,7 @@ fun WordsListView(
     LazyColumn(
         modifier = modifier
             .padding(vertical = dimens.paddingXLarge)
-            .background(color = White)
+            .background(color = White, shape = RoundedCornerShape(8.dp))
     ) {
         items(wordsPlayed) { word ->
             WordPlayedView(word = word, dimens = dimens, onClick = onWordChange)
@@ -173,7 +172,7 @@ fun WordsListView(
 @Preview(showBackground = true, name = "Turn End - Phone", device = Devices.PIXEL_4)
 @Composable
 fun TurnEndScreenPreviewPhone() {
-    OufMimeTheme {
+    OufMimeTheme(invert = false) {
         TurnEndScreen(
             wordsPlayed = listOf(
                 Pair(Word("Squid", Categories.ANIMALS), true),
@@ -181,6 +180,7 @@ fun TurnEndScreenPreviewPhone() {
             ),
             dimens = MediumDimens,
             isExpandedScreen = false,
+            invertColors = false,
             onWordChange = {},
             onNextClick = {})
     }
@@ -189,7 +189,7 @@ fun TurnEndScreenPreviewPhone() {
 @Preview(showBackground = true, name = "Turn End - Tablet", device = Devices.PIXEL_C)
 @Composable
 fun TurnEndScreenPreviewTablet() {
-    OufMimeTheme {
+    OufMimeTheme(invert = false) {
         TurnEndScreen(
             wordsPlayed = listOf(
                 Pair(Word("Squid", Categories.ANIMALS), true),
@@ -197,6 +197,7 @@ fun TurnEndScreenPreviewTablet() {
             ),
             dimens = ExpandedDimens,
             isExpandedScreen = true,
+            invertColors = false,
             onWordChange = {},
             onNextClick = {})
     }
@@ -233,7 +234,7 @@ fun WordPlayedView(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun WordPlayedPreview() {
-    OufMimeTheme {
+    OufMimeTheme(invert = false) {
         WordPlayedView(
             word = Pair(Word("Squid", Categories.ANIMALS), true),
             dimens = MediumDimens,

@@ -1,14 +1,17 @@
 package net.ouftech.oufmime.ui.views
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,7 +29,7 @@ fun ScoreboardScreen(
     dimens: Dimens,
     onNextClick: () -> Unit
 ) {
-    FullScreenColumn {
+    FullScreenColumn(modifier = Modifier.background(color = White)) {
         if (isExpandedScreen) {
             FullWidthRow {
                 TeamScoreboardView(viewModel = viewModel, team = 0, dimens = dimens)
@@ -71,18 +74,29 @@ fun TeamScoreboardView(
     team: Int,
     dimens: Dimens
 ) {
+    val shape = RoundedCornerShape(16.dp)
     Column(
         modifier = Modifier
             .width(dimens.fullScoreBoardWidth)
-            .background(shape = RoundedCornerShape(2.dp), color = White)
+            .clip(shape = shape)
+            .border(
+                width = dimens.timerStrokeWidth,
+                color = viewModel.getTeamColor(team),
+                shape = shape
+            )
+            .background(shape = shape, color = White)
             .padding(dimens.paddingLarge),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(id = R.string.team_x, team + 1),
+            text = stringResource(
+                id = if (team == 0) R.string.team_blue else R.string.team_orange,
+                team + 1
+            ),
             fontSize = dimens.titleText,
-            color = Accent
+            color = Accent,
+            textAlign = TextAlign.Center
         )
 
         ScoreboardLineView(
