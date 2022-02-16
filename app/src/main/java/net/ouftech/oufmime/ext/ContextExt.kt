@@ -5,7 +5,7 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.annotation.RawRes
 
-fun Context.playSound(@RawRes soundResId: Int) {
+fun Context.playSound(@RawRes soundResId: Int): MediaPlayer? =
     MediaPlayer.create(this, soundResId).apply {
         setAudioAttributes(
             AudioAttributes.Builder()
@@ -20,4 +20,3 @@ fun Context.playSound(@RawRes soundResId: Int) {
 
         start()
     }
-}

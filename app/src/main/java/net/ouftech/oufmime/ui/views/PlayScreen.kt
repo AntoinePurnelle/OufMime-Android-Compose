@@ -1,5 +1,6 @@
 package net.ouftech.oufmime.ui.views
 
+import android.media.MediaPlayer
 import android.os.CountDownTimer
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,14 +43,15 @@ fun PlayScreen(
     var currentTimerValue by remember { mutableStateOf(timerMaxValue + 1000L) }
     lateinit var timer: CountDownTimer
     val context = LocalContext.current
+    var lastSecondsMP: MediaPlayer? = null
 
-    LaunchedEffect(key1 = null) {
+    DisposableEffect(key1 = null) {
         timer = object : CountDownTimer(currentTimerValue, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 currentTimerValue -= 1000L
 
                 if (currentTimerValue == 4000L) {
-                    context.playSound(R.raw.timer)
+                    lastSecondsMP = context.playSound(R.raw.timer)
                 }
             }
 
@@ -59,6 +61,11 @@ fun PlayScreen(
         }
 
         timer.start()
+
+        onDispose {
+            lastSecondsMP?.stop()
+            timer.cancel()
+        }
     }
 
     // TODO Sounds
