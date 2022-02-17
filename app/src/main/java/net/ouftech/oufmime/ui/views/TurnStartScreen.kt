@@ -58,7 +58,7 @@ fun TurnStartScreen(
 @Preview(showBackground = true, name = "TurnStart - Phone", device = Devices.PIXEL_4)
 @Composable
 fun TurnStartPreviewPhone() {
-    OufMimeTheme(invert = false) {
+    OufMimeTheme {
         TurnStartScreen(WordsViewModel(), MediumDimens, false) {}
     }
 }
@@ -66,7 +66,7 @@ fun TurnStartPreviewPhone() {
 @Preview(showBackground = true, name = "TurnStart - Tablet", device = Devices.PIXEL_C)
 @Composable
 fun TurnStartPreviewTablet() {
-    OufMimeTheme(invert = false) {
+    OufMimeTheme {
         TurnStartScreen(WordsViewModel(), ExpandedDimens, false) {}
     }
 }

@@ -1,7 +1,10 @@
 package net.ouftech.oufmime.ui.views
 
+import androidx.compose.foundation.clickable
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
@@ -13,7 +16,8 @@ import net.ouftech.oufmime.ui.theme.ButtonsTextSize.BIG
 @Composable
 fun WelcomeScreen(
     dimens: Dimens,
-    onStartClick: () -> Unit
+    onStartClick: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
     FullScreenColumn {
         Text(
@@ -27,7 +31,14 @@ fun WelcomeScreen(
             onClick = onStartClick,
             text = stringResource(id = R.string.start),
             textSize = BIG,
-            dimens = MediumDimens
+            dimens = dimens
+        )
+
+        Text(
+            modifier = Modifier.clickable(onClick = onSettingsClick),
+            text = stringResource(id = R.string.settings),
+            fontSize = dimens.bodyText,
+            color = Color.Gray
         )
     }
 }
@@ -35,15 +46,15 @@ fun WelcomeScreen(
 @Preview(showBackground = true, name = "Welcome - Phone", device = Devices.PIXEL_4)
 @Composable
 fun WelcomeScreenPreviewPhone() {
-    OufMimeTheme(invert = false) {
-        WelcomeScreen(dimens = MediumDimens) {}
+    OufMimeTheme {
+        WelcomeScreen(dimens = MediumDimens, onStartClick = {}, onSettingsClick = {})
     }
 }
 
 @Preview(showBackground = true, name = "Welcome - Tablet", device = Devices.PIXEL_C)
 @Composable
 fun WelcomeScreenPreviewTablet() {
-    OufMimeTheme(invert = false) {
-        WelcomeScreen(dimens = ExpandedDimens) {}
+    OufMimeTheme {
+        WelcomeScreen(dimens = ExpandedDimens, onStartClick = {}, onSettingsClick = {})
     }
 }

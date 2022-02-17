@@ -10,15 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import net.ouftech.oufmime.MainActivity.OufMimeDestinations.PLAY_SCREEN
 import net.ouftech.oufmime.MainActivity.OufMimeDestinations.SCOREBOARD_SCREEN
+import net.ouftech.oufmime.MainActivity.OufMimeDestinations.SETTINGS_SCREEN
 import net.ouftech.oufmime.MainActivity.OufMimeDestinations.TURN_END_SCREEN
 import net.ouftech.oufmime.MainActivity.OufMimeDestinations.TURN_START_SCREEN
 import net.ouftech.oufmime.MainActivity.OufMimeDestinations.WELCOME_SCREEN
-import net.ouftech.oufmime.data.Categories
 import net.ouftech.oufmime.data.WordsViewModel
 import net.ouftech.oufmime.ui.theme.ExpandedDimens
 import net.ouftech.oufmime.ui.theme.MediumDimens
@@ -54,14 +55,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(navController = navController, startDestination = WELCOME_SCREEN) {
                         composable(WELCOME_SCREEN) {
-                            WelcomeScreen(dimens = dimens) {
-                                vm.initGame(
-                                    categories = Categories.values().map { it.toString() },
-                                    duration = 10000L // TODO pick from settings
-                                )
-
-                                navController.navigate(TURN_START_SCREEN)
-                            }
+                            WelcomeScreen(
+                                dimens = dimens,
+                                onStartClick = { startGame(navController) },
+                                onSettingsClick = {
+                                    navController.navigate(SETTINGS_SCREEN)
+                                }
+                            )
                         }
 
                         composable(TURN_START_SCREEN) {
@@ -135,10 +135,25 @@ class MainActivity : ComponentActivity() {
                                     }
                                 })
                         }
+
+                        composable(SETTINGS_SCREEN) {
+                            SettingsScreen(
+                                viewModel = vm,
+                                dimens = dimens,
+                                isExpandedScreen = isExpandedScreen,
+                                onStartClick = { startGame(navController) })
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun startGame(navController: NavHostController) {
+        vm.initGame()
+
+        navController.navigate(TURN_START_SCREEN)
+
     }
 
     override fun onBackPressed() {
@@ -155,5 +170,6 @@ class MainActivity : ComponentActivity() {
         const val PLAY_SCREEN = "play"
         const val TURN_END_SCREEN = "turnEnd"
         const val SCOREBOARD_SCREEN = "scoreboard"
+        const val SETTINGS_SCREEN = "settings"
     }
 }

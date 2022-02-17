@@ -65,7 +65,7 @@ fun HeaderView(
 @Preview(showBackground = true, widthDp = 600)
 @Composable
 fun HeaderPreview() {
-    OufMimeTheme(invert = false) {
+    OufMimeTheme {
         HeaderView(10, 5, 20, 10, MediumDimens, invertColors = false)
     }
 }
@@ -108,7 +108,7 @@ fun ScoreBoardView(
 @Preview(showBackground = true, device = Devices.PIXEL_4)
 @Composable
 fun ScoreBoardPreviewPhone() {
-    OufMimeTheme(invert = false) {
+    OufMimeTheme {
         ScoreBoardView(
             topLabel = "Total",
             topScore = 10,
@@ -123,7 +123,7 @@ fun ScoreBoardPreviewPhone() {
 @Preview(showBackground = true, device = Devices.PIXEL_C)
 @Composable
 fun ScoreBoardPreviewTablet() {
-    OufMimeTheme(invert = false) {
+    OufMimeTheme {
         ScoreBoardView(
             topLabel = "Total",
             topScore = 10,
@@ -154,7 +154,7 @@ fun ScoreLineView(
 @Preview(showBackground = true, widthDp = 200)
 @Composable
 fun ScoreLinePreview() {
-    OufMimeTheme(invert = false) {
+    OufMimeTheme {
         ScoreLineView("Total", 5, MediumDimens, Primary)
     }
 }

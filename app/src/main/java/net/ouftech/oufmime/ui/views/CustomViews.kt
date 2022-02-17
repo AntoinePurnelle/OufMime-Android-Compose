@@ -49,6 +49,7 @@ fun SizedButton(
 @Composable
 fun FullScreenColumn(
     modifier: Modifier = Modifier,
+    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
@@ -56,7 +57,23 @@ fun FullScreenColumn(
             .fillMaxSize()
             .padding(20.dp),
         verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = horizontalAlignment,
+        content = content
+    )
+}
+
+@Composable
+fun FullScreenRow(
+    modifier: Modifier = Modifier,
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+    content: @Composable RowScope.() -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(20.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = verticalAlignment,
         content = content
     )
 }

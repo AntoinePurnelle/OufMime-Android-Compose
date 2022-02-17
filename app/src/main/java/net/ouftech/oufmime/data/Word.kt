@@ -22,9 +22,11 @@ enum class Categories(@StringRes val resId: Int) {
     EVENTS(R.string.category_events),
     FICTIONAL(R.string.category_fictional),
     FOOD(R.string.category_food),
+    GEEK(R.string.category_geek),
     JOBS(R.string.category_jobs),
     LOCATIONS(R.string.category_locations),
+    MYTHOLOGY(R.string.category_mythology),
     NATURE(R.string.category_nature),
     OBJECTS(R.string.category_objects),
-    VEHICLES(R.string.category_vehicles),
+    VEHICLES(R.string.category_vehicles)
 }

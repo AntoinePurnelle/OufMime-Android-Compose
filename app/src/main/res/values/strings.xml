@@ -25,6 +25,7 @@
     </plurals>
     <string name="next_round">Manche suivante</string>
 
+    <string name="categories">Catégories</string>
     <string name="category_actions">Actions</string>
     <string name="category_activities">Sports - Hobbies - Jeux</string>
     <string name="category_anatomy">Anatomie</string>
@@ -33,11 +34,13 @@
     <string name="category_clothes">Habits</string>
     <string name="category_events">Évènements</string>
     <string name="category_fictional">Personnage ou créature fictif</string>
+    <string name="category_food">Nourriture</string>
+    <string name="category_geek">Geek</string>
     <string name="category_jobs">Métiers</string>
     <string name="category_locations">Lieux</string>
-    <string name="category_objects">Objets</string>
-    <string name="category_food">Nourriture</string>
+    <string name="category_mythology">Mythologie</string>
     <string name="category_nature">Nature</string>
+    <string name="category_objects">Objets</string>
     <string name="category_vehicles">Véhicules</string>
 
     <string name="score_total">Total</string>
@@ -47,5 +50,10 @@
     <string name="missed">Manqués</string>
 
     <string name="next">Suivant</string>
+
+    <string name="settings">Paramètres</string>
+
+    <string name="duration">Durée des manche</string>
+    <string name="words_count">Nombre de mots</string>
 
 </resources>

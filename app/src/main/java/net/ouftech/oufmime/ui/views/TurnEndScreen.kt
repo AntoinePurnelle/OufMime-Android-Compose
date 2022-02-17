@@ -172,7 +172,7 @@ fun WordsListView(
 @Preview(showBackground = true, name = "Turn End - Phone", device = Devices.PIXEL_4)
 @Composable
 fun TurnEndScreenPreviewPhone() {
-    OufMimeTheme(invert = false) {
+    OufMimeTheme {
         TurnEndScreen(
             wordsPlayed = listOf(
                 Pair(Word("Squid", Categories.ANIMALS), true),
@@ -189,7 +189,7 @@ fun TurnEndScreenPreviewPhone() {
 @Preview(showBackground = true, name = "Turn End - Tablet", device = Devices.PIXEL_C)
 @Composable
 fun TurnEndScreenPreviewTablet() {
-    OufMimeTheme(invert = false) {
+    OufMimeTheme {
         TurnEndScreen(
             wordsPlayed = listOf(
                 Pair(Word("Squid", Categories.ANIMALS), true),
@@ -234,7 +234,7 @@ fun WordPlayedView(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun WordPlayedPreview() {
-    OufMimeTheme(invert = false) {
+    OufMimeTheme {
         WordPlayedView(
             word = Pair(Word("Squid", Categories.ANIMALS), true),
             dimens = MediumDimens,

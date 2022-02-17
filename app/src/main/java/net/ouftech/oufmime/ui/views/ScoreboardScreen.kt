@@ -17,10 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.WordsViewModel
-import net.ouftech.oufmime.ui.theme.Accent
-import net.ouftech.oufmime.ui.theme.Dimens
-import net.ouftech.oufmime.ui.theme.ExpandedDimens
-import net.ouftech.oufmime.ui.theme.MediumDimens
+import net.ouftech.oufmime.ui.theme.*
 
 @Composable
 fun ScoreboardScreen(
@@ -51,21 +48,25 @@ fun ScoreboardScreen(
 @Preview(showBackground = true, name = "Scoreboard Phone", device = Devices.PIXEL_4)
 @Composable
 fun ScoreboardScreenPreviewPhone() {
-    ScoreboardScreen(
-        viewModel = WordsViewModel(),
-        isExpandedScreen = false,
-        dimens = MediumDimens,
-        onNextClick = {})
+    OufMimeTheme {
+        ScoreboardScreen(
+            viewModel = WordsViewModel(),
+            isExpandedScreen = false,
+            dimens = MediumDimens,
+            onNextClick = {})
+    }
 }
 
 @Preview(showBackground = true, name = "Scoreboard Tablet", device = Devices.PIXEL_C)
 @Composable
 fun ScoreboardScreenPreviewTablet() {
-    ScoreboardScreen(
-        viewModel = WordsViewModel(),
-        isExpandedScreen = true,
-        dimens = ExpandedDimens,
-        onNextClick = {})
+    OufMimeTheme {
+        ScoreboardScreen(
+            viewModel = WordsViewModel(),
+            isExpandedScreen = true,
+            dimens = ExpandedDimens,
+            onNextClick = {})
+    }
 }
 
 @Composable

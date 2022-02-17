@@ -3,10 +3,7 @@ package net.ouftech.oufmime.data
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
@@ -36,9 +33,11 @@ class WordsViewModel : ViewModel() {
 
     var currentWord by mutableStateOf<Word?>(null)
 
-    var timerTotalTime by mutableStateOf(10000L)
+    var timerTotalTime by mutableStateOf(40000L)
     var timerCurrentTime by mutableStateOf(timerTotalTime)
-    var wordsCount by mutableStateOf(5)
+    var wordsCount by mutableStateOf(40)
+    var selectedCategories = Categories.values().map { it.name to true }.toMutableStateMap()
+
 
     // region Startup
 
@@ -66,8 +65,10 @@ class WordsViewModel : ViewModel() {
             insertListOfWords(EVENTS, words.events)
             insertListOfWords(FICTIONAL, words.fictional)
             insertListOfWords(FOOD, words.food)
+            insertListOfWords(GEEK, words.geek)
             insertListOfWords(LOCATIONS, words.locations)
             insertListOfWords(JOBS, words.jobs)
+            insertListOfWords(MYTHOLOGY, words.mythology)
             insertListOfWords(NATURE, words.nature)
             insertListOfWords(OBJECTS, words.objects)
             insertListOfWords(VEHICLES, words.vehicles)
@@ -104,10 +105,12 @@ class WordsViewModel : ViewModel() {
 
     // region Game
 
-    fun initGame(categories: List<String>, duration: Long) {
+    fun initGame() {
         runBlocking {
-            words = repository!!.getRandomWordsInCategories(categories, wordsCount).toMutableList()
-            timerTotalTime = duration
+            words = repository!!.getRandomWordsInCategories(
+                selectedCategories.filter { it.value }.keys.toList(),
+                wordsCount
+            ).toMutableList()
             Log.d("GameManager", "Selected Words (${words.size}) $words")
 
             currentRound = 0

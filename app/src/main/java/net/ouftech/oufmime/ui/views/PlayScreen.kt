@@ -221,7 +221,7 @@ fun Timer(
 @Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Timer")
 @Composable
 fun TimerPreview() {
-    OufMimeTheme(invert = false) {
+    OufMimeTheme {
         Timer(20000L, 40000L, MediumDimens, false)
     }
 }
