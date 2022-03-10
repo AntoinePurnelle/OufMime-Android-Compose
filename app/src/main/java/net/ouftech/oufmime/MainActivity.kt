@@ -38,12 +38,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val windowSizeClass = rememberWindowSizeClass()
-            val backgroundColor = vm.getCurrentTeamColor()
+            val backgroundColor = vm.currentTeamColor
 
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.statusBarColor = backgroundColor.toArgb()
 
-            OufMimeTheme(invert = vm.shouldInvertColors()) {
+            OufMimeTheme(invert = vm.shouldInvertColors) {
                 val navController = rememberNavController()
                 val isExpandedScreen = windowSizeClass == WindowSize.Expanded
                 val dimens = if (isExpandedScreen) ExpandedDimens else MediumDimens
@@ -57,7 +57,9 @@ class MainActivity : ComponentActivity() {
                         composable(WELCOME_SCREEN) {
                             WelcomeScreen(
                                 dimens = dimens,
-                                onStartClick = { startGame(navController) },
+                                onStartClick = {
+                                    startGame(navController)
+                                },
                                 onSettingsClick = {
                                     navController.navigate(SETTINGS_SCREEN)
                                 }
@@ -68,7 +70,7 @@ class MainActivity : ComponentActivity() {
                             TurnStartScreen(
                                 viewModel = vm,
                                 dimens = dimens,
-                                invertColors = vm.shouldInvertColors()
+                                invertColors = vm.shouldInvertColors
                             ) {
                                 vm.initTurn()
 
@@ -78,15 +80,15 @@ class MainActivity : ComponentActivity() {
 
                         composable(PLAY_SCREEN) {
                             PlayScreen(
-                                foundWordsCount = vm.getWordsFoundInTurnCount(),
-                                missedWordsCount = vm.getWordsMissedInTurnCount(),
+                                foundWordsCount = vm.wordsFoundInTurnCount,
+                                missedWordsCount = vm.wordsMissedInTurnCount,
                                 timerMaxValue = vm.timerTotalTime,
                                 currentWord = vm.currentWord,
                                 dimens = dimens,
-                                invertColors = vm.shouldInvertColors(),
+                                invertColors = vm.shouldInvertColors,
                                 onWordPlayed = { found, timerEnded ->
                                     vm.playWord(found, timerEnded)
-                                    if (!vm.hasMoreWords()) {
+                                    if (!vm.hasMoreWords) {
                                         navController.navigate(TURN_END_SCREEN)
                                     }
                                 },
@@ -101,14 +103,14 @@ class MainActivity : ComponentActivity() {
                                 wordsPlayed = vm.wordsPlayedInTurn,
                                 dimens = dimens,
                                 isExpandedScreen = isExpandedScreen,
-                                invertColors = vm.shouldInvertColors(),
+                                invertColors = vm.shouldInvertColors,
                                 onWordChange = { changedWord ->
                                     vm.changeValueInPlayedWords(changedWord)
                                 },
                                 onNextClick = {
                                     vm.finishTurn()
 
-                                    if (vm.hasMoreWords()) {
+                                    if (vm.hasMoreWords) {
                                         navController.navigate(TURN_START_SCREEN)
                                     } else {
                                         vm.currentRoundFinished = true
@@ -151,9 +153,7 @@ class MainActivity : ComponentActivity() {
 
     private fun startGame(navController: NavHostController) {
         vm.initGame()
-
         navController.navigate(TURN_START_SCREEN)
-
     }
 
     override fun onBackPressed() {

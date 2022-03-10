@@ -1,6 +1,7 @@
 package net.ouftech.oufmime.data
 
 class WordLists(
+    val version: Int,
     val actions: List<String>,
     val activities: List<String>,
     val anatomy: List<String>,

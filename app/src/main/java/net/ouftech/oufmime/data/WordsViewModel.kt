@@ -7,6 +7,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories.*
@@ -17,7 +22,8 @@ import java.io.IOException
 class WordsViewModel : ViewModel() {
 
     private var repository: WordsRepository? = null
-    var currentTeam by mutableStateOf(-1)
+    lateinit var dataStoreManager: DataStoreManager
+    private var currentTeam by mutableStateOf(-1)
     var currentRound by mutableStateOf(0)
     var currentRoundFinished by mutableStateOf(true)
     var words = mutableListOf<Word>()
@@ -27,7 +33,7 @@ class WordsViewModel : ViewModel() {
             arrayOf(mutableListOf(), mutableListOf(), mutableListOf())
         )
 
-    var wordsToPlay = mutableStateListOf<Word>()
+    private var wordsToPlay = mutableStateListOf<Word>()
     private var wordsMissedInRound = mutableStateListOf<Word>()
     var wordsPlayedInTurn = mutableStateListOf<Pair<Word, Boolean>>()
 
@@ -43,6 +49,8 @@ class WordsViewModel : ViewModel() {
 
     fun init(application: Application) {
         if (repository == null) {
+            dataStoreManager = DataStoreManager(application)
+
             val db = WordsDB.getDataBase(application)
             repository = WordsRepository(db.wordsDao())
             insertWords(application.applicationContext)
@@ -56,27 +64,43 @@ class WordsViewModel : ViewModel() {
 
             val words = Gson().fromJson(jsonFileString, WordLists::class.java)
 
-            insertListOfWords(ACTIONS, words.actions)
-            insertListOfWords(ACTIVITIES, words.activities)
-            insertListOfWords(ANATOMY, words.anatomy)
-            insertListOfWords(ANIMALS, words.animals)
-            insertListOfWords(CELEBRITIES, words.celebrities)
-            insertListOfWords(CLOTHES, words.clothes)
-            insertListOfWords(EVENTS, words.events)
-            insertListOfWords(FICTIONAL, words.fictional)
-            insertListOfWords(FOOD, words.food)
-            insertListOfWords(GEEK, words.geek)
-            insertListOfWords(LOCATIONS, words.locations)
-            insertListOfWords(JOBS, words.jobs)
-            insertListOfWords(MYTHOLOGY, words.mythology)
-            insertListOfWords(NATURE, words.nature)
-            insertListOfWords(OBJECTS, words.objects)
-            insertListOfWords(VEHICLES, words.vehicles)
+            GlobalScope.launch(
+                Dispatchers.IO
+            ) {
+                dataStoreManager.getWordsListVersionFromDataStore().catch { e ->
+                    Log.e("GameManager", e.toString())
+                }.collect {
+                    if (it < words.version) {
+                        insertListOfWords(ACTIONS, words.actions)
+                        insertListOfWords(ACTIVITIES, words.activities)
+                        insertListOfWords(ANATOMY, words.anatomy)
+                        insertListOfWords(ANIMALS, words.animals)
+                        insertListOfWords(CELEBRITIES, words.celebrities)
+                        insertListOfWords(CLOTHES, words.clothes)
+                        insertListOfWords(EVENTS, words.events)
+                        insertListOfWords(FICTIONAL, words.fictional)
+                        insertListOfWords(FOOD, words.food)
+                        insertListOfWords(GEEK, words.geek)
+                        insertListOfWords(LOCATIONS, words.locations)
+                        insertListOfWords(JOBS, words.jobs)
+                        insertListOfWords(MYTHOLOGY, words.mythology)
+                        insertListOfWords(NATURE, words.nature)
+                        insertListOfWords(OBJECTS, words.objects)
+                        insertListOfWords(VEHICLES, words.vehicles)
 
-            Log.d(
-                "GameManager",
-                "All Words (${repository?.getAllWords()?.size}) ${repository?.getAllWords()}"
-            )
+                        GlobalScope.launch(Dispatchers.IO) {
+                            dataStoreManager.saveToDataStore(words.version)
+                        }
+                    }
+
+                    val w = repository?.getAllWords()
+
+                    Log.d(
+                        "GameManager",
+                        "All Words (${repository?.getAllWords()?.size}) ${repository?.getAllWords()}"
+                    )
+                }
+            }
         }
 
     }
@@ -137,13 +161,13 @@ class WordsViewModel : ViewModel() {
     }
 
     fun initTurn() {
-        wordsPlayedInTurn = mutableStateListOf()
+        wordsPlayedInTurn.clear()
         currentWord = wordsToPlay.firstOrNull()
         timerCurrentTime = timerTotalTime
     }
 
     fun playWord(found: Boolean, timerEnded: Boolean) {
-        if (hasMoreWords()) {
+        if (hasMoreWords) {
             wordsPlayedInTurn.add(Pair(wordsToPlay.removeFirst(), found))
 
             Log.d("GameManager", "Word played ${wordsPlayedInTurn.last()}")
@@ -171,17 +195,23 @@ class WordsViewModel : ViewModel() {
             Pair(first = word.first, second = !word.second)
     }
 
-    fun hasMoreWords() = wordsToPlay.size > 0
+    val hasMoreWords
+        get() = wordsToPlay.size > 0
 
-    fun getWordsFoundInTurnCount() = wordsPlayedInTurn.count { it.second }
-    fun getWordsMissedInTurnCount() = wordsPlayedInTurn.count { !it.second }
+    val wordsFoundInTurnCount
+        get() = wordsPlayedInTurn.count { it.second }
+    val wordsMissedInTurnCount
+        get() = wordsPlayedInTurn.count { !it.second }
+
+    fun getTeamCurrentRoundScore(team: Int) = getTeamRoundScore(team = team, round = currentRound)
 
     fun getTeamRoundScore(team: Int, round: Int) =
         if (currentRound < round) -1 else teamWords[team][round].size
 
     fun getTeamTotalScore(team: Int) = teamWords[team].sumOf { it.size }
 
-    fun shouldInvertColors() = currentTeam == 0
+    val shouldInvertColors
+        get() = currentTeam == 0
 
     fun getTeamColor(team: Int) = when (team) {
         0 -> Accent
@@ -189,9 +219,11 @@ class WordsViewModel : ViewModel() {
         else -> White
     }
 
-    fun getCurrentTeamColor() = if (!currentRoundFinished) getTeamColor(currentTeam) else White
+    val currentTeamColor
+        get() = if (!currentRoundFinished) getTeamColor(currentTeam) else White
 
-    fun getTeamNameId() = if (currentTeam == 0) R.string.team_blue else R.string.team_orange
+    val teamNameId
+        get() = if (currentTeam == 0) R.string.team_blue else R.string.team_orange
 
     // endregion Game
 }

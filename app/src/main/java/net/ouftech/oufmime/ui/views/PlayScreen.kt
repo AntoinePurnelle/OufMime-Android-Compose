@@ -98,11 +98,11 @@ fun PlayScreen(
 
         Box(
             modifier = Modifier
-                .heightIn(min = 200.dp)
-                .widthIn(max = 800.dp)
-                .fillMaxWidth()
-                .background(color = White, shape = RoundedCornerShape(8.dp))
-                .padding(dimens.paddingLarge),
+                    .heightIn(min = 200.dp)
+                    .widthIn(max = 800.dp)
+                    .fillMaxWidth()
+                    .background(color = White, shape = RoundedCornerShape(8.dp))
+                    .padding(dimens.paddingLarge),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -152,7 +152,7 @@ fun PlayScreen(
     }
 }
 
-@Preview(showBackground = true, name = "Play - Phone", device = Devices.PIXEL_4)
+@Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Play - Phone", device = Devices.PIXEL_4)
 @Composable
 fun PlayScreenPreviewPhone() {
     PlayScreen(
@@ -167,7 +167,7 @@ fun PlayScreenPreviewPhone() {
     )
 }
 
-@Preview(showBackground = true, name = "Play - Tablet", device = Devices.PIXEL_C)
+@Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Play - Tablet", device = Devices.PIXEL_C)
 @Composable
 fun PlayScreenPreviewTablet() {
     PlayScreen(
@@ -197,9 +197,9 @@ fun Timer(
 
         Surface(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(dimens.paddingXSmall)
-                .border(shape = CircleShape, color = TransparentWhite, width = dimens.borderMedium),
+                    .fillMaxSize()
+                    .padding(dimens.paddingXSmall)
+                    .border(shape = CircleShape, color = TransparentWhite, width = dimens.borderMedium),
             color = Transparent
         ) {}
 
@@ -236,8 +236,8 @@ fun AnswerButton(
 ) {
     Button(
         modifier = Modifier
-            .size(dimens.iconMedium)
-            .clip(CircleShape),
+                .size(dimens.iconMedium)
+                .clip(CircleShape),
         colors = ButtonDefaults.buttonColors(backgroundColor = color),
         onClick = onCLick
     ) {

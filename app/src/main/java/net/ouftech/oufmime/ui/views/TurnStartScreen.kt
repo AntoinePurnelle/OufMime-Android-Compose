@@ -29,12 +29,12 @@ fun TurnStartScreen(
 
     FullScreenColumn {
         HeaderView(
-            viewModel.getTeamTotalScore(0),
-            viewModel.getTeamRoundScore(0, viewModel.currentRound),
-            viewModel.getTeamTotalScore(1),
-            viewModel.getTeamRoundScore(1, viewModel.currentRound),
-            dimens,
-            invertColors = invertColors
+                viewModel.getTeamTotalScore(0),
+                viewModel.getTeamCurrentRoundScore(0),
+                viewModel.getTeamTotalScore(1),
+                viewModel.getTeamCurrentRoundScore(1),
+                dimens,
+                invertColors = invertColors
         )
 
         Text(
@@ -48,7 +48,7 @@ fun TurnStartScreen(
             onClick = onStartClick,
             text = stringResource(
                 id = R.string.team_x_plays,
-                stringResource(id = viewModel.getTeamNameId())
+                    stringResource(id = viewModel.teamNameId)
             ),
             dimens = dimens
         )
