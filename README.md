@@ -1,6 +1,6 @@
 # OufMime-Android-Compose
 
-Android app developped in Kotlin with Jetpack Compose as a learning project.
+Android app developed in Kotlin with Jetpack Compose as a learning project.
 
 OufMime is a family game where two teams will try to guess the most words.
 It is played in three rounds:
