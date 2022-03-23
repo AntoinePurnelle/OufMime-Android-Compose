@@ -24,7 +24,9 @@ import net.ouftech.oufmime.data.WordsViewModel
 import net.ouftech.oufmime.ui.theme.ExpandedDimens
 import net.ouftech.oufmime.ui.theme.MediumDimens
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
-import net.ouftech.oufmime.ui.views.*
+import net.ouftech.oufmime.ui.views.WindowSize
+import net.ouftech.oufmime.ui.views.rememberWindowSizeClass
+import net.ouftech.oufmime.ui.views.screens.*
 
 
 class MainActivity : ComponentActivity() {
@@ -127,12 +129,11 @@ class MainActivity : ComponentActivity() {
                                 dimens = dimens,
                                 onNextClick = {
                                     with(vm) {
-                                        if (currentRound == 2) {
-                                            navController.navigate(WELCOME_SCREEN)
-                                        } else {
-                                            currentRound++
-                                            initRound()
+                                        if (hasMoreRounds) {
+                                            finishRound()
                                             navController.navigate(TURN_START_SCREEN)
+                                        } else {
+                                            navController.navigate(WELCOME_SCREEN)
                                         }
                                     }
                                 })

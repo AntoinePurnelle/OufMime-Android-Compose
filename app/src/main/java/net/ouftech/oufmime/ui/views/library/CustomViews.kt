@@ -1,4 +1,4 @@
-package net.ouftech.oufmime.ui.views
+package net.ouftech.oufmime.ui.views.library
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

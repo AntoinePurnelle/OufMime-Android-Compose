@@ -93,11 +93,11 @@ class WordsViewModel : ViewModel() {
                         }
                     }
 
-                    val w = repository?.getAllWords()
+                    val allWords = repository?.getAllWords()
 
                     Log.d(
                         "GameManager",
-                        "All Words (${repository?.getAllWords()?.size}) ${repository?.getAllWords()}"
+                        "All Words (${allWords?.size}) $allWords"
                     )
                 }
             }
@@ -189,6 +189,11 @@ class WordsViewModel : ViewModel() {
         Log.d("GameManager", "Turned finished and saved")
     }
 
+    fun finishRound() {
+        currentRound++
+        initRound()
+    }
+
     fun changeValueInPlayedWords(word: Pair<Word, Boolean>) {
         wordsPlayedInTurn.indexOf(word)
         wordsPlayedInTurn[wordsPlayedInTurn.indexOf(word)] =
@@ -197,6 +202,9 @@ class WordsViewModel : ViewModel() {
 
     val hasMoreWords
         get() = wordsToPlay.size > 0
+
+    val hasMoreRounds
+        get() = currentRound < 2
 
     val wordsFoundInTurnCount
         get() = wordsPlayedInTurn.count { it.second }

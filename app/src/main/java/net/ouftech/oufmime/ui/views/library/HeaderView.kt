@@ -1,4 +1,4 @@
-package net.ouftech.oufmime.ui.views
+package net.ouftech.oufmime.ui.views.library
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,9 +28,9 @@ fun HeaderView(
 ) {
     Row(
         modifier = Modifier
-                .widthIn(max = 600.dp)
-                .background(shape = RoundedCornerShape(20), color = White)
-                .padding(horizontal = dimens.paddingLarge),
+            .widthIn(max = 600.dp)
+            .background(shape = RoundedCornerShape(20), color = White)
+            .padding(horizontal = dimens.paddingLarge),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -82,13 +82,13 @@ fun ScoreBoardView(
 ) {
     Column(
         modifier = modifier
-                .width(dimens.simpleScoreBoardWidth)
-                .border(
-                        width = dimens.borderSmall,
-                        color = color,
-                        shape = RoundedCornerShape(20)
-                )
-                .padding(dimens.paddingMedium)
+            .width(dimens.simpleScoreBoardWidth)
+            .border(
+                width = dimens.borderSmall,
+                color = color,
+                shape = RoundedCornerShape(20)
+            )
+            .padding(dimens.paddingMedium)
     ) {
         ScoreLineView(
             scoreName = topLabel,

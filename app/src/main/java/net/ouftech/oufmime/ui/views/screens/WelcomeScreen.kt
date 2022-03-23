@@ -1,4 +1,4 @@
-package net.ouftech.oufmime.ui.views
+package net.ouftech.oufmime.ui.views.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material.Text
@@ -12,6 +12,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.ui.theme.*
 import net.ouftech.oufmime.ui.theme.ButtonsTextSize.BIG
+import net.ouftech.oufmime.ui.views.library.FullScreenColumn
+import net.ouftech.oufmime.ui.views.library.SizedButton
 
 @Composable
 fun WelcomeScreen(

@@ -1,4 +1,4 @@
-package net.ouftech.oufmime.ui.views
+package net.ouftech.oufmime.ui.views.screens
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +13,9 @@ import net.ouftech.oufmime.ui.theme.Dimens
 import net.ouftech.oufmime.ui.theme.ExpandedDimens
 import net.ouftech.oufmime.ui.theme.MediumDimens
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
+import net.ouftech.oufmime.ui.views.library.FullScreenColumn
+import net.ouftech.oufmime.ui.views.library.HeaderView
+import net.ouftech.oufmime.ui.views.library.SizedButton
 
 @Composable
 fun TurnStartScreen(
@@ -55,7 +58,12 @@ fun TurnStartScreen(
     }
 }
 
-@Preview(showBackground = true, name = "TurnStart - Phone", device = Devices.PIXEL_4)
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFFFF6F00,
+    name = "TurnStart - Phone",
+    device = Devices.PIXEL_4
+)
 @Composable
 fun TurnStartPreviewPhone() {
     OufMimeTheme {
@@ -63,7 +71,12 @@ fun TurnStartPreviewPhone() {
     }
 }
 
-@Preview(showBackground = true, name = "TurnStart - Tablet", device = Devices.PIXEL_C)
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFFFF6F00,
+    name = "TurnStart - Tablet",
+    device = Devices.PIXEL_C
+)
 @Composable
 fun TurnStartPreviewTablet() {
     OufMimeTheme {

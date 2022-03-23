@@ -1,4 +1,4 @@
-package net.ouftech.oufmime.ui.views
+package net.ouftech.oufmime.ui.views.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,6 +20,9 @@ import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories
 import net.ouftech.oufmime.data.WordsViewModel
 import net.ouftech.oufmime.ui.theme.*
+import net.ouftech.oufmime.ui.views.library.FullScreenColumn
+import net.ouftech.oufmime.ui.views.library.FullScreenRow
+import net.ouftech.oufmime.ui.views.library.SizedButton
 
 @Composable
 fun SettingsScreen(
@@ -153,7 +156,7 @@ fun SettingsPreviewPhone() {
     }
 }
 
-@Preview(showBackground = true, name = "Settings Phone", device = Devices.PIXEL_C)
+@Preview(showBackground = true, name = "Settings Tablet", device = Devices.PIXEL_C)
 @Composable
 fun SettingsPreviewTablet() {
     OufMimeTheme {

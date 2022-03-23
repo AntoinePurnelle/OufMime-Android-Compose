@@ -1,4 +1,4 @@
-package net.ouftech.oufmime.ui.views
+package net.ouftech.oufmime.ui.views.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +28,7 @@ import net.ouftech.oufmime.data.Categories
 import net.ouftech.oufmime.data.Word
 import net.ouftech.oufmime.ext.playSound
 import net.ouftech.oufmime.ui.theme.*
+import net.ouftech.oufmime.ui.views.library.*
 
 @Composable
 fun TurnEndScreen(
@@ -117,8 +118,8 @@ fun TabletTurnEndView(
         scoreBoard()
         WordsListView(
             modifier = Modifier
-                    .fillMaxHeight()
-                    .width(600.dp),
+                .fillMaxHeight()
+                .width(600.dp),
             wordsPlayed = wordsPlayed,
             dimens = dimens,
             onWordChange = onWordChange
@@ -136,7 +137,7 @@ fun getTurnEndScoreboardView(
     val missedWordsCount = wordsPlayed.count { !it.second }
 
     return {
-        Column {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             AppIcon(dimens = dimens, inverted = invertColors)
 
             ScoreBoardView(
@@ -160,8 +161,8 @@ fun WordsListView(
 ) {
     LazyColumn(
         modifier = modifier
-                .padding(vertical = dimens.paddingXLarge)
-                .background(color = White, shape = RoundedCornerShape(8.dp))
+            .padding(vertical = dimens.paddingXLarge)
+            .background(color = White, shape = RoundedCornerShape(8.dp))
     ) {
         items(wordsPlayed) { word ->
             WordPlayedView(word = word, dimens = dimens, onClick = onWordChange)
@@ -211,17 +212,17 @@ fun WordPlayedView(
 ) {
     FullWidthRow(
         modifier = Modifier
-                .padding(horizontal = dimens.paddingMedium, vertical = dimens.paddingSmall)
-                .clickable { onClick.invoke(word) },
+            .padding(horizontal = dimens.paddingMedium, vertical = dimens.paddingSmall)
+            .clickable { onClick.invoke(word) },
         arrangement = Arrangement.SpaceBetween,
     ) {
         val found = word.second
         Text(text = word.first.word, color = Black, fontSize = dimens.bodyText)
         Icon(
             modifier = Modifier
-                    .size(24.dp)
-                    .background(color = if (found) Green else Red, shape = CircleShape)
-                    .padding(1.dp),
+                .size(24.dp)
+                .background(color = if (found) Green else Red, shape = CircleShape)
+                .padding(1.dp),
             imageVector = if (found) Icons.Default.Check else Icons.Default.Close,
             contentDescription = stringResource(
                 id = if (found) R.string.found else R.string.missed

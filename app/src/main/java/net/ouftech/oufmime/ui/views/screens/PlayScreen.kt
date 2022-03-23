@@ -1,8 +1,9 @@
-package net.ouftech.oufmime.ui.views
+package net.ouftech.oufmime.ui.views.screens
 
 import android.media.MediaPlayer
 import android.os.CountDownTimer
 import android.util.Log
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -26,12 +27,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories
 import net.ouftech.oufmime.data.Word
 import net.ouftech.oufmime.ext.playSound
 import net.ouftech.oufmime.ui.theme.*
+import net.ouftech.oufmime.ui.views.library.FullScreenColumn
+import net.ouftech.oufmime.ui.views.library.FullWidthRow
+import net.ouftech.oufmime.ui.views.library.ScoreBoardView
 
 @Composable
 fun PlayScreen(
@@ -98,11 +101,11 @@ fun PlayScreen(
 
         Box(
             modifier = Modifier
-                    .heightIn(min = 200.dp)
-                    .widthIn(max = 800.dp)
-                    .fillMaxWidth()
-                    .background(color = White, shape = RoundedCornerShape(8.dp))
-                    .padding(dimens.paddingLarge),
+                .heightIn(min = 200.dp)
+                .widthIn(max = 800.dp)
+                .fillMaxWidth()
+                .background(color = White, shape = RoundedCornerShape(8.dp))
+                .padding(dimens.paddingLarge),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -195,17 +198,22 @@ fun Timer(
     ) {
         val color = if (invertColors) Primary else Accent
 
+        val animatedProgress = animateFloatAsState(
+            targetValue = value.toFloat() / maxValue,
+            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+        ).value
+
         Surface(
             modifier = Modifier
-                    .fillMaxSize()
-                    .padding(dimens.paddingXSmall)
-                    .border(shape = CircleShape, color = TransparentWhite, width = dimens.borderMedium),
+                .fillMaxSize()
+                .padding(dimens.paddingXSmall)
+                .border(shape = CircleShape, color = TransparentWhite, width = dimens.borderMedium),
             color = Transparent
         ) {}
 
         CircularProgressIndicator(
             modifier = Modifier.fillMaxSize(),
-            progress = value.toFloat() / maxValue,
+            progress = animatedProgress,
             color = color,
             strokeWidth = dimens.timerStrokeWidth
         )
@@ -213,7 +221,7 @@ fun Timer(
         Text(
             text = (value / 1000).toString(),
             color = color,
-            fontSize = 60.sp
+            fontSize = dimens.bigTitleText
         )
     }
 }
@@ -236,8 +244,8 @@ fun AnswerButton(
 ) {
     Button(
         modifier = Modifier
-                .size(dimens.iconMedium)
-                .clip(CircleShape),
+            .size(dimens.iconMedium)
+            .clip(CircleShape),
         colors = ButtonDefaults.buttonColors(backgroundColor = color),
         onClick = onCLick
     ) {
