@@ -8,9 +8,9 @@ import androidx.room.RoomDatabase
 @Database(entities = [Word::class], version = 1)
 abstract class WordsDB : RoomDatabase() {
 
-    abstract fun wordsDao() : WordsDao
+    abstract fun wordsDao(): WordsDao
 
-    companion object  {
+    companion object {
         @Volatile
         private var INSTANCE: WordsDB? = null
 

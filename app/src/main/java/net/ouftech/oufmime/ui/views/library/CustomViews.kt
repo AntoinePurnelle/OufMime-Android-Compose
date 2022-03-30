@@ -112,5 +112,4 @@ fun AppIcon(dimens: Dimens, inverted: Boolean) {
             contentDescription = "App Icon"
         )
     }
-
 }

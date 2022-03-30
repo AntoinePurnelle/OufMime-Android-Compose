@@ -1,7 +1,6 @@
 package net.ouftech.oufmime.data
 
 class WordsRepository(private val repository: WordsDao) {
-
     suspend fun insertWord(word: Word) = repository.insertWord(word)
     suspend fun insertWords(words: List<Word>) = repository.insertWords(words)
     suspend fun getWord(word: String, language: String) = repository.getWord(word, language)

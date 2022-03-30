@@ -24,5 +24,4 @@ class DataStoreManager(private val context: Context) {
 
     fun getWordsListVersion() =
         context.dataStore.data.map { it[WORDS_LIST_VERSION] ?: 0 }
-
 }

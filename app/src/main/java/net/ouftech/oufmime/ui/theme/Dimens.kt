@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.ouftech.oufmime.ui.theme.ButtonsTextSize.*
 
+@SuppressWarnings("LongParameterList")
 class Dimens(
     val bodyText: TextUnit = 16.sp,
     val titleText: TextUnit = 42.sp,
@@ -71,6 +72,5 @@ val ExpandedDimens = Dimens(
     timerSize = 160.dp,
     timerStrokeWidth = 12.dp
 )
-
 
 enum class ButtonsTextSize { SMALL, MEDIUM, BIG }

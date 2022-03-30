@@ -182,8 +182,9 @@ fun TurnEndScreenPreviewPhone() {
             dimens = MediumDimens,
             isExpandedScreen = false,
             invertColors = false,
-            onWordChange = {},
-            onNextClick = {})
+            onWordChange = { },
+            onNextClick = { }
+        )
     }
 }
 
@@ -199,8 +200,9 @@ fun TurnEndScreenPreviewTablet() {
             dimens = ExpandedDimens,
             isExpandedScreen = true,
             invertColors = false,
-            onWordChange = {},
-            onNextClick = {})
+            onWordChange = { },
+            onNextClick = { }
+        )
     }
 }
 
@@ -239,6 +241,7 @@ fun WordPlayedPreview() {
         WordPlayedView(
             word = Pair(Word("Squid", Categories.ANIMALS, "en"), true),
             dimens = MediumDimens,
-            onClick = { })
+            onClick = { }
+        )
     }
 }

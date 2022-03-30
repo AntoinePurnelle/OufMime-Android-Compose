@@ -56,7 +56,8 @@ fun ScoreboardScreenPreviewPhone() {
             viewModel = WordsViewModel(),
             isExpandedScreen = false,
             dimens = MediumDimens,
-            onNextClick = {})
+            onNextClick = { }
+        )
     }
 }
 
@@ -68,7 +69,8 @@ fun ScoreboardScreenPreviewTablet() {
             viewModel = WordsViewModel(),
             isExpandedScreen = true,
             dimens = ExpandedDimens,
-            onNextClick = {})
+            onNextClick = { }
+        )
     }
 }
 

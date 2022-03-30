@@ -128,7 +128,6 @@ fun PlayScreen(
                         textAlign = TextAlign.Center
                     )
                 }
-
             }
         }
 

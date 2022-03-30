@@ -30,7 +30,7 @@ import net.ouftech.oufmime.ui.views.rememberWindowSizeClass
 import net.ouftech.oufmime.ui.views.screens.*
 import net.ouftech.oufmime.utils.LanguageUtils
 
-
+@SuppressWarnings("LongMethod")
 class MainActivity : ComponentActivity() {
 
     private val vm: WordsViewModel by viewModels()
@@ -54,7 +54,6 @@ class MainActivity : ComponentActivity() {
                 val isExpandedScreen = windowSizeClass == WindowSize.Expanded
                 val dimens = if (isExpandedScreen) ExpandedDimens else MediumDimens
 
-                // A surface container using the "background" color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = backgroundColor
