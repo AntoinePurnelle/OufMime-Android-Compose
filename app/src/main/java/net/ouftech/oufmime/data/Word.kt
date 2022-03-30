@@ -9,7 +9,8 @@ import net.ouftech.oufmime.R
 data class Word(
     @PrimaryKey
     var word: String,
-    var category: Categories
+    var category: Categories,
+    var language: String
 )
 
 enum class Categories(@StringRes val resId: Int) {

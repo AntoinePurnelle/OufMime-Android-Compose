@@ -16,13 +16,13 @@ class DataStoreManager(private val context: Context) {
         val WORDS_LIST_VERSION = intPreferencesKey("words_list_version")
     }
 
-    suspend fun saveToDataStore(wordsListVersion: Int) {
+    suspend fun saveWordsListsVersion(wordsListVersion: Int) {
         context.dataStore.edit {
             it[WORDS_LIST_VERSION] = wordsListVersion
         }
     }
 
-    fun getWordsListVersionFromDataStore() =
+    fun getWordsListVersion() =
         context.dataStore.data.map { it[WORDS_LIST_VERSION] ?: 0 }
 
 }

@@ -1,5 +1,6 @@
 package net.ouftech.oufmime.ui.views.screens
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +12,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Devices
@@ -23,13 +26,15 @@ import net.ouftech.oufmime.ui.theme.*
 import net.ouftech.oufmime.ui.views.library.FullScreenColumn
 import net.ouftech.oufmime.ui.views.library.FullScreenRow
 import net.ouftech.oufmime.ui.views.library.SizedButton
+import net.ouftech.oufmime.utils.LanguageUtils
 
 @Composable
 fun SettingsScreen(
     viewModel: WordsViewModel,
     dimens: Dimens,
     isExpandedScreen: Boolean,
-    onStartClick: () -> Unit
+    onStartClick: () -> Unit,
+    onLanguageClick: () -> Unit
 ) {
     if (isExpandedScreen) {
         FullScreenRow {
@@ -38,7 +43,12 @@ fun SettingsScreen(
                 dimens = dimens
             )
 
-            InputFieldsView(viewModel = viewModel, dimens = dimens, onStartClick = onStartClick)
+            InputFieldsView(
+                viewModel = viewModel,
+                dimens = dimens,
+                onStartClick = onStartClick,
+                onLanguageClick = onLanguageClick
+            )
         }
     } else {
         FullScreenColumn(modifier = Modifier.padding(40.dp)) {
@@ -52,7 +62,12 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(dimens.paddingLarge))
 
-            InputFieldsView(viewModel = viewModel, dimens = dimens, onStartClick = onStartClick)
+            InputFieldsView(
+                viewModel = viewModel,
+                dimens = dimens,
+                onStartClick = onStartClick,
+                onLanguageClick = onLanguageClick
+            )
         }
     }
 }
@@ -85,7 +100,12 @@ fun CategoriesPickerView(modifier: Modifier = Modifier, viewModel: WordsViewMode
 }
 
 @Composable
-fun InputFieldsView(viewModel: WordsViewModel, dimens: Dimens, onStartClick: () -> Unit) {
+fun InputFieldsView(
+    viewModel: WordsViewModel,
+    dimens: Dimens,
+    onStartClick: () -> Unit,
+    onLanguageClick: () -> Unit
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         var wordsCount by remember { mutableStateOf(viewModel.wordsCount.toString()) }
 
@@ -110,6 +130,22 @@ fun InputFieldsView(viewModel: WordsViewModel, dimens: Dimens, onStartClick: () 
 
         Spacer(modifier = Modifier.height(dimens.paddingLarge))
 
+        LanguageButton(
+            language = "en",
+            textId = R.string.switch_language_en,
+            dimens = dimens,
+            onLanguageClick = onLanguageClick
+        )
+
+        LanguageButton(
+            language = "fr",
+            textId = R.string.switch_language_fr,
+            dimens = dimens,
+            onLanguageClick = onLanguageClick
+        )
+
+        Spacer(modifier = Modifier.height(dimens.paddingLarge))
+
         SizedButton(
             text = stringResource(id = R.string.start),
             textSize = ButtonsTextSize.BIG,
@@ -123,6 +159,25 @@ fun InputFieldsView(viewModel: WordsViewModel, dimens: Dimens, onStartClick: () 
     }
 }
 
+@Composable
+fun LanguageButton(
+    language: String,
+    @StringRes textId: Int,
+    dimens: Dimens,
+    onLanguageClick: () -> Unit
+) {
+    val context = LocalContext.current
+
+    Text(
+        modifier = Modifier.clickable(onClick = {
+            LanguageUtils.setLanguage(language, context)
+            onLanguageClick()
+        }),
+        text = stringResource(id = textId),
+        fontSize = dimens.bodyText,
+        color = Color.Gray
+    )
+}
 
 @Composable
 fun CategoryCheckbox(
@@ -152,7 +207,9 @@ fun SettingsPreviewPhone() {
             viewModel = WordsViewModel(),
             dimens = MediumDimens,
             isExpandedScreen = false,
-            onStartClick = {})
+            onStartClick = {},
+            onLanguageClick = {}
+        )
     }
 }
 
@@ -164,6 +221,8 @@ fun SettingsPreviewTablet() {
             viewModel = WordsViewModel(),
             dimens = ExpandedDimens,
             isExpandedScreen = true,
-            onStartClick = {})
+            onStartClick = {},
+            onLanguageClick = {}
+        )
     }
 }

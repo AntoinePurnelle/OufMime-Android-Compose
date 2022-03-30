@@ -5,7 +5,7 @@ plugins {
 }
 
 object Versions {
-    const val composeVersion = "1.1.0"
+    const val composeVersion = "1.1.1"
 }
 
 android {
@@ -52,7 +52,7 @@ android {
 
 dependencies {
     val composeVersion = Versions.composeVersion
-    val roomVersion = "2.4.1"
+    val roomVersion = "2.4.2"
 
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.compose.ui:ui:$composeVersion")
@@ -67,6 +67,6 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("com.google.code.gson:gson:2.8.6")
+    implementation("com.google.code.gson:gson:2.9.0")
     implementation("androidx.window:window:1.0.0")
 }

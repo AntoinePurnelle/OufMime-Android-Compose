@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">OufMime !</string>
+
+    <string name="quit">Quitter l\'app ?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+
+    <string name="start">Jouer !</string>
+    <string name="round_title">Manche %s</string>
+    <string name="describe">Décrire</string>
+    <string name="word">Un mot</string>
+    <string name="mime">Mimer</string>
+    <string name="team_x_plays">%s, jouez !</string>
+    <string name="team_blue">Les Bleus</string>
+    <string name="team_orange">Les Oranges</string>
+    <string name="new_game">Nouvelle partie !</string>
+    <string name="next_round">Manche suivante</string>
+
+    <string name="categories">Catégories</string>
+    <string name="category_actions">Actions</string>
+    <string name="category_activities">Sports - Hobbies - Jeux</string>
+    <string name="category_anatomy">Anatomie</string>
+    <string name="category_animals">Animaux</string>
+    <string name="category_celebrities">Personnages célèbres ou historiques</string>
+    <string name="category_clothes">Habits</string>
+    <string name="category_events">Évènements</string>
+    <string name="category_fictional">Fiction</string>
+    <string name="category_food">Nourriture</string>
+    <string name="category_geek">Geek</string>
+    <string name="category_jobs">Métiers</string>
+    <string name="category_locations">Lieux</string>
+    <string name="category_mythology">Mythologie</string>
+    <string name="category_nature">Nature</string>
+    <string name="category_objects">Objets</string>
+    <string name="category_vehicles">Véhicules</string>
+
+    <string name="score_total">Total</string>
+    <string name="score_round">Manche</string>
+
+    <string name="found">Trouvés</string>
+    <string name="missed">Manqués</string>
+
+    <string name="next">Suivant</string>
+
+    <string name="settings">Paramètres</string>
+
+    <string name="duration">Durée des tours (s)</string>
+    <string name="words_count">Nombre de mots</string>
+
+</resources>
