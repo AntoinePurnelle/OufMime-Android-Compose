@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,6 +28,7 @@ import net.ouftech.oufmime.ui.theme.OufMimeTheme
 import net.ouftech.oufmime.ui.views.WindowSize
 import net.ouftech.oufmime.ui.views.rememberWindowSizeClass
 import net.ouftech.oufmime.ui.views.screens.*
+import net.ouftech.oufmime.utils.LanguageUtils
 
 
 class MainActivity : ComponentActivity() {
@@ -39,6 +41,8 @@ class MainActivity : ComponentActivity() {
         vm.init(application)
 
         setContent {
+            LanguageUtils.updateResources(LocalContext.current)
+
             val windowSizeClass = rememberWindowSizeClass()
             val backgroundColor = vm.currentTeamColor
 
@@ -75,7 +79,6 @@ class MainActivity : ComponentActivity() {
                                 invertColors = vm.shouldInvertColors
                             ) {
                                 vm.initTurn()
-
                                 navController.navigate(PLAY_SCREEN)
                             }
                         }
@@ -144,7 +147,13 @@ class MainActivity : ComponentActivity() {
                                 viewModel = vm,
                                 dimens = dimens,
                                 isExpandedScreen = isExpandedScreen,
-                                onStartClick = { startGame(navController) })
+                                onStartClick = {
+                                    startGame(navController)
+                                },
+                                onLanguageClick = {
+                                    navController.navigate(SETTINGS_SCREEN)
+                                }
+                            )
                         }
                     }
                 }

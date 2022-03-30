@@ -17,8 +17,15 @@ interface WordsDao {
     /**
      * repository.getAllWords.observe(this, Observer {words -> ...})
      */
-    @Query("SELECT * FROM Word WHERE word = :word")
-    suspend fun getWord(word: String): Word
+    @Query(
+        """
+        SELECT * FROM Word 
+        WHERE word = :word 
+        AND language = :language
+        LIMIT 1
+        """
+    )
+    suspend fun getWord(word: String, language: String): Word
 
     /**
      * repository.getAllWords.observe(this, Observer {words -> ...})
@@ -33,8 +40,13 @@ interface WordsDao {
         """
         SELECT * FROM Word
         WHERE category IN (:categories)
+        AND language = :language
         ORDER BY RANDOM() LIMIT :count
     """
     )
-    suspend fun getRandomWordsInCategories(categories: List<String>, count: Int): List<Word>
+    suspend fun getRandomWordsInCategories(
+        categories: List<String>,
+        count: Int,
+        language: String
+    ): List<Word>
 }

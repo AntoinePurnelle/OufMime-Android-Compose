@@ -176,8 +176,8 @@ fun TurnEndScreenPreviewPhone() {
     OufMimeTheme {
         TurnEndScreen(
             wordsPlayed = listOf(
-                Pair(Word("Squid", Categories.ANIMALS), true),
-                Pair(Word("Blue Bear", Categories.ANIMALS), false)
+                Pair(Word("Squid", Categories.ANIMALS, "en"), true),
+                Pair(Word("Blue Bear", Categories.ANIMALS, "en"), false)
             ),
             dimens = MediumDimens,
             isExpandedScreen = false,
@@ -193,8 +193,8 @@ fun TurnEndScreenPreviewTablet() {
     OufMimeTheme {
         TurnEndScreen(
             wordsPlayed = listOf(
-                Pair(Word("Squid", Categories.ANIMALS), true),
-                Pair(Word("Blue Bear", Categories.ANIMALS), false)
+                Pair(Word("Squid", Categories.ANIMALS, "en"), true),
+                Pair(Word("Blue Bear", Categories.ANIMALS, "en"), false)
             ),
             dimens = ExpandedDimens,
             isExpandedScreen = true,
@@ -237,7 +237,7 @@ fun WordPlayedView(
 fun WordPlayedPreview() {
     OufMimeTheme {
         WordPlayedView(
-            word = Pair(Word("Squid", Categories.ANIMALS), true),
+            word = Pair(Word("Squid", Categories.ANIMALS, "en"), true),
             dimens = MediumDimens,
             onClick = { })
     }

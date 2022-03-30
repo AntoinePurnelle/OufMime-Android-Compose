@@ -28,7 +28,8 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
-import net.ouftech.oufmime.data.Categories
+import net.ouftech.oufmime.data.Categories.ANIMALS
+import net.ouftech.oufmime.data.Categories.CELEBRITIES
 import net.ouftech.oufmime.data.Word
 import net.ouftech.oufmime.ext.playSound
 import net.ouftech.oufmime.ui.theme.*
@@ -123,7 +124,8 @@ fun PlayScreen(
                         modifier = Modifier.padding(top = 8.dp),
                         text = stringResource(id = currentWord.category.resId),
                         color = AccentTransparent,
-                        fontSize = dimens.subtitleText
+                        fontSize = dimens.subtitleText,
+                        textAlign = TextAlign.Center
                     )
                 }
 
@@ -155,14 +157,20 @@ fun PlayScreen(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Play - Phone", device = Devices.PIXEL_4)
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFFFF6F00,
+    name = "Play - Phone",
+    device = Devices.PIXEL_4,
+    locale = "fr"
+)
 @Composable
 fun PlayScreenPreviewPhone() {
     PlayScreen(
         foundWordsCount = 5,
         missedWordsCount = 2,
         timerMaxValue = 40000L,
-        currentWord = Word("Squid", Categories.ANIMALS),
+        currentWord = Word("Squid", CELEBRITIES, "en"),
         dimens = MediumDimens,
         invertColors = false,
         onWordPlayed = { _, _ -> },
@@ -170,14 +178,19 @@ fun PlayScreenPreviewPhone() {
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Play - Tablet", device = Devices.PIXEL_C)
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFFFF6F00,
+    name = "Play - Tablet",
+    device = Devices.PIXEL_C
+)
 @Composable
 fun PlayScreenPreviewTablet() {
     PlayScreen(
         foundWordsCount = 5,
         missedWordsCount = 2,
         timerMaxValue = 40000L,
-        currentWord = Word("Squid", Categories.ANIMALS),
+        currentWord = Word("Squid", ANIMALS, "en"),
         dimens = ExpandedDimens,
         invertColors = false,
         onWordPlayed = { _, _ -> },

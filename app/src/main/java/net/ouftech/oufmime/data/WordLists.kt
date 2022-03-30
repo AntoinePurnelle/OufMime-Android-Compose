@@ -2,6 +2,11 @@ package net.ouftech.oufmime.data
 
 class WordLists(
     val version: Int,
+    val en: TranslatedWords,
+    val fr: TranslatedWords,
+)
+
+class TranslatedWords(
     val actions: List<String>,
     val activities: List<String>,
     val anatomy: List<String>,
