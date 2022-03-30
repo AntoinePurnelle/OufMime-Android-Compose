@@ -66,6 +66,7 @@ fun PlayScreen(
             }
 
             override fun onFinish() {
+                context.playSound(R.raw.times_up)
                 currentTimerValue -= 1000L
                 // Add last non played word in list in case player didn't have the time to mark as found
                 onWordPlayed(false, true)

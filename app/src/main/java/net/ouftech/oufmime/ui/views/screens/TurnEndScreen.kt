@@ -13,12 +13,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories
 import net.ouftech.oufmime.data.Word
-import net.ouftech.oufmime.ext.playSound
 import net.ouftech.oufmime.ui.theme.*
 import net.ouftech.oufmime.ui.views.library.*
 
@@ -39,11 +36,6 @@ fun TurnEndScreen(
     onNextClick: () -> Unit,
     invertColors: Boolean
 ) {
-    val context = LocalContext.current
-
-    LaunchedEffect(key1 = null) {
-        context.playSound(R.raw.times_up)
-    }
 
     FullScreenColumn {
 
