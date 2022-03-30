@@ -20,15 +20,16 @@ import net.ouftech.oufmime.ui.theme.Primary
 import java.io.IOException
 import java.util.*
 
+@SuppressWarnings("TooManyFunctions")
 class WordsViewModel : ViewModel() {
 
     private var repository: WordsRepository? = null
-    lateinit var dataStoreManager: DataStoreManager
+    private lateinit var dataStoreManager: DataStoreManager
 
     private var currentTeam by mutableStateOf(-1)
     var currentRound by mutableStateOf(0)
     var currentRoundFinished by mutableStateOf(true)
-    var words = mutableListOf<Word>()
+    private var words = mutableListOf<Word>()
     private var teamWords: Array<Array<MutableList<Word>>> =
         arrayOf(
             arrayOf(mutableListOf(), mutableListOf(), mutableListOf()),
@@ -42,10 +43,8 @@ class WordsViewModel : ViewModel() {
     var currentWord by mutableStateOf<Word?>(null)
 
     var timerTotalTime by mutableStateOf(40000L)
-    var timerCurrentTime by mutableStateOf(timerTotalTime)
     var wordsCount by mutableStateOf(40)
     var selectedCategories = Categories.values().map { it.name to true }.toMutableStateMap()
-
 
     fun init(application: Application) {
         if (repository == null) {
@@ -60,7 +59,7 @@ class WordsViewModel : ViewModel() {
     // region DB Access
     private fun insertWords(context: Context) {
         runBlocking {
-            val jsonFileString = getJsonDataFromAsset(context, "words.json")
+            val jsonFileString = getJsonDataFromAsset(context)
             Log.d("data", jsonFileString!!)
 
             val words = Gson().fromJson(jsonFileString, WordLists::class.java)
@@ -114,18 +113,20 @@ class WordsViewModel : ViewModel() {
         category: Categories,
         wordsToSort: List<String>,
         language: String
-    ) = repository?.insertWords(mutableListOf<Word>().also { words ->
-        wordsToSort.forEach {
-            words.add(Word(it, category, language))
+    ) = repository?.insertWords(
+        mutableListOf<Word>().also { words ->
+            wordsToSort.forEach {
+                words.add(Word(it, category, language))
+            }
         }
-    })
+    )
 
-    private fun getJsonDataFromAsset(context: Context, fileName: String): String? {
+    private fun getJsonDataFromAsset(context: Context): String? {
         val jsonString: String
         try {
-            jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }
+            jsonString = context.assets.open("words.json").bufferedReader().use { it.readText() }
         } catch (ioException: IOException) {
-            ioException.printStackTrace()
+            Log.e("GameManager", ioException.toString())
             return null
         }
         return jsonString
@@ -170,7 +171,6 @@ class WordsViewModel : ViewModel() {
     fun initTurn() {
         wordsPlayedInTurn.clear()
         currentWord = wordsToPlay.firstOrNull()
-        timerCurrentTime = timerTotalTime
     }
 
     fun playWord(found: Boolean, timerEnded: Boolean) {
@@ -186,8 +186,9 @@ class WordsViewModel : ViewModel() {
 
     fun finishTurn() {
         // Add all the words that were found in the Team Round List
-        teamWords[currentTeam][currentRound].addAll(wordsPlayedInTurn.filter { it.second }
-            .map { pair -> pair.first })
+        teamWords[currentTeam][currentRound].addAll(
+            wordsPlayedInTurn.filter { it.second }.map { pair -> pair.first }
+        )
         // Add all the words that were missed in the Missed List
         wordsToPlay.addAll(wordsPlayedInTurn.filter { !it.second }.map { pair -> pair.first })
 
@@ -243,7 +244,6 @@ class WordsViewModel : ViewModel() {
 
     val teamNameId
         get() = if (currentTeam == 0) R.string.team_blue else R.string.team_orange
-
 
     // endregion Getters/Setters
 }

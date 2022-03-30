@@ -15,8 +15,8 @@ android {
         applicationId = "net.ouftech.oufmime"
         minSdk = 26
         targetSdk = 31
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -30,19 +30,34 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
+
+    flavorDimensions += listOf("personalization")
+    productFlavors {
+        create("stock") {
+            dimension = "personalization"
+        }
+        create("custom") {
+            dimension = "personalization"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = Versions.composeVersion
     }
+
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -51,7 +66,7 @@ android {
 }
 
 dependencies {
-    val composeVersion = Versions.composeVersion
+    val composeVersion = "1.1.1"
     val roomVersion = "2.4.2"
 
     implementation("androidx.core:core-ktx:1.7.0")
