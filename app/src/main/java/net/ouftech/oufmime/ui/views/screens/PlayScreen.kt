@@ -41,6 +41,7 @@ import net.ouftech.oufmime.ui.views.library.ScoreBoardView
 fun PlayScreen(
     foundWordsCount: Int,
     missedWordsCount: Int,
+    wordsToPlayCount: Int,
     timerMaxValue: Long,
     currentWord: Word?,
     dimens: Dimens,
@@ -92,10 +93,12 @@ fun PlayScreen(
             ScoreBoardView(
                 topLabel = stringResource(id = R.string.found),
                 topScore = foundWordsCount,
-                bottomLabel = stringResource(id = R.string.missed),
-                bottomScore = missedWordsCount,
+                middleLabel = stringResource(id = R.string.missed),
+                middleScore = missedWordsCount,
                 dimens = dimens,
-                color = White
+                color = White,
+                bottomLabel = stringResource(id = R.string.to_play),
+                bottomScore = wordsToPlayCount
             )
 
             Timer(currentTimerValue, timerMaxValue, dimens, invertColors)
@@ -169,6 +172,7 @@ fun PlayScreenPreviewPhone() {
     PlayScreen(
         foundWordsCount = 5,
         missedWordsCount = 2,
+        wordsToPlayCount = 4,
         timerMaxValue = 40000L,
         currentWord = Word("Squid", CELEBRITIES, "en"),
         dimens = MediumDimens,
@@ -189,6 +193,7 @@ fun PlayScreenPreviewTablet() {
     PlayScreen(
         foundWordsCount = 5,
         missedWordsCount = 2,
+        wordsToPlayCount = 4,
         timerMaxValue = 40000L,
         currentWord = Word("Squid", ANIMALS, "en"),
         dimens = ExpandedDimens,

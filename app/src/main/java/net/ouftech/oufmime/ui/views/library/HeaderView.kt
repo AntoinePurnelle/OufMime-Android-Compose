@@ -38,8 +38,8 @@ fun HeaderView(
             modifier = Modifier.weight(1f),
             topLabel = stringResource(id = R.string.score_total),
             topScore = team1TotalScore,
-            bottomLabel = stringResource(id = R.string.score_round),
-            bottomScore = team1CurrentRoundScore,
+            middleLabel = stringResource(id = R.string.score_round),
+            middleScore = team1CurrentRoundScore,
             dimens = dimens,
             color = Accent
         )
@@ -54,8 +54,8 @@ fun HeaderView(
             modifier = Modifier.weight(1f),
             topLabel = stringResource(id = R.string.score_total),
             topScore = team2TotalScore,
-            bottomLabel = stringResource(id = R.string.score_round),
-            bottomScore = team2CurrentRoundScore,
+            middleLabel = stringResource(id = R.string.score_round),
+            middleScore = team2CurrentRoundScore,
             dimens = dimens,
             color = Primary
         )
@@ -75,8 +75,10 @@ fun ScoreBoardView(
     modifier: Modifier = Modifier,
     topLabel: String,
     topScore: Int = 0,
-    bottomLabel: String,
-    bottomScore: Int = 0,
+    middleLabel: String,
+    middleScore: Int = 0,
+    bottomLabel: String? = null,
+    bottomScore: Int? = null,
     dimens: Dimens,
     color: Color
 ) {
@@ -97,11 +99,19 @@ fun ScoreBoardView(
             color = color
         )
         ScoreLineView(
-            scoreName = bottomLabel,
-            score = bottomScore,
+            scoreName = middleLabel,
+            score = middleScore,
             dimens = dimens,
             color = color
         )
+        if (bottomLabel != null && bottomScore != null) {
+            ScoreLineView(
+                scoreName = bottomLabel,
+                score = bottomScore,
+                dimens = dimens,
+                color = color
+            )
+        }
     }
 }
 
@@ -112,8 +122,8 @@ fun ScoreBoardPreviewPhone() {
         ScoreBoardView(
             topLabel = "Total",
             topScore = 10,
-            bottomLabel = "Round",
-            bottomScore = 5,
+            middleLabel = "Round",
+            middleScore = 5,
             dimens = MediumDimens,
             color = Primary
         )
@@ -127,8 +137,8 @@ fun ScoreBoardPreviewTablet() {
         ScoreBoardView(
             topLabel = "Total",
             topScore = 10,
-            bottomLabel = "Round",
-            bottomScore = 5,
+            middleLabel = "Round",
+            middleScore = 5,
             dimens = ExpandedDimens,
             color = Primary
         )

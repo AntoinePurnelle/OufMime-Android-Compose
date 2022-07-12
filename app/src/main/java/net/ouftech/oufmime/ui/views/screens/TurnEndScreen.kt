@@ -135,8 +135,8 @@ fun getTurnEndScoreboardView(
             ScoreBoardView(
                 topLabel = stringResource(id = R.string.found),
                 topScore = foundWordsCount,
-                bottomLabel = stringResource(id = R.string.missed),
-                bottomScore = missedWordsCount,
+                middleLabel = stringResource(id = R.string.missed),
+                middleScore = missedWordsCount,
                 dimens = dimens,
                 color = White
             )

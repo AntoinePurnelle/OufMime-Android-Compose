@@ -86,6 +86,7 @@ class MainActivity : ComponentActivity() {
                             PlayScreen(
                                 foundWordsCount = vm.wordsFoundInTurnCount,
                                 missedWordsCount = vm.wordsMissedInTurnCount,
+                                wordsToPlayCount = vm.wordsToPlayCount,
                                 timerMaxValue = vm.timerTotalTime,
                                 currentWord = vm.currentWord,
                                 dimens = dimens,

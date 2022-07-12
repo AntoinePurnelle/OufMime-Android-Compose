@@ -220,8 +220,12 @@ class WordsViewModel : ViewModel() {
 
     val wordsFoundInTurnCount
         get() = wordsPlayedInTurn.count { it.second }
+
     val wordsMissedInTurnCount
         get() = wordsPlayedInTurn.count { !it.second }
+
+    val wordsToPlayCount
+        get() = wordsToPlay.size
 
     fun getTeamCurrentRoundScore(team: Int) = getTeamRoundScore(team = team, round = currentRound)
 
