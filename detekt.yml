@@ -1,9 +1,3 @@
-formatting:
-  active: true
-  android: true
-  autoCorrect: true
-  NoWildcardImports:
-    active: false
 style:
   active: true
   MaxLineLength:
