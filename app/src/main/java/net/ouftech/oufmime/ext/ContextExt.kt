@@ -28,9 +28,7 @@ fun Context.playSound(@RawRes soundResId: Int): MediaPlayer? =
                 .build()
         )
 
-        setOnCompletionListener {
-            release()
-        }
+        setOnCompletionListener { release() }
 
         start()
     }

@@ -35,7 +35,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories
-import net.ouftech.oufmime.data.WordsViewModel
 import net.ouftech.oufmime.ui.theme.*
 import net.ouftech.oufmime.ui.views.library.FullScreenColumn
 import net.ouftech.oufmime.ui.views.library.FullScreenRow
@@ -44,24 +43,27 @@ import net.ouftech.oufmime.utils.LanguageUtils
 
 @Composable
 fun SettingsScreen(
-    viewModel: WordsViewModel,
     dimens: Dimens,
     isExpandedScreen: Boolean,
-    onStartClick: () -> Unit,
-    onLanguageClick: () -> Unit
+    selectedCategories: Map<String, Boolean>,
+    wordsCount: Int,
+    timerTotalTime: Long,
+    listener: SettingsScreenListener
 ) {
     if (isExpandedScreen) {
         FullScreenRow {
             CategoriesPickerView(
-                viewModel = viewModel,
-                dimens = dimens
+                dimens = dimens,
+                selectedCategories = selectedCategories,
+                onCategoryClick = listener::onCategoryClick
             )
 
             InputFieldsView(
-                viewModel = viewModel,
                 dimens = dimens,
-                onStartClick = onStartClick,
-                onLanguageClick = onLanguageClick
+                wordsCount = wordsCount,
+                timerTotalTime = timerTotalTime,
+                onStartClick = listener::onStartClick,
+                onLanguageClick = listener::onLanguageClick
             )
         }
     } else {
@@ -70,28 +72,34 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                viewModel = viewModel,
-                dimens = dimens
+                dimens = dimens,
+                selectedCategories = selectedCategories,
+                onCategoryClick = listener::onCategoryClick
             )
 
             Spacer(modifier = Modifier.height(dimens.paddingLarge))
 
             InputFieldsView(
-                viewModel = viewModel,
                 dimens = dimens,
-                onStartClick = onStartClick,
-                onLanguageClick = onLanguageClick
+                wordsCount = wordsCount,
+                timerTotalTime = timerTotalTime,
+                onStartClick = listener::onStartClick,
+                onLanguageClick = listener::onLanguageClick
             )
         }
     }
 }
 
 @Composable
-fun CategoriesPickerView(modifier: Modifier = Modifier, viewModel: WordsViewModel, dimens: Dimens) {
-    val categories =
-        Categories.values()
-            .associateBy { stringResource(it.resId) }
-            .toSortedMap().values.toList()
+private fun CategoriesPickerView(
+    modifier: Modifier = Modifier,
+    dimens: Dimens,
+    selectedCategories: Map<String, Boolean>,
+    onCategoryClick: (String, Boolean) -> Unit,
+) {
+    val categories = Categories.values()
+        .associateBy { stringResource(it.resId) }
+        .toSortedMap().values.toList()
 
     Column(modifier) {
         Text(
@@ -104,9 +112,9 @@ fun CategoriesPickerView(modifier: Modifier = Modifier, viewModel: WordsViewMode
             items(categories) { category ->
                 CategoryCheckbox(
                     category = category,
-                    isChecked = viewModel.selectedCategories[category.name]!!,
+                    isChecked = selectedCategories[category.name]!!,
                     dimens = dimens,
-                    onClick = { viewModel.selectedCategories[category.name] = it }
+                    onClick = { onCategoryClick(category.name, it) }
                 )
             }
         }
@@ -114,30 +122,31 @@ fun CategoriesPickerView(modifier: Modifier = Modifier, viewModel: WordsViewMode
 }
 
 @Composable
-fun InputFieldsView(
-    viewModel: WordsViewModel,
+private fun InputFieldsView(
     dimens: Dimens,
-    onStartClick: () -> Unit,
-    onLanguageClick: () -> Unit
+    wordsCount: Int,
+    timerTotalTime: Long,
+    onStartClick: (Int, Long) -> Unit,
+    onLanguageClick: () -> Unit,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        var wordsCount by remember { mutableStateOf(viewModel.wordsCount.toString()) }
+        var count by remember { mutableStateOf(wordsCount.toString()) }
 
         OutlinedTextField(
             label = { Text(text = stringResource(id = R.string.words_count)) },
-            value = wordsCount,
-            onValueChange = { wordsCount = it },
+            value = count,
+            onValueChange = { count = it },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
         Spacer(modifier = Modifier.height(dimens.paddingLarge))
 
-        var timerTotalTime by remember { mutableStateOf((viewModel.timerTotalTime / 1000).toString()) }
+        var time by remember { mutableStateOf(timerTotalTime.toString()) }
 
         OutlinedTextField(
             label = { Text(text = stringResource(id = R.string.duration)) },
-            value = timerTotalTime,
-            onValueChange = { timerTotalTime = it },
+            value = time,
+            onValueChange = { time = it },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             maxLines = 1
         )
@@ -165,16 +174,14 @@ fun InputFieldsView(
             textSize = ButtonsTextSize.BIG,
             dimens = dimens,
             onClick = {
-                viewModel.wordsCount = wordsCount.toInt()
-                viewModel.timerTotalTime = timerTotalTime.trim().toLong() * 1000
-                onStartClick()
+                onStartClick(count.toInt(), time.trim().toLong())
             }
         )
     }
 }
 
 @Composable
-fun LanguageButton(
+private fun LanguageButton(
     language: String,
     @StringRes textId: Int,
     dimens: Dimens,
@@ -194,7 +201,7 @@ fun LanguageButton(
 }
 
 @Composable
-fun CategoryCheckbox(
+private fun CategoryCheckbox(
     category: Categories,
     isChecked: Boolean,
     dimens: Dimens,
@@ -215,28 +222,46 @@ fun CategoryCheckbox(
 
 @Preview(showBackground = true, name = "Settings Phone", device = Devices.PIXEL_4)
 @Composable
-fun SettingsPreviewPhone() {
+private fun SettingsPreviewPhone() {
     OufMimeTheme {
         SettingsScreen(
-            viewModel = WordsViewModel(),
             dimens = MediumDimens,
             isExpandedScreen = false,
-            onStartClick = {},
-            onLanguageClick = {}
+            selectedCategories = stubCategories,
+            wordsCount = 40,
+            timerTotalTime = 40,
+            listener = stubSettingsScreenListener,
         )
     }
 }
 
 @Preview(showBackground = true, name = "Settings Tablet", device = Devices.PIXEL_C)
 @Composable
-fun SettingsPreviewTablet() {
+private fun SettingsPreviewTablet() {
     OufMimeTheme {
         SettingsScreen(
-            viewModel = WordsViewModel(),
             dimens = ExpandedDimens,
             isExpandedScreen = true,
-            onStartClick = {},
-            onLanguageClick = {}
+            selectedCategories = stubCategories,
+            wordsCount = 40,
+            timerTotalTime = 40,
+            listener = stubSettingsScreenListener,
         )
     }
+}
+
+private val stubSettingsScreenListener
+    get() = object : SettingsScreenListener {
+        override fun onCategoryClick(category: String, selected: Boolean) = Unit
+        override fun onStartClick(wordsCount: Int, timerTotalTime: Long) = Unit
+        override fun onLanguageClick() = Unit
+    }
+
+private val stubCategories
+    get() = Categories.values().map { it.name to true }.toMutableStateMap()
+
+interface SettingsScreenListener {
+    fun onCategoryClick(category: String, selected: Boolean)
+    fun onStartClick(wordsCount: Int, timerTotalTime: Long)
+    fun onLanguageClick()
 }

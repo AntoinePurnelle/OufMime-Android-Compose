@@ -14,6 +14,7 @@
 
 package net.ouftech.oufmime.ui.views.screens
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +26,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import net.ouftech.oufmime.R
-import net.ouftech.oufmime.data.WordsViewModel
 import net.ouftech.oufmime.ui.theme.Dimens
 import net.ouftech.oufmime.ui.theme.ExpandedDimens
 import net.ouftech.oufmime.ui.theme.MediumDimens
@@ -36,13 +36,13 @@ import net.ouftech.oufmime.ui.views.library.SizedButton
 
 @Composable
 fun TurnStartScreen(
-    viewModel: WordsViewModel,
     dimens: Dimens,
     invertColors: Boolean,
-    onStartClick: () -> Unit
+    model: TurnStartUiModel,
+    onStartClick: () -> Unit,
 ) {
     val roundName = stringResource(
-        when (viewModel.currentRound) {
+        when (model.currentRound) {
             0 -> R.string.describe
             1 -> R.string.word
             else -> R.string.mime
@@ -51,11 +51,11 @@ fun TurnStartScreen(
 
     FullScreenColumn {
         HeaderView(
-            viewModel.getTeamTotalScore(0),
-            viewModel.getTeamCurrentRoundScore(0),
-            viewModel.getTeamTotalScore(1),
-            viewModel.getTeamCurrentRoundScore(1),
-            dimens,
+            team1TotalScore = model.blueTotalScore,
+            team1CurrentRoundScore = model.blueCurrentRoundScore,
+            team2TotalScore = model.orangeTotalScore,
+            team2CurrentRoundScore = model.orangeCurrentRoundScore,
+            dimens = dimens,
             invertColors = invertColors
         )
 
@@ -63,7 +63,7 @@ fun TurnStartScreen(
             Text(
                 text = stringResource(
                     id = R.string.round_title,
-                    viewModel.currentRound + 1
+                    model.currentRound + 1
                 ),
                 color = White,
                 fontSize = dimens.titleText,
@@ -82,7 +82,7 @@ fun TurnStartScreen(
             onClick = onStartClick,
             text = stringResource(
                 id = R.string.team_x_plays,
-                stringResource(id = viewModel.teamNameId)
+                stringResource(id = model.teamNameId)
             ),
             dimens = dimens
         )
@@ -97,9 +97,9 @@ fun TurnStartScreen(
     locale = "fr"
 )
 @Composable
-fun TurnStartPreviewPhone() {
+private fun TurnStartPreviewPhone() {
     OufMimeTheme {
-        TurnStartScreen(WordsViewModel(), MediumDimens, false) {}
+        TurnStartScreen(MediumDimens, false, stubTurnStartUiModel) {}
     }
 }
 
@@ -110,8 +110,20 @@ fun TurnStartPreviewPhone() {
     device = Devices.PIXEL_C,
 )
 @Composable
-fun TurnStartPreviewTablet() {
+private fun TurnStartPreviewTablet() {
     OufMimeTheme {
-        TurnStartScreen(WordsViewModel(), ExpandedDimens, false) {}
+        TurnStartScreen(ExpandedDimens, false, stubTurnStartUiModel) {}
     }
 }
+
+data class TurnStartUiModel(
+    val currentRound: Int,
+    @StringRes val teamNameId: Int,
+    val blueTotalScore: Int,
+    val blueCurrentRoundScore: Int,
+    val orangeTotalScore: Int,
+    val orangeCurrentRoundScore: Int,
+)
+
+private val stubTurnStartUiModel
+    get() = TurnStartUiModel(0, R.string.team_blue, 4, 2, 6, 3)

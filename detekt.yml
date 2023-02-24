@@ -12,6 +12,10 @@ style:
     active: false
   MagicNumber:
     active: false
+  UnusedPrivateMember:
+    active: true
+    ignoreAnnotated:
+      - 'Preview'
 complexity:
   LongParameterList:
     constructorThreshold: 20
@@ -21,4 +25,5 @@ complexity:
 naming:
   FunctionNaming:
     ignoreAnnotated: [ Composable ]
+
 

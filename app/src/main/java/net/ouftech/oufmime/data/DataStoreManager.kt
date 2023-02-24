@@ -20,22 +20,28 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class DataStoreManager(private val context: Context) {
+interface DataStoreManager {
+    suspend fun saveWordsListsVersion(wordsListVersion: Int)
+    fun getWordsListVersion(): Flow<Int>
+}
+
+class DataStoreManagerImpl(private val context: Context) : DataStoreManager {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-    companion object {
-        val WORDS_LIST_VERSION = intPreferencesKey("words_list_version")
-    }
-
-    suspend fun saveWordsListsVersion(wordsListVersion: Int) {
+    override suspend fun saveWordsListsVersion(wordsListVersion: Int) {
         context.dataStore.edit {
             it[WORDS_LIST_VERSION] = wordsListVersion
         }
     }
 
-    fun getWordsListVersion() =
-        context.dataStore.data.map { it[WORDS_LIST_VERSION] ?: 0 }
+    override fun getWordsListVersion() = context.dataStore.data.map { it[WORDS_LIST_VERSION] ?: 0 }
+
+    companion object {
+        val WORDS_LIST_VERSION = intPreferencesKey("words_list_version")
+    }
+
 }

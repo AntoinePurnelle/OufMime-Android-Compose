@@ -22,18 +22,19 @@ import androidx.room.RoomDatabase
 @Database(entities = [Word::class], version = 1)
 abstract class WordsDB : RoomDatabase() {
 
-    abstract fun wordsDao(): WordsDao
+    abstract val wordsDao: WordsDao
 
     companion object {
         @Volatile
         private var INSTANCE: WordsDB? = null
 
+        @Suppress("unused")
         fun getDataBase(context: Context): WordsDB {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(
-                    context.applicationContext,
-                    WordsDB::class.java,
-                    "OufMime"
+                    context = context.applicationContext,
+                    klass = WordsDB::class.java,
+                    name = "OufMime"
                 ).build()
             }
 

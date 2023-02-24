@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
 }
 
+@Suppress("UnstableApiUsage")
 android {
     compileSdk = 33
 
@@ -63,18 +64,28 @@ android {
 }
 
 dependencies {
-    val roomVersion = "2.5.0"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("androidx.window:window:1.0.0")
+
+    // Room
+    val roomVersion = "2.5.0"
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("androidx.window:window:1.0.0")
 
+    // Koin
+    val koinVersion = "3.3.3"
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-android:$koinVersion")
+    implementation("io.insert-koin:koin-androidx-compose:3.4.2")
+    testImplementation("io.insert-koin:koin-test-junit4:$koinVersion")
+
+    // Compose
     val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)

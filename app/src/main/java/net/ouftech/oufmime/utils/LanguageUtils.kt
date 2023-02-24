@@ -42,6 +42,5 @@ object LanguageUtils {
         }
     }
 
-    private fun getSharedPrefs(context: Context) =
-        context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
+    private fun getSharedPrefs(context: Context) = context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
 }

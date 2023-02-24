@@ -14,11 +14,31 @@
 
 package net.ouftech.oufmime.data
 
-class WordsRepository(private val repository: WordsDao) {
-    suspend fun insertWord(word: Word) = repository.insertWord(word)
-    suspend fun insertWords(words: List<Word>) = repository.insertWords(words)
-    suspend fun getWord(word: String, language: String) = repository.getWord(word, language)
-    suspend fun getAllWords() = repository.getAllWords()
-    suspend fun getRandomWordsInCategories(categories: List<String>, count: Int, language: String) =
-        repository.getRandomWordsInCategories(categories, count, language)
+interface WordsRepository {
+    suspend fun insertWord(word: Word)
+    suspend fun insertWords(words: List<Word>)
+    suspend fun getWord(word: String, language: String): Word
+    suspend fun getAllWords(): List<Word>
+    suspend fun getRandomWordsInCategories(
+        categories: List<String>,
+        count: Int,
+        language: String
+    ): List<Word>
+
+}
+
+class WordsRepositoryImpl(private val dao: WordsDao) : WordsRepository {
+    override suspend fun insertWord(word: Word) = dao.insertWord(word)
+    override suspend fun insertWords(words: List<Word>) = dao.insertWords(words)
+    override suspend fun getWord(
+        word: String,
+        language: String
+    ) = dao.getWord(word, language)
+
+    override suspend fun getAllWords() = dao.getAllWords()
+    override suspend fun getRandomWordsInCategories(
+        categories: List<String>,
+        count: Int,
+        language: String
+    ) = dao.getRandomWordsInCategories(categories, count, language)
 }

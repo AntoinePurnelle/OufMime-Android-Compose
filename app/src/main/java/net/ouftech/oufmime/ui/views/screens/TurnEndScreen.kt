@@ -84,7 +84,7 @@ fun TurnEndScreen(
 }
 
 @Composable
-fun PhoneTurnEndView(
+private fun PhoneTurnEndView(
     modifier: Modifier = Modifier,
     scoreBoard: @Composable () -> Unit,
     wordsPlayed: List<Pair<Word, Boolean>>,
@@ -107,7 +107,7 @@ fun PhoneTurnEndView(
 }
 
 @Composable
-fun TabletTurnEndView(
+private fun TabletTurnEndView(
     modifier: Modifier = Modifier,
     scoreBoard: @Composable () -> Unit,
     wordsPlayed: List<Pair<Word, Boolean>>,
@@ -132,7 +132,7 @@ fun TabletTurnEndView(
 }
 
 @Composable
-fun getTurnEndScoreboardView(
+private fun getTurnEndScoreboardView(
     wordsPlayed: List<Pair<Word, Boolean>>,
     dimens: Dimens,
     invertColors: Boolean
@@ -157,7 +157,7 @@ fun getTurnEndScoreboardView(
 }
 
 @Composable
-fun WordsListView(
+private fun WordsListView(
     modifier: Modifier,
     wordsPlayed: List<Pair<Word, Boolean>>,
     dimens: Dimens,
@@ -176,7 +176,7 @@ fun WordsListView(
 
 @Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Turn End - Phone", device = Devices.PIXEL_4)
 @Composable
-fun TurnEndScreenPreviewPhone() {
+private fun TurnEndScreenPreviewPhone() {
     OufMimeTheme {
         TurnEndScreen(
             wordsPlayed = listOf(
@@ -194,7 +194,7 @@ fun TurnEndScreenPreviewPhone() {
 
 @Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Turn End - Tablet", device = Devices.PIXEL_C)
 @Composable
-fun TurnEndScreenPreviewTablet() {
+private fun TurnEndScreenPreviewTablet() {
     OufMimeTheme {
         TurnEndScreen(
             wordsPlayed = listOf(
@@ -211,7 +211,7 @@ fun TurnEndScreenPreviewTablet() {
 }
 
 @Composable
-fun WordPlayedView(
+private fun WordPlayedView(
     word: Pair<Word, Boolean>,
     dimens: Dimens,
     onClick: (Pair<Word, Boolean>) -> Unit
@@ -240,7 +240,7 @@ fun WordPlayedView(
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
-fun WordPlayedPreview() {
+private fun WordPlayedPreview() {
     OufMimeTheme {
         WordPlayedView(
             word = Pair(Word("Squid", Categories.ANIMALS, "en"), true),

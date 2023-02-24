@@ -61,7 +61,7 @@ fun WelcomeScreen(
 
 @Preview(showBackground = true, name = "Welcome - Phone", device = Devices.PIXEL_4)
 @Composable
-fun WelcomeScreenPreviewPhone() {
+private fun WelcomeScreenPreviewPhone() {
     OufMimeTheme {
         WelcomeScreen(dimens = MediumDimens, onStartClick = {}, onSettingsClick = {})
     }
@@ -69,7 +69,7 @@ fun WelcomeScreenPreviewPhone() {
 
 @Preview(showBackground = true, name = "Welcome - Tablet", device = Devices.PIXEL_C)
 @Composable
-fun WelcomeScreenPreviewTablet() {
+private fun WelcomeScreenPreviewTablet() {
     OufMimeTheme {
         WelcomeScreen(dimens = ExpandedDimens, onStartClick = {}, onSettingsClick = {})
     }

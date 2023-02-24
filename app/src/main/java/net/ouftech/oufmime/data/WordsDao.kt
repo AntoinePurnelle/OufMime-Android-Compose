@@ -28,9 +28,6 @@ interface WordsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWords(words: List<Word>)
 
-    /**
-     * repository.getAllWords.observe(this, Observer {words -> ...})
-     */
     @Query(
         """
         SELECT * FROM Word 
@@ -41,15 +38,9 @@ interface WordsDao {
     )
     suspend fun getWord(word: String, language: String): Word
 
-    /**
-     * repository.getAllWords.observe(this, Observer {words -> ...})
-     */
     @Query("SELECT * FROM Word")
     suspend fun getAllWords(): List<Word>
 
-    /**
-     * repository.getRandomWords.observe(this, Observer {words -> ...})
-     */
     @Query(
         """
         SELECT * FROM Word

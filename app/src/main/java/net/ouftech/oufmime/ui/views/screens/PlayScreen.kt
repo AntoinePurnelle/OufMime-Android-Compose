@@ -174,51 +174,8 @@ fun PlayScreen(
     }
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFFFF6F00,
-    name = "Play - Phone",
-    device = Devices.PIXEL_4,
-    locale = "fr"
-)
 @Composable
-fun PlayScreenPreviewPhone() {
-    PlayScreen(
-        foundWordsCount = 5,
-        missedWordsCount = 2,
-        wordsToPlayCount = 4,
-        timerMaxValue = 40000L,
-        currentWord = Word("Squid", CELEBRITIES, "en"),
-        dimens = MediumDimens,
-        invertColors = false,
-        onWordPlayed = { _, _ -> },
-        onFinishTurn = {}
-    )
-}
-
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFFFF6F00,
-    name = "Play - Tablet",
-    device = Devices.PIXEL_C
-)
-@Composable
-fun PlayScreenPreviewTablet() {
-    PlayScreen(
-        foundWordsCount = 5,
-        missedWordsCount = 2,
-        wordsToPlayCount = 4,
-        timerMaxValue = 40000L,
-        currentWord = Word("Squid", ANIMALS, "en"),
-        dimens = ExpandedDimens,
-        invertColors = false,
-        onWordPlayed = { _, _ -> },
-        onFinishTurn = {}
-    )
-}
-
-@Composable
-fun Timer(
+private fun Timer(
     value: Long,
     maxValue: Long,
     dimens: Dimens,
@@ -258,16 +215,8 @@ fun Timer(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Timer")
 @Composable
-fun TimerPreview() {
-    OufMimeTheme {
-        Timer(20000L, 40000L, MediumDimens, false)
-    }
-}
-
-@Composable
-fun AnswerButton(
+private fun AnswerButton(
     color: Color,
     imageVector: ImageVector,
     contentDescription: String?,
@@ -287,5 +236,56 @@ fun AnswerButton(
             contentDescription = contentDescription,
             tint = White
         )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFFFF6F00,
+    name = "Play - Phone",
+    device = Devices.PIXEL_4,
+    locale = "fr"
+)
+@Composable
+private fun PlayScreenPreviewPhone() {
+    PlayScreen(
+        foundWordsCount = 5,
+        missedWordsCount = 2,
+        wordsToPlayCount = 4,
+        timerMaxValue = 40000L,
+        currentWord = Word("Squid", CELEBRITIES, "en"),
+        dimens = MediumDimens,
+        invertColors = false,
+        onWordPlayed = { _, _ -> },
+        onFinishTurn = {}
+    )
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFFFF6F00,
+    name = "Play - Tablet",
+    device = Devices.PIXEL_C
+)
+@Composable
+private fun PlayScreenPreviewTablet() {
+    PlayScreen(
+        foundWordsCount = 5,
+        missedWordsCount = 2,
+        wordsToPlayCount = 4,
+        timerMaxValue = 40000L,
+        currentWord = Word("Squid", ANIMALS, "en"),
+        dimens = ExpandedDimens,
+        invertColors = false,
+        onWordPlayed = { _, _ -> },
+        onFinishTurn = {}
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Timer")
+@Composable
+private fun TimerPreview() {
+    OufMimeTheme {
+        Timer(20000L, 40000L, MediumDimens, false)
     }
 }
