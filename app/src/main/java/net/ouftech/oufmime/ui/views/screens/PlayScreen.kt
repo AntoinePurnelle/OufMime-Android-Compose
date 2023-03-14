@@ -16,7 +16,6 @@ package net.ouftech.oufmime.ui.views.screens
 
 import android.media.MediaPlayer
 import android.os.CountDownTimer
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -72,7 +71,6 @@ fun PlayScreen(
     DisposableEffect(key1 = null) {
         timer = object : CountDownTimer(timerMaxValue, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                Log.d("Timer", "Time: $millisUntilFinished")
                 currentTimerValue -= 1000L
 
                 if (currentTimerValue == 4000L) {
@@ -94,8 +92,8 @@ fun PlayScreen(
         onDispose {
             try {
                 lastSecondsMP?.stop()
-            } catch (e: IllegalStateException) {
-                Log.w("PlayScreen", "Error while stopping MediaPlayer: $e")
+            } catch (_: IllegalStateException) {
+                // Do nothing
             }
 
             timer.cancel()

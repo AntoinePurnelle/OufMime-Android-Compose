@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import net.ouftech.oufmime.data.*
 import net.ouftech.oufmime.ui.MainActivityViewModel
+import net.ouftech.oufmime.utils.Logger
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -16,6 +17,7 @@ val appModule = module {
     factoryOf(::WordsAccessUseCaseImpl) { bind<WordsAccessUseCase>() }
     singleOf(::MainActivityViewModel)
     single { provideDataStoreManager(androidApplication()) }
+    factoryOf(::Logger)
 }
 
 val dbModule = module {

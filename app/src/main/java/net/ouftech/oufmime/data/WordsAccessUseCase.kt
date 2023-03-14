@@ -15,9 +15,9 @@
 package net.ouftech.oufmime.data
 
 import android.content.Context
-import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.catch
+import net.ouftech.oufmime.utils.Logger
 import java.io.IOException
 import java.util.*
 
@@ -29,15 +29,15 @@ interface WordsAccessUseCase {
 class WordsAccessUseCaseImpl(
     private val repository: WordsRepository,
     private val dataStoreManager: DataStoreManager,
+    private val logger: Logger,
 ) : WordsAccessUseCase {
 
     override suspend fun insertWords(context: Context) {
         val jsonFileString = getJsonDataFromAsset(context)
-        Log.d("data", jsonFileString!!)
 
         val words = Gson().fromJson(jsonFileString, WordLists::class.java)
 
-        dataStoreManager.getWordsListVersion().catch { e -> Log.e("WordsAccessUseCase", e.toString()) }.collect { savedVersion ->
+        dataStoreManager.getWordsListVersion().catch { e -> logger.e(e) }.collect { savedVersion ->
             if (savedVersion < words.version) {
                 insertLanguageWords("en", words.en)
                 insertLanguageWords("fr", words.fr)
@@ -47,7 +47,7 @@ class WordsAccessUseCaseImpl(
 
             val allWords = repository.getAllWords()
 
-            Log.d("WordsAccessUseCase", "All Words (${allWords.size}) $allWords")
+            logger.d("All Words (${allWords.size}) $allWords")
         }
     }
 
@@ -77,7 +77,7 @@ class WordsAccessUseCaseImpl(
         try {
             context.assets.open("words.json").bufferedReader().use { it.readText() }
         } catch (ioException: IOException) {
-            Log.e("WordsAccessUseCase", ioException.toString())
+            logger.e(ioException)
             null
         }
 

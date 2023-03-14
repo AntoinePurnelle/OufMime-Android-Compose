@@ -15,7 +15,7 @@
 package net.ouftech.oufmime.ui
 
 import android.app.Application
-import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.lifecycle.ViewModel
@@ -23,50 +23,33 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.ouftech.oufmime.R
-import net.ouftech.oufmime.data.Categories
+import net.ouftech.oufmime.data.GameData
 import net.ouftech.oufmime.data.Word
 import net.ouftech.oufmime.data.WordsAccessUseCase
 import net.ouftech.oufmime.ui.theme.Accent
 import net.ouftech.oufmime.ui.theme.Primary
 import net.ouftech.oufmime.ui.views.screens.TeamScoreboardUiModel
 import net.ouftech.oufmime.ui.views.screens.TurnStartUiModel
-import org.koin.java.KoinJavaComponent.inject
+import net.ouftech.oufmime.utils.Logger
 
 @SuppressWarnings("TooManyFunctions")
-class MainActivityViewModel : ViewModel() {
+class MainActivityViewModel(
+    private val wordsAccessUseCase: WordsAccessUseCase,
+    private val logger: Logger
+) : ViewModel() {
 
-    private val insertUseCase: WordsAccessUseCase by inject(WordsAccessUseCase::class.java)
-
-    private var currentTeam by mutableStateOf(-1)
-    private var currentRound by mutableStateOf(0)
-    var currentRoundFinished by mutableStateOf(true)
-    private var words = mutableListOf<Word>()
-    private var teamWords: Array<Array<MutableList<Word>>> =
-        arrayOf(
-            arrayOf(mutableListOf(), mutableListOf(), mutableListOf()),
-            arrayOf(mutableListOf(), mutableListOf(), mutableListOf())
-        )
-
-    private var wordsToPlay = mutableStateListOf<Word>()
-    private var wordsMissedInRound = mutableStateListOf<Word>()
-    var wordsPlayedInTurn = mutableStateListOf<Pair<Word, Boolean>>()
-
-    var currentWord by mutableStateOf<Word?>(null)
-
-    var timerTotalTime by mutableStateOf(40000L)
-    var wordsCount by mutableStateOf(40)
-    var selectedCategories = Categories.values().map { it.name to true }.toMutableStateMap()
+    private var gameData = GameData()
 
     fun init(application: Application) = viewModelScope.launch {
-        insertUseCase.insertWords(application.applicationContext)
+        wordsAccessUseCase.insertWords(application.applicationContext)
     }
 
     // region Game Lifecycle
 
-    fun initGame() {
+    fun initGame() = with(gameData) {
         runBlocking {
-            words = insertUseCase.getRandomWordsInCategories(selectedCategories, wordsCount)
-            Log.d("WordsViewModel", "Selected Words (${words.size}) $words")
+            words = wordsAccessUseCase.getRandomWordsInCategories(selectedCategories, wordsCount)
+            logger.d("Selected Words (${words.size}) $words")
 
             currentRound = 0
             currentTeam = 0
@@ -80,24 +63,23 @@ class MainActivityViewModel : ViewModel() {
         }
     }
 
-    private fun initRound() {
+    private fun initRound() = with(gameData) {
         currentRoundFinished = false
-        wordsToPlay.clear()
-        wordsToPlay.addAll(words.shuffled())
+        resetWordsToPlay()
         wordsMissedInRound.clear()
-        Log.d("WordsViewModel", "Starting round $currentRound - Words to Play (${wordsToPlay.size}): $wordsToPlay")
+        logger.d("Starting round $currentRound - Words to Play (${wordsToPlay.size}): $wordsToPlay")
     }
 
-    fun initTurn() {
+    fun initTurn() = with(gameData) {
         wordsPlayedInTurn.clear()
         currentWord = wordsToPlay.firstOrNull()
     }
 
-    fun playWord(found: Boolean, timerEnded: Boolean) {
+    fun playWord(found: Boolean, timerEnded: Boolean) = with(gameData) {
         if (hasMoreWords) {
             wordsPlayedInTurn.add(Pair(wordsToPlay.removeFirst(), found))
 
-            Log.d("WordsViewModel", "Word played ${wordsPlayedInTurn.last()}")
+            logger.d("Word played ${wordsPlayedInTurn.last()}")
 
             if (!timerEnded) {
                 currentWord = wordsToPlay.firstOrNull()
@@ -105,7 +87,7 @@ class MainActivityViewModel : ViewModel() {
         }
     }
 
-    fun finishTurn() {
+    fun finishTurn() = with(gameData) {
         // Add all the words that were found in the Team Round List
         teamWords[currentTeam][currentRound].addAll(wordsPlayedInTurn.filter { it.second }.map { pair -> pair.first })
         // Add all the words that were missed in the Missed List
@@ -113,46 +95,71 @@ class MainActivityViewModel : ViewModel() {
 
         currentTeam = if (currentTeam == 0) 1 else 0
 
-        Log.d("WordsViewModel", "Turned finished and saved")
+        logger.d("Turned finished and saved")
     }
 
-    fun finishRound() {
+    fun finishRound() = with(gameData) {
+        currentRoundFinished = true
+    }
+
+    fun startNextRound() = with(gameData) {
         currentRound++
         initRound()
+    }
+
+    fun changeValueInPlayedWords(word: Pair<Word, Boolean>) = with(gameData) {
+        wordsPlayedInTurn[wordsPlayedInTurn.indexOf(word)] = Pair(first = word.first, second = !word.second)
     }
 
     // endregion Game Lifecycle
 
     // region Getters/Setters
 
-    fun changeValueInPlayedWords(word: Pair<Word, Boolean>) {
-        wordsPlayedInTurn.indexOf(word)
-        wordsPlayedInTurn[wordsPlayedInTurn.indexOf(word)] = Pair(first = word.first, second = !word.second)
+    fun getWordsPlayedInTurn() = gameData.wordsPlayedInTurn
+
+    fun getCurrentWord() = gameData.currentWord
+
+    fun getTimerTotalTime() = gameData.timerTotalTime
+
+    fun setTimerTotalTime(time: Long) {
+        gameData.timerTotalTime = time
+    }
+
+    fun getSelectedCategories() = gameData.selectedCategories
+
+    fun setCategorySelected(category: String, selected: Boolean) {
+        gameData.selectedCategories[category] = selected
+    }
+
+    fun getWordsCount() = gameData.wordsCount
+
+    fun setWordsCount(wordsCount: Int) {
+        gameData.wordsCount = wordsCount
     }
 
     val hasMoreWords
-        get() = wordsToPlay.size > 0
+        get() = gameData.wordsToPlay.size > 0
 
     val hasMoreRounds
-        get() = currentRound < 2
+        get() = gameData.currentRound < 2
 
     val wordsFoundInTurnCount
-        get() = wordsPlayedInTurn.count { it.second }
+        get() = gameData.wordsPlayedInTurn.count { it.second }
 
     val wordsMissedInTurnCount
-        get() = wordsPlayedInTurn.count { !it.second }
+        get() = gameData.wordsPlayedInTurn.count { !it.second }
 
     val wordsToPlayCount
-        get() = wordsToPlay.size
+        get() = gameData.wordsToPlay.size
 
-    private fun getTeamCurrentRoundScore(team: Int) = getTeamRoundScore(team = team, round = currentRound)
+    private fun getTeamCurrentRoundScore(team: Int) = getTeamRoundScore(team = team, round = gameData.currentRound)
 
-    private fun getTeamRoundScore(team: Int, round: Int) = if (currentRound < round) -1 else teamWords[team][round].size
+    private fun getTeamRoundScore(team: Int, round: Int) = if (gameData.currentRound < round) -1 else gameData.teamWords[team][round].size
 
-    private fun getTeamTotalScore(team: Int) = teamWords[team].sumOf { it.size }
+    private fun getTeamTotalScore(team: Int) = gameData.teamWords[team].sumOf { it.size }
 
     val shouldInvertColors
-        get() = currentTeam == 0
+        get() = gameData.currentTeam == 0
 
     private fun getTeamColor(team: Int) = when (team) {
         0 -> Accent
@@ -169,7 +176,7 @@ class MainActivityViewModel : ViewModel() {
     )
 
     fun getTurnStartUiModel() = TurnStartUiModel(
-        currentRound = currentRound,
+        currentRound = gameData.currentRound,
         teamNameId = teamNameId,
         blueTotalScore = getTeamTotalScore(0),
         blueCurrentRoundScore = getTeamCurrentRoundScore(0),
@@ -178,10 +185,15 @@ class MainActivityViewModel : ViewModel() {
     )
 
     val currentTeamColor
-        get() = if (!currentRoundFinished) getTeamColor(currentTeam) else White
+        get() = if (!gameData.currentRoundFinished) getTeamColor(gameData.currentTeam) else White
 
     private val teamNameId
-        get() = if (currentTeam == 0) R.string.team_blue else R.string.team_orange
+        get() = if (gameData.currentTeam == 0) R.string.team_blue else R.string.team_orange
+
+    @VisibleForTesting
+    fun replaceGameData(gameData: GameData) {
+        this.gameData = gameData
+    }
 
     // endregion Getters/Setters
 }

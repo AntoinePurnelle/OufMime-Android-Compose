@@ -19,7 +19,6 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -39,10 +38,11 @@ import net.ouftech.oufmime.ui.views.WindowSize
 import net.ouftech.oufmime.ui.views.rememberWindowSizeClass
 import net.ouftech.oufmime.ui.views.screens.*
 import net.ouftech.oufmime.utils.LanguageUtils
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    val viewModel: MainActivityViewModel by viewModels()
+    val viewModel: MainActivityViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,8 +102,8 @@ class MainActivity : ComponentActivity() {
             foundWordsCount = viewModel.wordsFoundInTurnCount,
             missedWordsCount = viewModel.wordsMissedInTurnCount,
             wordsToPlayCount = viewModel.wordsToPlayCount,
-            timerMaxValue = viewModel.timerTotalTime,
-            currentWord = viewModel.currentWord,
+            timerMaxValue = viewModel.getTimerTotalTime(),
+            currentWord = viewModel.getCurrentWord(),
             dimens = dimens,
             invertColors = viewModel.shouldInvertColors,
             onWordPlayed = { found, timerEnded ->
@@ -120,7 +120,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun NavTurnEndScreen(dimens: Dimens, isExpandedScreen: Boolean, navController: NavHostController) =
         TurnEndScreen(
-            wordsPlayed = viewModel.wordsPlayedInTurn,
+            wordsPlayed = viewModel.getWordsPlayedInTurn(),
             dimens = dimens,
             isExpandedScreen = isExpandedScreen,
             invertColors = viewModel.shouldInvertColors,
@@ -131,7 +131,7 @@ class MainActivity : ComponentActivity() {
                 if (viewModel.hasMoreWords) {
                     navController.navigate(TURN_START_SCREEN)
                 } else {
-                    viewModel.currentRoundFinished = true
+                    viewModel.finishRound()
                     navController.navigate(SCOREBOARD_SCREEN)
                 }
             }
@@ -148,7 +148,7 @@ class MainActivity : ComponentActivity() {
             onNextClick = {
                 with(viewModel) {
                     if (hasMoreRounds) {
-                        finishRound()
+                        startNextRound()
                         navController.navigate(TURN_START_SCREEN)
                     } else {
                         navController.navigate(WELCOME_SCREEN)
@@ -162,18 +162,18 @@ class MainActivity : ComponentActivity() {
         SettingsScreen(
             dimens = dimens,
             isExpandedScreen = isExpandedScreen,
-            selectedCategories = viewModel.selectedCategories,
-            wordsCount = viewModel.wordsCount,
-            timerTotalTime = viewModel.timerTotalTime / 1000,
+            selectedCategories = viewModel.getSelectedCategories(),
+            wordsCount = viewModel.getWordsCount(),
+            timerTotalTime = viewModel.getTimerTotalTime() / 1000,
             listener = object : SettingsScreenListener {
 
                 override fun onCategoryClick(category: String, selected: Boolean) {
-                    viewModel.selectedCategories[category] = selected
+                    viewModel.setCategorySelected(category, selected)
                 }
 
                 override fun onStartClick(wordsCount: Int, timerTotalTime: Long) {
-                    viewModel.wordsCount = wordsCount
-                    viewModel.timerTotalTime = timerTotalTime * 1000
+                    viewModel.setWordsCount(wordsCount)
+                    viewModel.setTimerTotalTime(timerTotalTime * 1000)
                     startGame(navController, viewModel)
                 }
 
