@@ -42,7 +42,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    val viewModel: MainActivityViewModel by viewModel()
+    private val viewModel: MainActivityViewModel by viewModel()
+    private lateinit var dimens: Dimens
+    private lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,19 +53,22 @@ class MainActivity : ComponentActivity() {
         setContent {
             LanguageUtils.updateResources(LocalContext.current)
 
-            val windowSizeClass = rememberWindowSizeClass()
-            val backgroundColor = viewModel.currentTeamColor
+            dimens = if (rememberWindowSizeClass() == WindowSize.Expanded) ExpandedDimens else MediumDimens
+            navController = rememberNavController()
 
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = backgroundColor.toArgb()
+            window.statusBarColor = viewModel.currentTeamColor.toArgb()
 
             OufMimeTheme(invert = viewModel.shouldInvertColors) {
-                val navController = rememberNavController()
-                val isExpandedScreen = windowSizeClass == WindowSize.Expanded
-                val dimens = if (isExpandedScreen) ExpandedDimens else MediumDimens
-
-                Surface(modifier = Modifier.fillMaxSize(), color = backgroundColor) {
-                    Nav(dimens, isExpandedScreen, navController)
+                Surface(modifier = Modifier.fillMaxSize(), color = viewModel.currentTeamColor) {
+                    NavHost(navController = navController, startDestination = WELCOME_SCREEN) {
+                        composable(WELCOME_SCREEN) { NavWelcomeScreen() }
+                        composable(TURN_START_SCREEN) { NavTurnStartScreen() }
+                        composable(PLAY_SCREEN) { NavPlayScreen() }
+                        composable(TURN_END_SCREEN) { NavTurnEndScreen() }
+                        composable(SCOREBOARD_SCREEN) { NavScoreboardScreen() }
+                        composable(SETTINGS_SCREEN) { NavSettingsScreen() }
+                    }
                 }
             }
         }
@@ -72,121 +77,103 @@ class MainActivity : ComponentActivity() {
     // region Navigation
 
     @Composable
-    private fun Nav(dimens: Dimens, isExpandedScreen: Boolean, navController: NavHostController) =
-        NavHost(navController = navController, startDestination = WELCOME_SCREEN) {
-            composable(WELCOME_SCREEN) { NavWelcomeScreen(dimens, navController) }
-            composable(TURN_START_SCREEN) { NavTurnStartScreen(dimens, navController) }
-            composable(PLAY_SCREEN) { NavPlayScreen(dimens, navController) }
-            composable(TURN_END_SCREEN) { NavTurnEndScreen(dimens, isExpandedScreen, navController) }
-            composable(SCOREBOARD_SCREEN) { NavScoreboardScreen(dimens, isExpandedScreen, navController) }
-            composable(SETTINGS_SCREEN) { NavSettingsScreen(dimens, isExpandedScreen, navController) }
-        }
-
-    @Composable
-    private fun NavWelcomeScreen(dimens: Dimens, navController: NavHostController) = WelcomeScreen(
+    private fun NavWelcomeScreen() = WelcomeScreen(
         dimens = dimens,
-        onStartClick = { startGame(navController, viewModel) },
+        onStartClick = { startGame() },
         onSettingsClick = { navController.navigate(SETTINGS_SCREEN) }
     )
 
     @Composable
-    private fun NavTurnStartScreen(dimens: Dimens, navController: NavHostController) =
-        TurnStartScreen(dimens, viewModel.shouldInvertColors, viewModel.getTurnStartUiModel()) {
+    private fun NavTurnStartScreen() = TurnStartScreen(
+        model = viewModel.getTurnStartUiModel(),
+        dimens = dimens,
+        invertColors = viewModel.shouldInvertColors,
+        onStartClick = {
             viewModel.initTurn()
             navController.navigate(PLAY_SCREEN)
         }
+    )
 
     @Composable
-    private fun NavPlayScreen(dimens: Dimens, navController: NavHostController) =
-        PlayScreen(
-            foundWordsCount = viewModel.wordsFoundInTurnCount,
-            missedWordsCount = viewModel.wordsMissedInTurnCount,
-            wordsToPlayCount = viewModel.wordsToPlayCount,
-            timerMaxValue = viewModel.getTimerTotalTime(),
-            currentWord = viewModel.getCurrentWord(),
-            dimens = dimens,
-            invertColors = viewModel.shouldInvertColors,
-            onWordPlayed = { found, timerEnded ->
-                viewModel.playWord(found, timerEnded)
-                if (!viewModel.hasMoreWords) {
-                    navController.navigate(TURN_END_SCREEN)
-                }
-            },
-            onFinishTurn = {
+    private fun NavPlayScreen() = PlayScreen(
+        uiModel = viewModel.getPlayScreenUiModel(),
+        dimens = dimens,
+        invertColors = viewModel.shouldInvertColors,
+        onWordPlayed = { found, timerEnded ->
+            viewModel.playWord(found, timerEnded)
+            if (!viewModel.hasMoreWords) {
                 navController.navigate(TURN_END_SCREEN)
             }
-        )
+        },
+        onFinishTurn = {
+            navController.navigate(TURN_END_SCREEN)
+        }
+    )
 
     @Composable
-    private fun NavTurnEndScreen(dimens: Dimens, isExpandedScreen: Boolean, navController: NavHostController) =
-        TurnEndScreen(
-            wordsPlayed = viewModel.getWordsPlayedInTurn(),
-            dimens = dimens,
-            isExpandedScreen = isExpandedScreen,
-            invertColors = viewModel.shouldInvertColors,
-            onWordChange = { changedWord -> viewModel.changeValueInPlayedWords(changedWord) },
-            onNextClick = {
-                viewModel.finishTurn()
+    private fun NavTurnEndScreen() = TurnEndScreen(
+        wordsPlayed = viewModel.getWordsPlayedInTurn(),
+        dimens = dimens,
+        invertColors = viewModel.shouldInvertColors,
+        onWordChange = { changedWord -> viewModel.changeValueInPlayedWords(changedWord) },
+        onNextClick = {
+            viewModel.finishTurn()
 
-                if (viewModel.hasMoreWords) {
+            if (viewModel.hasMoreWords) {
+                navController.navigate(TURN_START_SCREEN)
+            } else {
+                viewModel.finishRound()
+                navController.navigate(SCOREBOARD_SCREEN)
+            }
+        }
+    )
+
+    @Composable
+    private fun NavScoreboardScreen() = ScoreboardScreen(
+        dimens = dimens,
+        teamBlueScoreboardUiModel = viewModel.getTeamScoreboardUiModel(0),
+        teamOrangeScoreboardUiModel = viewModel.getTeamScoreboardUiModel(1),
+        hasMoreRounds = viewModel.hasMoreRounds,
+        onNextClick = {
+            with(viewModel) {
+                if (hasMoreRounds) {
+                    startNextRound()
                     navController.navigate(TURN_START_SCREEN)
                 } else {
-                    viewModel.finishRound()
-                    navController.navigate(SCOREBOARD_SCREEN)
+                    navController.navigate(WELCOME_SCREEN)
                 }
             }
-        )
+        }
+    )
 
     @Composable
-    private fun NavScoreboardScreen(dimens: Dimens, isExpandedScreen: Boolean, navController: NavHostController) =
-        ScoreboardScreen(
-            isExpandedScreen = isExpandedScreen,
-            dimens = dimens,
-            teamBlueScoreboardUiModel = viewModel.getTeamScoreboardUiModel(0),
-            teamOrangeScoreboardUiModel = viewModel.getTeamScoreboardUiModel(1),
-            hasMoreRounds = viewModel.hasMoreRounds,
-            onNextClick = {
-                with(viewModel) {
-                    if (hasMoreRounds) {
-                        startNextRound()
-                        navController.navigate(TURN_START_SCREEN)
-                    } else {
-                        navController.navigate(WELCOME_SCREEN)
-                    }
-                }
+    private fun NavSettingsScreen() = SettingsScreen(
+        dimens = dimens,
+        selectedCategories = viewModel.getSelectedCategories(),
+        wordsCount = viewModel.getWordsCount(),
+        timerTotalTime = viewModel.getTimerTotalTime() / 1000,
+        listener = object : SettingsScreenListener {
+
+            override fun onCategoryClick(category: String, selected: Boolean) {
+                viewModel.setCategorySelected(category, selected)
             }
-        )
 
-    @Composable
-    private fun NavSettingsScreen(dimens: Dimens, isExpandedScreen: Boolean, navController: NavHostController) =
-        SettingsScreen(
-            dimens = dimens,
-            isExpandedScreen = isExpandedScreen,
-            selectedCategories = viewModel.getSelectedCategories(),
-            wordsCount = viewModel.getWordsCount(),
-            timerTotalTime = viewModel.getTimerTotalTime() / 1000,
-            listener = object : SettingsScreenListener {
+            override fun onStartClick(wordsCount: Int, timerTotalTime: Long) {
+                viewModel.setWordsCount(wordsCount)
+                viewModel.setTimerTotalTime(timerTotalTime * 1000)
+                startGame()
+            }
 
-                override fun onCategoryClick(category: String, selected: Boolean) {
-                    viewModel.setCategorySelected(category, selected)
-                }
+            override fun onLanguageClick() {
+                navController.navigate(SETTINGS_SCREEN)
+            }
 
-                override fun onStartClick(wordsCount: Int, timerTotalTime: Long) {
-                    viewModel.setWordsCount(wordsCount)
-                    viewModel.setTimerTotalTime(timerTotalTime * 1000)
-                    startGame(navController, viewModel)
-                }
-
-                override fun onLanguageClick() {
-                    navController.navigate(SETTINGS_SCREEN)
-                }
-
-            },
-        )
+        },
+    )
 
     // endregion Navigation
 
-    private fun startGame(navController: NavHostController, viewModel: MainActivityViewModel) {
+    private fun startGame() {
         viewModel.initGame()
         navController.navigate(TURN_START_SCREEN)
     }
@@ -200,12 +187,12 @@ class MainActivity : ComponentActivity() {
     }
 
     companion object {
-        private const val WELCOME_SCREEN = "welcome"
-        private const val TURN_START_SCREEN = "turnStart"
-        private const val PLAY_SCREEN = "play"
-        private const val TURN_END_SCREEN = "turnEnd"
-        private const val SCOREBOARD_SCREEN = "scoreboard"
-        private const val SETTINGS_SCREEN = "settings"
+        private const val WELCOME_SCREEN = "nav:welcome"
+        private const val TURN_START_SCREEN = "nav:turnStart"
+        private const val PLAY_SCREEN = "nav:play"
+        private const val TURN_END_SCREEN = "nav:turnEnd"
+        private const val SCOREBOARD_SCREEN = "nav:scoreboard"
+        private const val SETTINGS_SCREEN = "nav:settings"
     }
 
 }

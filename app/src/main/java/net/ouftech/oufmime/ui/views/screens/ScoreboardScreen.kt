@@ -38,7 +38,6 @@ import net.ouftech.oufmime.ui.views.library.SizedButton
 
 @Composable
 fun ScoreboardScreen(
-    isExpandedScreen: Boolean,
     dimens: Dimens,
     hasMoreRounds: Boolean,
     teamBlueScoreboardUiModel: TeamScoreboardUiModel,
@@ -46,7 +45,7 @@ fun ScoreboardScreen(
     onNextClick: () -> Unit
 ) {
     FullScreenColumn(modifier = Modifier.background(color = White)) {
-        if (isExpandedScreen) {
+        if (dimens.isExpandedScreen) {
             FullWidthRow {
                 TeamScoreboardView(team = 0, dimens = dimens, teamBlueScoreboardUiModel)
                 TeamScoreboardView(team = 1, dimens = dimens, teamOrangeScoreboardUiModel)
@@ -145,7 +144,6 @@ private fun ScoreboardLineView(
 private fun ScoreboardScreenPreviewPhone() {
     OufMimeTheme {
         ScoreboardScreen(
-            isExpandedScreen = false,
             dimens = MediumDimens,
             hasMoreRounds = true,
             teamBlueScoreboardUiModel = getStubTeamScoreboardUiModel(0),
@@ -160,7 +158,6 @@ private fun ScoreboardScreenPreviewPhone() {
 private fun ScoreboardScreenPreviewTablet() {
     OufMimeTheme {
         ScoreboardScreen(
-            isExpandedScreen = true,
             dimens = ExpandedDimens,
             hasMoreRounds = true,
             teamBlueScoreboardUiModel = getStubTeamScoreboardUiModel(0),

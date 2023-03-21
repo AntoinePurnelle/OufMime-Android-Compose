@@ -48,6 +48,8 @@ class Dimens(
 
     val timerSize: Dp = 100.dp,
     val timerStrokeWidth: Dp = 6.dp,
+
+    val isExpandedScreen: Boolean = false,
 ) {
     val buttonDimens = mapOf(
         SMALL to smallButtonText,
@@ -84,7 +86,9 @@ val ExpandedDimens = Dimens(
     iconMedium = 200.dp,
 
     timerSize = 160.dp,
-    timerStrokeWidth = 12.dp
+    timerStrokeWidth = 12.dp,
+
+    isExpandedScreen = true,
 )
 
 enum class ButtonsTextSize { SMALL, MEDIUM, BIG }

@@ -44,13 +44,12 @@ import net.ouftech.oufmime.utils.LanguageUtils
 @Composable
 fun SettingsScreen(
     dimens: Dimens,
-    isExpandedScreen: Boolean,
     selectedCategories: Map<String, Boolean>,
     wordsCount: Int,
     timerTotalTime: Long,
     listener: SettingsScreenListener
 ) {
-    if (isExpandedScreen) {
+    if (dimens.isExpandedScreen) {
         FullScreenRow {
             CategoriesPickerView(
                 dimens = dimens,
@@ -226,7 +225,6 @@ private fun SettingsPreviewPhone() {
     OufMimeTheme {
         SettingsScreen(
             dimens = MediumDimens,
-            isExpandedScreen = false,
             selectedCategories = stubCategories,
             wordsCount = 40,
             timerTotalTime = 40,
@@ -241,7 +239,6 @@ private fun SettingsPreviewTablet() {
     OufMimeTheme {
         SettingsScreen(
             dimens = ExpandedDimens,
-            isExpandedScreen = true,
             selectedCategories = stubCategories,
             wordsCount = 40,
             timerTotalTime = 40,

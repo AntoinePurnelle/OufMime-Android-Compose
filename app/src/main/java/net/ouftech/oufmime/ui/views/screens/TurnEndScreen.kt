@@ -45,7 +45,6 @@ import net.ouftech.oufmime.ui.views.library.*
 fun TurnEndScreen(
     wordsPlayed: List<Pair<Word, Boolean>>,
     dimens: Dimens,
-    isExpandedScreen: Boolean,
     onWordChange: (Pair<Word, Boolean>) -> Unit,
     onNextClick: () -> Unit,
     invertColors: Boolean
@@ -57,7 +56,7 @@ fun TurnEndScreen(
             invertColors = invertColors
         )
 
-        if (isExpandedScreen) {
+        if (dimens.isExpandedScreen) {
             TabletTurnEndView(
                 modifier = Modifier.weight(1f),
                 scoreBoard = scoreBoard,
@@ -184,7 +183,6 @@ private fun TurnEndScreenPreviewPhone() {
                 Pair(Word("Blue Bear", Categories.ANIMALS, "en"), false)
             ),
             dimens = MediumDimens,
-            isExpandedScreen = false,
             invertColors = false,
             onWordChange = { },
             onNextClick = { }
@@ -202,7 +200,6 @@ private fun TurnEndScreenPreviewTablet() {
                 Pair(Word("Blue Bear", Categories.ANIMALS, "en"), false)
             ),
             dimens = ExpandedDimens,
-            isExpandedScreen = true,
             invertColors = false,
             onWordChange = { },
             onNextClick = { }

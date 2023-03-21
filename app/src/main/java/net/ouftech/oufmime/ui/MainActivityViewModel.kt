@@ -28,6 +28,7 @@ import net.ouftech.oufmime.data.Word
 import net.ouftech.oufmime.data.WordsAccessUseCase
 import net.ouftech.oufmime.ui.theme.Accent
 import net.ouftech.oufmime.ui.theme.Primary
+import net.ouftech.oufmime.ui.views.screens.PlayScreenUiModel
 import net.ouftech.oufmime.ui.views.screens.TeamScoreboardUiModel
 import net.ouftech.oufmime.ui.views.screens.TurnStartUiModel
 import net.ouftech.oufmime.utils.Logger
@@ -117,8 +118,6 @@ class MainActivityViewModel(
 
     fun getWordsPlayedInTurn() = gameData.wordsPlayedInTurn
 
-    fun getCurrentWord() = gameData.currentWord
-
     fun getTimerTotalTime() = gameData.timerTotalTime
 
     fun setTimerTotalTime(time: Long) {
@@ -142,15 +141,6 @@ class MainActivityViewModel(
 
     val hasMoreRounds
         get() = gameData.currentRound < 2
-
-    val wordsFoundInTurnCount
-        get() = gameData.wordsPlayedInTurn.count { it.second }
-
-    val wordsMissedInTurnCount
-        get() = gameData.wordsPlayedInTurn.count { !it.second }
-
-    val wordsToPlayCount
-        get() = gameData.wordsToPlay.size
 
     private fun getTeamCurrentRoundScore(team: Int) = getTeamRoundScore(team = team, round = gameData.currentRound)
 
@@ -177,18 +167,23 @@ class MainActivityViewModel(
 
     fun getTurnStartUiModel() = TurnStartUiModel(
         currentRound = gameData.currentRound,
-        teamNameId = teamNameId,
+        teamNameId = if (gameData.currentTeam == 0) R.string.team_blue else R.string.team_orange,
         blueTotalScore = getTeamTotalScore(0),
         blueCurrentRoundScore = getTeamCurrentRoundScore(0),
         orangeTotalScore = getTeamTotalScore(1),
         orangeCurrentRoundScore = getTeamCurrentRoundScore(1)
     )
 
+    fun getPlayScreenUiModel() = PlayScreenUiModel(
+        foundWordsCount = gameData.wordsPlayedInTurn.count { it.second },
+        missedWordsCount = gameData.wordsPlayedInTurn.count { !it.second },
+        wordsToPlayCount = gameData.wordsToPlay.size,
+        timerMaxValue = getTimerTotalTime(),
+        currentWord = gameData.currentWord,
+    )
+
     val currentTeamColor
         get() = if (!gameData.currentRoundFinished) getTeamColor(gameData.currentTeam) else White
-
-    private val teamNameId
-        get() = if (gameData.currentTeam == 0) R.string.team_blue else R.string.team_orange
 
     @VisibleForTesting
     fun replaceGameData(gameData: GameData) {

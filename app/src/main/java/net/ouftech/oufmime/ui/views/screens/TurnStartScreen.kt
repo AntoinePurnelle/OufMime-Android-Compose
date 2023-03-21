@@ -36,9 +36,9 @@ import net.ouftech.oufmime.ui.views.library.SizedButton
 
 @Composable
 fun TurnStartScreen(
+    model: TurnStartUiModel,
     dimens: Dimens,
     invertColors: Boolean,
-    model: TurnStartUiModel,
     onStartClick: () -> Unit,
 ) {
     val roundName = stringResource(
@@ -99,7 +99,7 @@ fun TurnStartScreen(
 @Composable
 private fun TurnStartPreviewPhone() {
     OufMimeTheme {
-        TurnStartScreen(MediumDimens, false, stubTurnStartUiModel) {}
+        TurnStartScreen(stubTurnStartUiModel, MediumDimens, false) {}
     }
 }
 
@@ -112,7 +112,7 @@ private fun TurnStartPreviewPhone() {
 @Composable
 private fun TurnStartPreviewTablet() {
     OufMimeTheme {
-        TurnStartScreen(ExpandedDimens, false, stubTurnStartUiModel) {}
+        TurnStartScreen(stubTurnStartUiModel, ExpandedDimens, false) {}
     }
 }
 
