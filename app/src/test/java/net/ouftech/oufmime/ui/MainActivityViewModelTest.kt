@@ -28,10 +28,14 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@SuppressWarnings("UnusedPrivateMember")
 @RunWith(JUnitParamsRunner::class)
 class MainActivityViewModelTest {
 
     @MockK private lateinit var wordsAccessUseCase: WordsAccessUseCase
+
+    @MockK private lateinit var transformer: GameDataToUiStateTransformer
+
     @MockK private lateinit var logger: Logger
 
     private lateinit var vm: MainActivityViewModel
@@ -40,8 +44,9 @@ class MainActivityViewModelTest {
     @Before
     fun setup() {
         wordsAccessUseCase = mockk()
+        transformer = mockk()
         logger = mockk()
-        vm = MainActivityViewModel(wordsAccessUseCase, logger)
+        vm = MainActivityViewModel(wordsAccessUseCase, transformer, logger)
         vm.replaceGameData(gameData)
     }
 
@@ -206,7 +211,6 @@ class MainActivityViewModelTest {
         Word(it.toString(), Categories.values().random(), "en")
     }.toMutableList()
 
-
     private fun getEmptyTeamWords() = arrayOf(
         arrayOf(mutableListOf<Word>(), mutableListOf(), mutableListOf()),
         arrayOf(mutableListOf(), mutableListOf(), mutableListOf())
@@ -223,5 +227,4 @@ class MainActivityViewModelTest {
         listOf(false, false, false),
         listOf(false, true, false),
     )
-
 }

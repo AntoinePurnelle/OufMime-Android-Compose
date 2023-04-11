@@ -19,7 +19,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.flow.catch
 import net.ouftech.oufmime.utils.Logger
 import java.io.IOException
-import java.util.*
+import java.util.Locale
 
 interface WordsAccessUseCase {
     suspend fun insertWords(context: Context)
@@ -87,5 +87,4 @@ class WordsAccessUseCaseImpl(
             count,
             Locale.getDefault().language
         ).toMutableList()
-
 }

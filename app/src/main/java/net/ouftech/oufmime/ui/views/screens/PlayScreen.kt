@@ -12,98 +12,146 @@
 * limitations under the License.
 */
 
+@file:Suppress("TooManyFunctions")
+
 package net.ouftech.oufmime.ui.views.screens
 
-import android.media.MediaPlayer
 import android.os.CountDownTimer
+import androidx.annotation.RawRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories.ANIMALS
 import net.ouftech.oufmime.data.Word
+import net.ouftech.oufmime.ext.circleShadowedBackground
+import net.ouftech.oufmime.ext.createMediaPlayer
 import net.ouftech.oufmime.ext.playSound
-import net.ouftech.oufmime.ui.theme.*
+import net.ouftech.oufmime.ext.roundedRectShadowedBackground
+import net.ouftech.oufmime.ui.theme.Accent
+import net.ouftech.oufmime.ui.theme.AccentTransparent
+import net.ouftech.oufmime.ui.theme.Blue
+import net.ouftech.oufmime.ui.theme.BlueLight
+import net.ouftech.oufmime.ui.theme.Dimens
+import net.ouftech.oufmime.ui.theme.ExpandedDimens
+import net.ouftech.oufmime.ui.theme.Green
+import net.ouftech.oufmime.ui.theme.MediumDimens
+import net.ouftech.oufmime.ui.theme.Orange
+import net.ouftech.oufmime.ui.theme.OrangeDark
+import net.ouftech.oufmime.ui.theme.OufMimeTheme
+import net.ouftech.oufmime.ui.theme.Red
 import net.ouftech.oufmime.ui.views.library.FullScreenColumn
 import net.ouftech.oufmime.ui.views.library.FullWidthRow
-import net.ouftech.oufmime.ui.views.library.ScoreBoardView
 
 @Composable
 fun PlayScreen(
-    uiModel: PlayScreenUiModel,
-    dimens: Dimens,
-    invertColors: Boolean,
+    uiState: PlayScreenUiState,
     onWordPlayed: (Boolean, Boolean) -> Unit,
     onFinishTurn: () -> Unit
-) {
-    // Add -1000L to forgo initial tick
-    var currentTimerValue by remember { mutableStateOf(uiModel.timerMaxValue + 1000L) }
+) = with(uiState) {
+    var timerCurrentValue by remember { mutableStateOf(uiState.timerMaxValue) }
 
-    TimerDisposableEffect(uiModel.timerMaxValue, currentTimerValue, onWordPlayed, onFinishTurn) { currentTimerValue -= 1000L }
+    TimerDisposableEffect(uiState, onWordPlayed, onFinishTurn) { timerCurrentValue -= 1000L }
 
     FullScreenColumn {
+        Box(
+            modifier = Modifier
+                .widthIn(max = 900.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            WordBox(uiState)
 
-        HeaderRow(currentTimerValue, uiModel, dimens, invertColors)
+            CardDeck(
+                modifier = Modifier.align(Alignment.TopStart),
+                count = wordsToPlayCount,
+                dimens = dimens,
+            )
 
-        WordBox(uiModel.currentWord, dimens)
+            Timer(
+                modifier = Modifier.align(Alignment.TopEnd),
+                value = timerCurrentValue,
+                maxValue = timerMaxValue,
+                dimens = dimens,
+                invertColors = invertColors
+            )
+        }
 
         ButtonsRow(dimens, onWordPlayed)
-
     }
 }
 
 @Composable
 private fun TimerDisposableEffect(
-    timerMaxValue: Long,
-    currentTimerValue: Long,
+    uiState: PlayScreenUiState,
     onWordPlayed: (Boolean, Boolean) -> Unit,
     onFinishTurn: () -> Unit,
     onTick: () -> Unit,
 ) {
     val context = LocalContext.current
-    var lastSecondsMP: MediaPlayer? = null
+    val lastSecondsMP by remember { mutableStateOf(context.createMediaPlayer(R.raw.timer)) }
+    val timesUpMP by remember { mutableStateOf(context.createMediaPlayer(R.raw.times_up)) }
     lateinit var timer: CountDownTimer
 
     DisposableEffect(key1 = null) {
-        timer = object : CountDownTimer(timerMaxValue, 1000) {
+        timer = object : CountDownTimer(uiState.timerMaxValue, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 onTick()
 
-                if (currentTimerValue == 4000L) {
-                    lastSecondsMP = context.playSound(R.raw.timer)
+                if (millisUntilFinished < 4500L) {
+                    lastSecondsMP?.start()
                 }
             }
 
             override fun onFinish() {
-                context.playSound(R.raw.times_up)
+                timesUpMP?.start()
                 onTick()
                 // Add last non played word in list in case player didn't have the time to mark as found
                 onWordPlayed(false, true)
@@ -115,7 +163,9 @@ private fun TimerDisposableEffect(
 
         onDispose {
             try {
-                lastSecondsMP?.stop()
+                if (lastSecondsMP?.isPlaying == true) {
+                    lastSecondsMP?.stop()
+                }
             } catch (_: IllegalStateException) {
                 // Do nothing
             }
@@ -126,106 +176,148 @@ private fun TimerDisposableEffect(
 }
 
 @Composable
-private fun HeaderRow(currentTimerValue: Long, uiModel: PlayScreenUiModel, dimens: Dimens, invertColors: Boolean) = FullWidthRow {
-    ScoreBoardView(
-        topLabel = stringResource(id = R.string.found),
-        topScore = uiModel.foundWordsCount,
-        middleLabel = stringResource(id = R.string.missed),
-        middleScore = uiModel.missedWordsCount,
-        dimens = dimens,
-        color = White,
-        bottomLabel = stringResource(id = R.string.to_play),
-        bottomScore = uiModel.wordsToPlayCount
-    )
+private fun WordBox(
+    uiState: PlayScreenUiState,
+) = with(uiState) {
+    Column(
+        modifier = Modifier
+            .padding(dimens.playWidgetsSize / 3)
+            .heightIn(min = 400.dp)
+            .widthIn(max = 800.dp)
+            .fillMaxWidth()
+            .roundedRectShadowedBackground()
+            .animateContentSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        currentWord?.let {
+            Text(
+                text = currentWord.word,
+                color = Accent,
+                fontSize = dimens.wordCardWordText,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = stringResource(id = currentWord.category.resId),
+                color = AccentTransparent,
+                fontSize = dimens.subtitleText,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
 
-    Timer(
-        value = currentTimerValue,
-        maxValue = uiModel.timerMaxValue,
-        dimens = dimens,
-        invertColors = invertColors
+@Composable
+fun CardDeck(
+    modifier: Modifier = Modifier,
+    count: Int,
+    dimens: Dimens
+) {
+    val color = MaterialTheme.colors.secondary
+
+    Box(
+        modifier = modifier
+            .size(dimens.playWidgetsSize)
+            .circleShadowedBackground(backgroundColor = color)
+            .rotate(-dimens.widgetRotation)
+    ) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(dimens.paddingMedium)
+        ) {
+            drawCardWithShadow(0, color, dimens)
+            drawCardWithShadow(1, color, dimens)
+            drawCardWithShadow(2, color, dimens)
+        }
+
+        val textPadding = dimens.cardPadding * 5 + dimens.paddingMedium
+
+        Box(
+            modifier = Modifier
+                .padding(start = textPadding, top = textPadding)
+                .size(dimens.cardWidth, dimens.cardHeight)
+        ) {
+            Text(
+                text = count.toString(),
+                modifier = Modifier.align(Alignment.Center),
+                color = color,
+                fontSize = dimens.cardDeckText,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
+private fun DrawScope.drawCardWithShadow(cardNb: Int, color: Color, dimens: Dimens) {
+    drawCard(
+        color = color,
+        topLeftOffset = dimens.cardPadding * cardNb * 2,
+        dimens = dimens
+    )
+    drawCard(
+        color = White,
+        topLeftOffset = dimens.cardPadding * cardNb * 2 + dimens.cardPadding,
+        dimens = dimens
+    )
+}
+
+private fun DrawScope.drawCard(color: Color, topLeftOffset: Dp, dimens: Dimens) {
+    drawRoundRect(
+        color = color,
+        topLeft = Offset(topLeftOffset.toPx(), topLeftOffset.toPx()),
+        size = Size(dimens.cardWidth.toPx(), dimens.cardHeight.toPx()),
+        cornerRadius = CornerRadius(dimens.cardCornerRadius.toPx())
     )
 }
 
 @Composable
 private fun Timer(
+    modifier: Modifier = Modifier,
     value: Long,
     maxValue: Long,
     dimens: Dimens,
     invertColors: Boolean
 ) {
     Box(
-        modifier = Modifier.size(dimens.timerSize),
+        modifier = modifier
+            .size(dimens.playWidgetsSize)
+            .rotate(dimens.widgetRotation),
         contentAlignment = Alignment.Center
     ) {
-        val color = if (invertColors) Primary else Accent
+        val colorTransparent = if (invertColors) OrangeDark else BlueLight
+        val color = if (invertColors) Orange else Blue
 
         val animatedProgress = animateFloatAsState(
-            targetValue = value.toFloat() / maxValue,
-            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+            targetValue = value.toFloat() / maxValue * 360,
+            animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
         ).value
 
-        Surface(
+        Canvas(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(dimens.paddingXSmall)
-                .border(shape = CircleShape, color = TransparentWhite, width = dimens.borderMedium),
-            color = Transparent
-        ) {}
+                .size(size = dimens.playWidgetsSize)
+                .circleShadowedBackground()
+        ) {
+            drawArc(
+                color = color,
+                startAngle = -90f,
+                sweepAngle = animatedProgress,
+                useCenter = true
+            )
 
-        CircularProgressIndicator(
-            modifier = Modifier.fillMaxSize(),
-            progress = animatedProgress,
-            color = color,
-            strokeWidth = dimens.timerStrokeWidth
-        )
-
+            drawArc(
+                color = colorTransparent,
+                startAngle = -90f + animatedProgress,
+                sweepAngle = 360 - animatedProgress,
+                useCenter = true
+            )
+        }
         Text(
-            text = (value / 1000).toString(),
-            color = color,
+            text = (value / 1000 + 1).toString(),
+            color = White,
             fontSize = dimens.bigTitleText
         )
-    }
-}
-
-@Composable
-private fun WordBox(currentWord: Word?, dimens: Dimens) {
-    val boxShape = RoundedCornerShape(8.dp)
-
-    Box(
-        modifier = Modifier
-            .heightIn(min = 200.dp)
-            .widthIn(max = 800.dp)
-            .graphicsLayer {
-                shadowElevation = 8.dp.toPx()
-                shape = boxShape
-                clip = true
-            }
-            .fillMaxWidth()
-            .background(color = White, shape = boxShape)
-            .animateContentSize()
-            .padding(dimens.paddingLarge),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            currentWord?.let {
-                Text(
-                    text = currentWord.word,
-                    color = Accent,
-                    fontSize = dimens.titleText,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    modifier = Modifier.padding(top = 8.dp),
-                    text = stringResource(id = currentWord.category.resId),
-                    color = AccentTransparent,
-                    fontSize = dimens.subtitleText,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
     }
 }
 
@@ -234,33 +326,28 @@ private fun ButtonsRow(
     dimens: Dimens,
     onWordPlayed: (Boolean, Boolean) -> Unit
 ) = FullWidthRow {
-    val context = LocalContext.current
-
     AnswerButton(
-        color = Green,
-        imageVector = Icons.Default.Check,
-        contentDescription = stringResource(id = R.string.found),
-        dimens,
-        onCLick = {
-            onWordPlayed(true, false)
-            context.playSound(R.raw.word_ok)
-        }
-    )
-
-    AnswerButton(
+        sound = R.raw.word_wrong,
         color = Red,
         imageVector = Icons.Default.Close,
         contentDescription = stringResource(id = R.string.missed),
-        dimens,
-        onCLick = {
-            onWordPlayed(false, false)
-            context.playSound(R.raw.word_wrong)
-        }
+        dimens = dimens,
+        onCLick = { onWordPlayed(false, false) }
+    )
+
+    AnswerButton(
+        sound = R.raw.word_ok,
+        color = Green,
+        imageVector = Icons.Default.Check,
+        contentDescription = stringResource(id = R.string.found),
+        dimens = dimens,
+        onCLick = { onWordPlayed(true, false) }
     )
 }
 
 @Composable
 private fun AnswerButton(
+    @RawRes sound: Int,
     color: Color,
     imageVector: ImageVector,
     contentDescription: String?,
@@ -270,38 +357,45 @@ private fun AnswerButton(
     val interactionSource = MutableInteractionSource()
     val coroutineScope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
-            .size(dimens.iconMedium)
+            .size(dimens.bigIconButton)
             .scale(scale = scale.value)
-            .background(
-                color = color,
-                shape = RoundedCornerShape(20)
-            )
+            .roundedRectShadowedBackground(backgroundColor = color)
             .clickable(interactionSource = interactionSource, indication = null) {
+                onCLick()
+                context.playSound(sound)
                 coroutineScope.launch {
                     scale.animateTo(
-                        0.9f,
+                        targetValue = 0.9f,
                         animationSpec = tween(100),
                     )
                     scale.animateTo(
-                        1f,
+                        targetValue = 1f,
                         animationSpec = tween(100),
                     )
                 }
-                onCLick()
             },
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            modifier = Modifier.size(dimens.iconSmall),
+            modifier = Modifier.size(dimens.bigIconButton),
             imageVector = imageVector,
             contentDescription = contentDescription,
             tint = White
         )
     }
 }
+
+data class PlayScreenUiState(
+    val dimens: Dimens,
+    val wordsToPlayCount: Int,
+    val timerMaxValue: Long,
+    val currentWord: Word?,
+    val invertColors: Boolean = false,
+)
 
 @Preview(
     showBackground = true,
@@ -312,13 +406,13 @@ private fun AnswerButton(
 )
 @Composable
 private fun PlayScreenPreviewPhone() {
-    PlayScreen(
-        uiModel = stubPlayUiModel,
-        dimens = MediumDimens,
-        invertColors = false,
-        onWordPlayed = { _, _ -> },
-        onFinishTurn = {}
-    )
+    OufMimeTheme {
+        PlayScreen(
+            uiState = getStubPlayUiState(MediumDimens),
+            onWordPlayed = { _, _ -> },
+            onFinishTurn = {}
+        )
+    }
 }
 
 @Preview(
@@ -329,36 +423,42 @@ private fun PlayScreenPreviewPhone() {
 )
 @Composable
 private fun PlayScreenPreviewTablet() {
-    PlayScreen(
-        uiModel = stubPlayUiModel,
-        dimens = ExpandedDimens,
-        invertColors = false,
-        onWordPlayed = { _, _ -> },
-        onFinishTurn = {}
-    )
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFFF6F00, name = "Timer")
-@Composable
-private fun TimerPreview() {
     OufMimeTheme {
-        Timer(20000L, 40000L, MediumDimens, false)
+        PlayScreen(
+            uiState = getStubPlayUiState(ExpandedDimens),
+            onWordPlayed = { _, _ -> },
+            onFinishTurn = {}
+        )
     }
 }
 
-data class PlayScreenUiModel(
-    val foundWordsCount: Int,
-    val missedWordsCount: Int,
-    val wordsToPlayCount: Int,
-    val timerMaxValue: Long,
-    val currentWord: Word?,
+private fun getStubPlayUiState(dimens: Dimens = MediumDimens) = PlayScreenUiState(
+    dimens = dimens,
+    wordsToPlayCount = 4,
+    timerMaxValue = 40000L,
+    currentWord = Word("Squid", ANIMALS, "en"),
 )
 
-private val stubPlayUiModel
-    get() = PlayScreenUiModel(
-        foundWordsCount = 5,
-        missedWordsCount = 2,
-        wordsToPlayCount = 4,
-        timerMaxValue = 40000L,
-        currentWord = Word("Squid", ANIMALS, "en"),
-    )
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF, name = "Timer")
+@Composable
+private fun TimerPreview() {
+    OufMimeTheme {
+        Timer(value = 32000L, maxValue = 40000L, dimens = MediumDimens, invertColors = false)
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@Composable
+private fun CardDeckPreviewMedium() {
+    OufMimeTheme {
+        CardDeck(count = 32, dimens = MediumDimens)
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@Composable
+private fun CardDeckPreviewExpanded() {
+    OufMimeTheme {
+        CardDeck(count = 32, dimens = ExpandedDimens)
+    }
+}

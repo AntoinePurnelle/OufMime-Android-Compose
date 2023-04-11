@@ -2,7 +2,15 @@ package net.ouftech.oufmime
 
 import android.app.Application
 import androidx.room.Room
-import net.ouftech.oufmime.data.*
+import net.ouftech.oufmime.data.DataStoreManager
+import net.ouftech.oufmime.data.DataStoreManagerImpl
+import net.ouftech.oufmime.data.WordsAccessUseCase
+import net.ouftech.oufmime.data.WordsAccessUseCaseImpl
+import net.ouftech.oufmime.data.WordsDB
+import net.ouftech.oufmime.data.WordsRepository
+import net.ouftech.oufmime.data.WordsRepositoryImpl
+import net.ouftech.oufmime.ui.GameDataToUiStateTransformer
+import net.ouftech.oufmime.ui.GameDataToUiStateTransformerImpl
 import net.ouftech.oufmime.ui.MainActivityViewModel
 import net.ouftech.oufmime.utils.Logger
 import org.koin.android.ext.koin.androidApplication
@@ -16,6 +24,7 @@ val appModule = module {
     singleOf(::WordsRepositoryImpl) { bind<WordsRepository>() }
     factoryOf(::WordsAccessUseCaseImpl) { bind<WordsAccessUseCase>() }
     singleOf(::MainActivityViewModel)
+    factoryOf(::GameDataToUiStateTransformerImpl) { bind<GameDataToUiStateTransformer>() }
     single { provideDataStoreManager(androidApplication()) }
     factoryOf(::Logger)
 }

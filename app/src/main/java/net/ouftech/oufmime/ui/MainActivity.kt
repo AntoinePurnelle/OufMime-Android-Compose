@@ -16,34 +16,44 @@ package net.ouftech.oufmime.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import net.ouftech.oufmime.R
-import net.ouftech.oufmime.ui.theme.Dimens
+import net.ouftech.oufmime.ui.theme.BlueTeam
 import net.ouftech.oufmime.ui.theme.ExpandedDimens
 import net.ouftech.oufmime.ui.theme.MediumDimens
+import net.ouftech.oufmime.ui.theme.OrangeTeam
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
 import net.ouftech.oufmime.ui.views.WindowSize
 import net.ouftech.oufmime.ui.views.rememberWindowSizeClass
-import net.ouftech.oufmime.ui.views.screens.*
+import net.ouftech.oufmime.ui.views.screens.PlayScreen
+import net.ouftech.oufmime.ui.views.screens.ScoreboardScreen
+import net.ouftech.oufmime.ui.views.screens.SettingsScreen
+import net.ouftech.oufmime.ui.views.screens.SettingsScreenListener
+import net.ouftech.oufmime.ui.views.screens.TurnEndScreen
+import net.ouftech.oufmime.ui.views.screens.TurnStartScreen
+import net.ouftech.oufmime.ui.views.screens.WelcomeScreen
 import net.ouftech.oufmime.utils.LanguageUtils
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainActivityViewModel by viewModel()
-    private lateinit var dimens: Dimens
     private lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,14 +63,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             LanguageUtils.updateResources(LocalContext.current)
 
-            dimens = if (rememberWindowSizeClass() == WindowSize.Expanded) ExpandedDimens else MediumDimens
+            viewModel.updateDimens(if (rememberWindowSizeClass() == WindowSize.Expanded) ExpandedDimens else MediumDimens)
             navController = rememberNavController()
 
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = viewModel.currentTeamColor.toArgb()
+            hideSystemUI()
 
-            OufMimeTheme(invert = viewModel.shouldInvertColors) {
-                Surface(modifier = Modifier.fillMaxSize(), color = viewModel.currentTeamColor) {
+            OufMimeTheme(viewModel.colorPalette) {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+                    if (viewModel.colorPalette == -1) {
+                        NoTeamBackground()
+                    }
+
                     NavHost(navController = navController, startDestination = WELCOME_SCREEN) {
                         composable(WELCOME_SCREEN) { NavWelcomeScreen() }
                         composable(TURN_START_SCREEN) { NavTurnStartScreen() }
@@ -74,20 +87,44 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Composable
+    private fun NoTeamBackground() = Canvas(modifier = Modifier.fillMaxSize()) {
+        if (viewModel.dimens.isExpandedScreen) {
+            val midScreen = size.width / 2
+            drawRect(color = OrangeTeam, size = size.copy(width = midScreen))
+            drawRect(color = BlueTeam, topLeft = Offset(y = 0f, x = midScreen), size = size.copy(width = midScreen))
+        } else {
+            val midScreen = size.height / 2
+            drawRect(color = OrangeTeam, size = size.copy(height = midScreen))
+            drawRect(color = BlueTeam, topLeft = Offset(y = midScreen, x = 0f), size = size.copy(height = midScreen))
+        }
+    }
+
+    private fun hideSystemUI() {
+        // Hides the ugly action bar at the top
+        actionBar?.hide()
+
+        // Hides the status bars
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            hide(WindowInsetsCompat.Type.statusBars())
+            hide(WindowInsetsCompat.Type.navigationBars())
+        }
+    }
+
     // region Navigation
 
     @Composable
     private fun NavWelcomeScreen() = WelcomeScreen(
-        dimens = dimens,
+        dimens = viewModel.dimens,
         onStartClick = { startGame() },
         onSettingsClick = { navController.navigate(SETTINGS_SCREEN) }
     )
 
     @Composable
     private fun NavTurnStartScreen() = TurnStartScreen(
-        model = viewModel.getTurnStartUiModel(),
-        dimens = dimens,
-        invertColors = viewModel.shouldInvertColors,
+        model = viewModel.getTurnStartUiState(),
         onStartClick = {
             viewModel.initTurn()
             navController.navigate(PLAY_SCREEN)
@@ -96,9 +133,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun NavPlayScreen() = PlayScreen(
-        uiModel = viewModel.getPlayScreenUiModel(),
-        dimens = dimens,
-        invertColors = viewModel.shouldInvertColors,
+        uiState = viewModel.getPlayScreenUiState(),
         onWordPlayed = { found, timerEnded ->
             viewModel.playWord(found, timerEnded)
             if (!viewModel.hasMoreWords) {
@@ -112,9 +147,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun NavTurnEndScreen() = TurnEndScreen(
-        wordsPlayed = viewModel.getWordsPlayedInTurn(),
-        dimens = dimens,
-        invertColors = viewModel.shouldInvertColors,
+        model = viewModel.getTurnEndUiState(),
         onWordChange = { changedWord -> viewModel.changeValueInPlayedWords(changedWord) },
         onNextClick = {
             viewModel.finishTurn()
@@ -130,28 +163,20 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun NavScoreboardScreen() = ScoreboardScreen(
-        dimens = dimens,
-        teamBlueScoreboardUiModel = viewModel.getTeamScoreboardUiModel(0),
-        teamOrangeScoreboardUiModel = viewModel.getTeamScoreboardUiModel(1),
-        hasMoreRounds = viewModel.hasMoreRounds,
+        uiState = viewModel.getScoreboardScreenUiState(),
         onNextClick = {
-            with(viewModel) {
-                if (hasMoreRounds) {
-                    startNextRound()
-                    navController.navigate(TURN_START_SCREEN)
-                } else {
-                    navController.navigate(WELCOME_SCREEN)
-                }
+            if (viewModel.hasMoreRounds) {
+                viewModel.startNextRound()
+                navController.navigate(TURN_START_SCREEN)
+            } else {
+                navController.navigate(WELCOME_SCREEN)
             }
         }
     )
 
     @Composable
     private fun NavSettingsScreen() = SettingsScreen(
-        dimens = dimens,
-        selectedCategories = viewModel.getSelectedCategories(),
-        wordsCount = viewModel.getWordsCount(),
-        timerTotalTime = viewModel.getTimerTotalTime() / 1000,
+        uiState = viewModel.getSettingsScreenUiState(),
         listener = object : SettingsScreenListener {
 
             override fun onCategoryClick(category: String, selected: Boolean) {
@@ -167,7 +192,6 @@ class MainActivity : ComponentActivity() {
             override fun onLanguageClick() {
                 navController.navigate(SETTINGS_SCREEN)
             }
-
         },
     )
 
@@ -194,5 +218,4 @@ class MainActivity : ComponentActivity() {
         private const val SCOREBOARD_SCREEN = "nav:scoreboard"
         private const val SETTINGS_SCREEN = "nav:settings"
     }
-
 }

@@ -43,5 +43,4 @@ class DataStoreManagerImpl(private val context: Context) : DataStoreManager {
     companion object {
         val WORDS_LIST_VERSION = intPreferencesKey("words_list_version")
     }
-
 }

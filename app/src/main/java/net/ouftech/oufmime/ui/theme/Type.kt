@@ -16,19 +16,21 @@ package net.ouftech.oufmime.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import net.ouftech.oufmime.R
 
 // Set of Material typography styles to start with
 val Typography = Typography(
     body1 = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
+        fontFamily = FontFamily(Font(R.font.nunito)),
+        fontWeight = FontWeight.Medium,
         fontSize = MediumDimens.bodyText
     ),
     button = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.W500,
+        fontFamily = FontFamily(Font(R.font.nunito)),
+        fontWeight = FontWeight.Black,
         fontSize = MediumDimens.smallButtonText
     )
 )

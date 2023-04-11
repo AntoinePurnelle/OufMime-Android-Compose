@@ -21,11 +21,14 @@ import androidx.compose.ui.unit.sp
 import net.ouftech.oufmime.ui.theme.ButtonsTextSize.*
 
 @SuppressWarnings("LongParameterList")
-class Dimens(
+data class Dimens(
     val bodyText: TextUnit = 16.sp,
     val titleText: TextUnit = 42.sp,
     val bigTitleText: TextUnit = 64.sp,
     val subtitleText: TextUnit = 20.sp,
+    val wordCardWordText: TextUnit = 50.sp,
+    val wordCardCategoryText: TextUnit = 40.sp,
+    val cardDeckText: TextUnit = 36.sp,
 
     val smallButtonText: TextUnit = 16.sp,
     val mediumButtonText: TextUnit = 24.sp,
@@ -43,13 +46,24 @@ class Dimens(
     val borderSmall: Dp = 1.dp,
     val borderMedium: Dp = 2.dp,
 
-    val iconSmall: Dp = 100.dp,
-    val iconMedium: Dp = iconSmall,
+    val iconSmall: Dp = 60.dp,
+    val iconMedium: Dp = 100.dp,
 
-    val timerSize: Dp = 100.dp,
-    val timerStrokeWidth: Dp = 6.dp,
+    val smallIconButton: Dp = iconSmall,
+    val bigIconButton: Dp = 120.dp,
+
+    val playWidgetsSize: Dp = 100.dp,
+    val cardHeight: Dp = 80.dp,
+    val cardWidth: Dp = 60.dp,
+    val cardPadding: Dp = 4.dp,
+    val cardCornerRadius: Dp = 10.dp,
+    val widgetRotation: Float = 20f,
+
+    val timerStrokeWidth: Dp = 64.dp,
 
     val isExpandedScreen: Boolean = false,
+
+    val defaultShadow: Dp = 8.dp
 ) {
     val buttonDimens = mapOf(
         SMALL to smallButtonText,
@@ -61,17 +75,20 @@ class Dimens(
 val MediumDimens = Dimens()
 
 val ExpandedDimens = Dimens(
-    bodyText = 24.sp,
-    titleText = 56.sp,
+    bodyText = 28.sp,
+    titleText = 60.sp,
     bigTitleText = 96.sp,
-    subtitleText = 32.sp,
+    subtitleText = 36.sp,
+    wordCardWordText = 100.sp,
+    wordCardCategoryText = 80.sp,
+    cardDeckText = 64.sp,
 
-    smallButtonText = 24.sp,
-    mediumButtonText = 32.sp,
-    bigButtonText = 40.sp,
+    smallButtonText = 32.sp,
+    mediumButtonText = 40.sp,
+    bigButtonText = 48.sp,
 
     simpleScoreBoardWidth = 200.dp,
-    fullScoreBoardWidth = 400.dp,
+    fullScoreBoardWidth = 500.dp,
 
     paddingXSmall = 4.dp,
     paddingSmall = 8.dp,
@@ -82,11 +99,18 @@ val ExpandedDimens = Dimens(
     borderSmall = 2.dp,
     borderMedium = 4.dp,
 
-    iconSmall = 160.dp,
+    iconSmall = 100.dp,
     iconMedium = 200.dp,
 
-    timerSize = 160.dp,
+    smallIconButton = 100.dp,
+    bigIconButton = 200.dp,
+
+    playWidgetsSize = 160.dp,
     timerStrokeWidth = 12.dp,
+    cardHeight = 128.dp,
+    cardWidth = 96.dp,
+    cardPadding = 6.dp,
+    cardCornerRadius = 16.dp,
 
     isExpandedScreen = true,
 )

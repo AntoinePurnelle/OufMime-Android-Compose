@@ -16,27 +16,42 @@ package net.ouftech.oufmime.ui.views.library
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
-import net.ouftech.oufmime.ui.theme.Accent
 import net.ouftech.oufmime.ui.theme.ButtonsTextSize
 import net.ouftech.oufmime.ui.theme.ButtonsTextSize.MEDIUM
 import net.ouftech.oufmime.ui.theme.Dimens
-import net.ouftech.oufmime.ui.theme.Primary
+import net.ouftech.oufmime.ui.theme.MediumDimens
+import net.ouftech.oufmime.ui.theme.OufMimeTheme
 
 @Composable
 fun SizedButton(
@@ -44,87 +59,120 @@ fun SizedButton(
     onClick: () -> Unit,
     text: String,
     textSize: ButtonsTextSize = MEDIUM,
+    textColor: Color = White,
+    backgroundColor: Color = MaterialTheme.colors.secondary,
     dimens: Dimens
+) = Button(
+    modifier = modifier,
+    onClick = onClick,
+    colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor),
+    shape = RoundedCornerShape(50)
 ) {
-    Button(
-        modifier = modifier,
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
-    ) {
-        Text(
-            text.toUpperCase(Locale.current),
-            color = Color.White,
-            fontSize = dimens.buttonDimens[textSize]!!,
-            textAlign = TextAlign.Center
-        )
-    }
+    Text(
+        modifier = Modifier.padding(horizontal = dimens.paddingLarge),
+        text = text.toUpperCase(Locale.current),
+        color = textColor,
+        fontSize = dimens.buttonDimens[textSize]!!,
+        style = MaterialTheme.typography.button,
+        textAlign = TextAlign.Center
+    )
 }
 
 @Composable
 fun FullScreenColumn(
     modifier: Modifier = Modifier,
+    verticalArrangement: Arrangement.Vertical = Arrangement.SpaceEvenly,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     content: @Composable ColumnScope.() -> Unit
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = horizontalAlignment,
-        content = content
-    )
-}
+) = Column(
+    modifier = modifier
+        .fillMaxSize()
+        .padding(20.dp),
+    verticalArrangement = verticalArrangement,
+    horizontalAlignment = horizontalAlignment,
+    content = content
+)
 
 @Composable
 fun FullScreenRow(
     modifier: Modifier = Modifier,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     content: @Composable RowScope.() -> Unit
-) {
-    Row(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(20.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = verticalAlignment,
-        content = content
-    )
-}
+) = Row(
+    modifier = modifier
+        .fillMaxSize()
+        .padding(20.dp),
+    horizontalArrangement = Arrangement.SpaceEvenly,
+    verticalAlignment = verticalAlignment,
+    content = content
+)
 
 @Composable
 fun FullWidthRow(
     modifier: Modifier = Modifier,
     arrangement: Arrangement.Horizontal = Arrangement.SpaceEvenly,
     content: @Composable RowScope.() -> Unit
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = arrangement,
-        verticalAlignment = Alignment.CenterVertically,
-        content = content
-    )
-}
+) = Row(
+    modifier = modifier.fillMaxWidth(),
+    horizontalArrangement = arrangement,
+    verticalAlignment = Alignment.CenterVertically,
+    content = content
+)
 
 @Composable
-fun AppIcon(dimens: Dimens, inverted: Boolean) {
-    Box {
+fun FullScreenBox(
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit
+) = Box(
+    modifier = modifier.fillMaxWidth(),
+    content = content
+)
+
+@Composable
+fun AppIcon(
+    modifier: Modifier = Modifier,
+    dimens: Dimens,
+    currentTeam: Int,
+) {
+    Box(modifier) {
         Spacer(
             modifier = Modifier
                 .size(dimens.iconMedium)
                 .padding(dimens.paddingLarge)
-                .background(shape = CircleShape, color = if (inverted) Accent else Primary)
+                .background(shape = CircleShape, color = MaterialTheme.colors.primary)
         )
+
+        Icon(
+            modifier = Modifier.size(dimens.iconMedium),
+            painter = painterResource(R.drawable.ic_launcher_foreground),
+            contentDescription = "App Icon",
+        )
+
         Image(
             modifier = Modifier.size(dimens.iconMedium),
             painter = painterResource(
-                id = if (inverted) {
-                    R.drawable.ic_launcher_foreground_inverted
-                } else {
-                    R.drawable.ic_launcher_foreground
-                }
+                id = when (currentTeam) {
+                    1 -> R.drawable.ic_launcher_foreground_inverted
+                    else -> R.drawable.ic_launcher_foreground
+                },
             ),
             contentDescription = "App Icon"
         )
+    }
+}
+
+@Preview
+@Composable
+private fun AppIconPreviewTeam0() {
+    Column {
+        OufMimeTheme(colorPalette = 0) {
+            AppIcon(dimens = MediumDimens, currentTeam = 0)
+        }
+        OufMimeTheme(colorPalette = 1) {
+            AppIcon(dimens = MediumDimens, currentTeam = 1)
+        }
+        OufMimeTheme(colorPalette = -1) {
+            AppIcon(dimens = MediumDimens, currentTeam = -1)
+        }
     }
 }

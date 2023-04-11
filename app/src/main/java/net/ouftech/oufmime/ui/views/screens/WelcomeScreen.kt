@@ -15,17 +15,30 @@
 package net.ouftech.oufmime.ui.views.screens
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
-import net.ouftech.oufmime.ui.theme.*
+import net.ouftech.oufmime.ui.theme.Accent
 import net.ouftech.oufmime.ui.theme.ButtonsTextSize.BIG
+import net.ouftech.oufmime.ui.theme.Dimens
+import net.ouftech.oufmime.ui.theme.ExpandedDimens
+import net.ouftech.oufmime.ui.theme.MediumDimens
+import net.ouftech.oufmime.ui.theme.OufMimeTheme
 import net.ouftech.oufmime.ui.views.library.FullScreenColumn
 import net.ouftech.oufmime.ui.views.library.SizedButton
 
@@ -35,26 +48,35 @@ fun WelcomeScreen(
     onStartClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
-    FullScreenColumn {
-        Text(
-            text = stringResource(id = R.string.app_name),
-            fontSize = dimens.bigTitleText,
-            color = Primary,
-            fontWeight = FontWeight.Bold
-        )
+    Box(Modifier.fillMaxSize()) {
+        FullScreenColumn {
+            Text(
+                text = stringResource(id = R.string.app_name),
+                fontSize = dimens.bigTitleText,
+                color = White,
+                fontWeight = FontWeight.Bold
+            )
 
-        SizedButton(
-            onClick = onStartClick,
-            text = stringResource(id = R.string.start),
-            textSize = BIG,
-            dimens = dimens
-        )
+            Spacer(Modifier.size(0.dp))
 
-        Text(
-            modifier = Modifier.clickable(onClick = onSettingsClick),
-            text = stringResource(id = R.string.settings),
-            fontSize = dimens.bodyText,
-            color = Color.Gray
+            SizedButton(
+                onClick = onStartClick,
+                text = stringResource(id = R.string.start),
+                textSize = BIG,
+                textColor = Accent,
+                dimens = dimens,
+            )
+        }
+
+        Icon(
+            painter = painterResource(id = R.drawable.ic_settings),
+            contentDescription = "TODO", // TODO
+            modifier = Modifier
+                .padding(top = dimens.paddingLarge, end = dimens.paddingLarge)
+                .size(30.dp)
+                .align(Alignment.TopEnd)
+                .clickable(onClick = onSettingsClick),
+            tint = White
         )
     }
 }

@@ -16,30 +16,26 @@ package net.ouftech.oufmime.ui
 
 import android.app.Application
 import androidx.annotation.VisibleForTesting
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.GameData
 import net.ouftech.oufmime.data.Word
 import net.ouftech.oufmime.data.WordsAccessUseCase
-import net.ouftech.oufmime.ui.theme.Accent
-import net.ouftech.oufmime.ui.theme.Primary
-import net.ouftech.oufmime.ui.views.screens.PlayScreenUiModel
-import net.ouftech.oufmime.ui.views.screens.TeamScoreboardUiModel
-import net.ouftech.oufmime.ui.views.screens.TurnStartUiModel
+import net.ouftech.oufmime.ui.theme.Dimens
 import net.ouftech.oufmime.utils.Logger
 
 @SuppressWarnings("TooManyFunctions")
 class MainActivityViewModel(
     private val wordsAccessUseCase: WordsAccessUseCase,
-    private val logger: Logger
+    private val transformer: GameDataToUiStateTransformer,
+    private val logger: Logger,
 ) : ViewModel() {
 
     private var gameData = GameData()
+    var dimens: Dimens = Dimens()
+        private set
 
     fun init(application: Application) = viewModelScope.launch {
         wordsAccessUseCase.insertWords(application.applicationContext)
@@ -116,21 +112,13 @@ class MainActivityViewModel(
 
     // region Getters/Setters
 
-    fun getWordsPlayedInTurn() = gameData.wordsPlayedInTurn
-
-    fun getTimerTotalTime() = gameData.timerTotalTime
-
     fun setTimerTotalTime(time: Long) {
         gameData.timerTotalTime = time
     }
 
-    fun getSelectedCategories() = gameData.selectedCategories
-
     fun setCategorySelected(category: String, selected: Boolean) {
         gameData.selectedCategories[category] = selected
     }
-
-    fun getWordsCount() = gameData.wordsCount
 
     fun setWordsCount(wordsCount: Int) {
         gameData.wordsCount = wordsCount
@@ -140,50 +128,26 @@ class MainActivityViewModel(
         get() = gameData.wordsToPlay.size > 0
 
     val hasMoreRounds
-        get() = gameData.currentRound < 2
+        get() = gameData.hasMoreRounds
 
-    private fun getTeamCurrentRoundScore(team: Int) = getTeamRoundScore(team = team, round = gameData.currentRound)
+    val colorPalette: Int
+        get() = when {
+            gameData.currentRoundFinished -> -1
+            else -> gameData.currentTeam
+        }
 
-    private fun getTeamRoundScore(team: Int, round: Int) = if (gameData.currentRound < round) -1 else gameData.teamWords[team][round].size
+    fun getTurnStartUiState() = transformer.getTurnStartUiState(gameData, dimens)
 
-    private fun getTeamTotalScore(team: Int) = gameData.teamWords[team].sumOf { it.size }
+    fun getPlayScreenUiState() = transformer.getPlayScreenUiState(gameData, dimens)
 
-    val shouldInvertColors
-        get() = gameData.currentTeam == 0
+    fun getTurnEndUiState() = transformer.getTurnEndUiState(gameData, dimens)
 
-    private fun getTeamColor(team: Int) = when (team) {
-        0 -> Accent
-        1 -> Primary
-        else -> White
+    fun getScoreboardScreenUiState() = transformer.getScoreboardScreenUiState(gameData, dimens)
+
+    fun getSettingsScreenUiState() = transformer.getSettingsScreenUiState(gameData, dimens)
+    fun updateDimens(dimens: Dimens) {
+        this.dimens = dimens
     }
-
-    fun getTeamScoreboardUiModel(team: Int) = TeamScoreboardUiModel(
-        color = getTeamColor(team),
-        describeScore = getTeamRoundScore(team, 0),
-        wordScore = getTeamRoundScore(team, 1),
-        mimeScore = getTeamRoundScore(team, 2),
-        totalScore = getTeamTotalScore(team)
-    )
-
-    fun getTurnStartUiModel() = TurnStartUiModel(
-        currentRound = gameData.currentRound,
-        teamNameId = if (gameData.currentTeam == 0) R.string.team_blue else R.string.team_orange,
-        blueTotalScore = getTeamTotalScore(0),
-        blueCurrentRoundScore = getTeamCurrentRoundScore(0),
-        orangeTotalScore = getTeamTotalScore(1),
-        orangeCurrentRoundScore = getTeamCurrentRoundScore(1)
-    )
-
-    fun getPlayScreenUiModel() = PlayScreenUiModel(
-        foundWordsCount = gameData.wordsPlayedInTurn.count { it.second },
-        missedWordsCount = gameData.wordsPlayedInTurn.count { !it.second },
-        wordsToPlayCount = gameData.wordsToPlay.size,
-        timerMaxValue = getTimerTotalTime(),
-        currentWord = gameData.currentWord,
-    )
-
-    val currentTeamColor
-        get() = if (!gameData.currentRoundFinished) getTeamColor(gameData.currentTeam) else White
 
     @VisibleForTesting
     fun replaceGameData(gameData: GameData) {

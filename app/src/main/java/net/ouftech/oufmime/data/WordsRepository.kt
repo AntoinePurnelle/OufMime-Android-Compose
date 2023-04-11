@@ -24,7 +24,6 @@ interface WordsRepository {
         count: Int,
         language: String
     ): List<Word>
-
 }
 
 class WordsRepositoryImpl(private val dao: WordsDao) : WordsRepository {

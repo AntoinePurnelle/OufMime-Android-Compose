@@ -19,7 +19,9 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.annotation.RawRes
 
-fun Context.playSound(@RawRes soundResId: Int): MediaPlayer? =
+fun Context.playSound(@RawRes soundResId: Int): MediaPlayer? = createMediaPlayer(soundResId).apply { this?.start() }
+
+fun Context.createMediaPlayer(@RawRes soundResId: Int): MediaPlayer? = try {
     MediaPlayer.create(this, soundResId).apply {
         setAudioAttributes(
             AudioAttributes.Builder()
@@ -29,6 +31,7 @@ fun Context.playSound(@RawRes soundResId: Int): MediaPlayer? =
         )
 
         setOnCompletionListener { release() }
-
-        start()
     }
+} catch (_: UnsupportedOperationException) {
+    null
+}

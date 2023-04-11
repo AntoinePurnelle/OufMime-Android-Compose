@@ -1,6 +1,10 @@
 package net.ouftech.oufmime.data
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateMap
 
 class GameData {
     var currentTeam by mutableStateOf(-1)
@@ -27,4 +31,7 @@ class GameData {
         wordsToPlay.clear()
         wordsToPlay.addAll(words.shuffled())
     }
+
+    val hasMoreRounds
+        get() = currentRound < 2
 }

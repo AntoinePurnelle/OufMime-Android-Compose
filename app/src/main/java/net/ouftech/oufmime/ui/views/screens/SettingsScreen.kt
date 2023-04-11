@@ -16,14 +16,24 @@ package net.ouftech.oufmime.ui.views.screens
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Checkbox
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +45,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories
-import net.ouftech.oufmime.ui.theme.*
+import net.ouftech.oufmime.ui.theme.ButtonsTextSize
+import net.ouftech.oufmime.ui.theme.Dimens
+import net.ouftech.oufmime.ui.theme.ExpandedDimens
+import net.ouftech.oufmime.ui.theme.MediumDimens
+import net.ouftech.oufmime.ui.theme.OufMimeTheme
 import net.ouftech.oufmime.ui.views.library.FullScreenColumn
 import net.ouftech.oufmime.ui.views.library.FullScreenRow
 import net.ouftech.oufmime.ui.views.library.SizedButton
@@ -43,12 +57,9 @@ import net.ouftech.oufmime.utils.LanguageUtils
 
 @Composable
 fun SettingsScreen(
-    dimens: Dimens,
-    selectedCategories: Map<String, Boolean>,
-    wordsCount: Int,
-    timerTotalTime: Long,
+    uiState: SettingsScreenUiState,
     listener: SettingsScreenListener
-) {
+) = with(uiState) {
     if (dimens.isExpandedScreen) {
         FullScreenRow {
             CategoriesPickerView(
@@ -224,10 +235,7 @@ private fun CategoryCheckbox(
 private fun SettingsPreviewPhone() {
     OufMimeTheme {
         SettingsScreen(
-            dimens = MediumDimens,
-            selectedCategories = stubCategories,
-            wordsCount = 40,
-            timerTotalTime = 40,
+            uiState = getStubSettingsScreenUiState(MediumDimens),
             listener = stubSettingsScreenListener,
         )
     }
@@ -238,14 +246,25 @@ private fun SettingsPreviewPhone() {
 private fun SettingsPreviewTablet() {
     OufMimeTheme {
         SettingsScreen(
-            dimens = ExpandedDimens,
-            selectedCategories = stubCategories,
-            wordsCount = 40,
-            timerTotalTime = 40,
+            uiState = getStubSettingsScreenUiState(ExpandedDimens),
             listener = stubSettingsScreenListener,
         )
     }
 }
+
+data class SettingsScreenUiState(
+    val dimens: Dimens,
+    val selectedCategories: Map<String, Boolean>,
+    val wordsCount: Int,
+    val timerTotalTime: Long,
+)
+
+private fun getStubSettingsScreenUiState(dimens: Dimens) = SettingsScreenUiState(
+    dimens = dimens,
+    selectedCategories = Categories.values().map { it.name to true }.toMutableStateMap(),
+    wordsCount = 40,
+    timerTotalTime = 40,
+)
 
 private val stubSettingsScreenListener
     get() = object : SettingsScreenListener {
@@ -253,9 +272,6 @@ private val stubSettingsScreenListener
         override fun onStartClick(wordsCount: Int, timerTotalTime: Long) = Unit
         override fun onLanguageClick() = Unit
     }
-
-private val stubCategories
-    get() = Categories.values().map { it.name to true }.toMutableStateMap()
 
 interface SettingsScreenListener {
     fun onCategoryClick(category: String, selected: Boolean)

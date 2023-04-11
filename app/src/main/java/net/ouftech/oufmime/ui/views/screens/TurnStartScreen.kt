@@ -36,9 +36,7 @@ import net.ouftech.oufmime.ui.views.library.SizedButton
 
 @Composable
 fun TurnStartScreen(
-    model: TurnStartUiModel,
-    dimens: Dimens,
-    invertColors: Boolean,
+    model: TurnStartUiState,
     onStartClick: () -> Unit,
 ) {
     val roundName = stringResource(
@@ -55,8 +53,8 @@ fun TurnStartScreen(
             team1CurrentRoundScore = model.blueCurrentRoundScore,
             team2TotalScore = model.orangeTotalScore,
             team2CurrentRoundScore = model.orangeCurrentRoundScore,
-            dimens = dimens,
-            invertColors = invertColors
+            dimens = model.dimens,
+            currentTeam = model.currentTeam
         )
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -66,13 +64,13 @@ fun TurnStartScreen(
                     model.currentRound + 1
                 ),
                 color = White,
-                fontSize = dimens.titleText,
-                textAlign = TextAlign.Center
+                fontSize = model.dimens.titleText,
+                textAlign = TextAlign.Center,
             )
             Text(
                 text = roundName.uppercase(),
                 color = White,
-                fontSize = dimens.titleText,
+                fontSize = model.dimens.titleText,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
@@ -84,7 +82,7 @@ fun TurnStartScreen(
                 id = R.string.team_x_plays,
                 stringResource(id = model.teamNameId)
             ),
-            dimens = dimens
+            dimens = model.dimens
         )
     }
 }
@@ -94,12 +92,12 @@ fun TurnStartScreen(
     backgroundColor = 0xFFFF6F00,
     name = "TurnStart - Phone",
     device = Devices.PIXEL_4,
-    locale = "fr"
+    locale = "fr",
 )
 @Composable
 private fun TurnStartPreviewPhone() {
     OufMimeTheme {
-        TurnStartScreen(stubTurnStartUiModel, MediumDimens, false) {}
+        TurnStartScreen(getStubTurnStartUiModel(MediumDimens)) {}
     }
 }
 
@@ -112,11 +110,13 @@ private fun TurnStartPreviewPhone() {
 @Composable
 private fun TurnStartPreviewTablet() {
     OufMimeTheme {
-        TurnStartScreen(stubTurnStartUiModel, ExpandedDimens, false) {}
+        TurnStartScreen(getStubTurnStartUiModel(ExpandedDimens)) {}
     }
 }
 
-data class TurnStartUiModel(
+data class TurnStartUiState(
+    val dimens: Dimens,
+    val currentTeam: Int,
     val currentRound: Int,
     @StringRes val teamNameId: Int,
     val blueTotalScore: Int,
@@ -125,5 +125,4 @@ data class TurnStartUiModel(
     val orangeCurrentRoundScore: Int,
 )
 
-private val stubTurnStartUiModel
-    get() = TurnStartUiModel(0, R.string.team_blue, 4, 2, 6, 3)
+private fun getStubTurnStartUiModel(dimens: Dimens = MediumDimens) = TurnStartUiState(dimens, 0, 0, R.string.team_blue, 4, 2, 6, 3)

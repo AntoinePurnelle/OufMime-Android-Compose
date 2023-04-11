@@ -15,37 +15,45 @@
 package net.ouftech.oufmime.ui.theme
 
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color.Companion.White
 
-private val InvertColorPalette = darkColors(
-    primary = Accent,
-    primaryVariant = AccentTransparent,
-    secondary = Primary,
+private val NoTeamColorPalette = lightColors(
+    primary = Orange,
+    primaryVariant = OrangeVariant,
+    secondary = White,
+    secondaryVariant = BlueVariant,
+    background = DarkerGray,
 )
 
-private val LightColorPalette = lightColors(
-    primary = Primary,
-    primaryVariant = PrimaryDark,
-    secondary = Accent,
+private val Team0ColorPalette = lightColors(
+    primary = Orange,
+    primaryVariant = OrangeVariant,
+    secondary = Blue,
+    secondaryVariant = BlueVariant,
+    background = Orange,
+)
+
+private val Team1ColorPalette = lightColors(
+    primary = Blue,
+    primaryVariant = BlueVariant,
+    secondary = Orange,
+    secondaryVariant = OrangeVariant,
+    background = Blue,
 )
 
 @Composable
 fun OufMimeTheme(
-    invert: Boolean = false,
+    colorPalette: Int = 0,
     content: @Composable () -> Unit
-) {
-    val colors = if (invert) {
-        InvertColorPalette
-    } else {
-        LightColorPalette
-    }
-
-    MaterialTheme(
-        colors = colors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
-}
+) = MaterialTheme(
+    colors = when (colorPalette) {
+        0 -> Team0ColorPalette
+        1 -> Team1ColorPalette
+        else -> NoTeamColorPalette
+    },
+    typography = Typography,
+    shapes = Shapes,
+    content = content
+)

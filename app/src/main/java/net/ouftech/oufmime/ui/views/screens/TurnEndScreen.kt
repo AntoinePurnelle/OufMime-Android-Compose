@@ -16,7 +16,15 @@ package net.ouftech.oufmime.ui.views.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -29,6 +37,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.stringResource
@@ -38,27 +48,35 @@ import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories
 import net.ouftech.oufmime.data.Word
-import net.ouftech.oufmime.ui.theme.*
-import net.ouftech.oufmime.ui.views.library.*
+import net.ouftech.oufmime.ui.theme.Accent
+import net.ouftech.oufmime.ui.theme.Dimens
+import net.ouftech.oufmime.ui.theme.ExpandedDimens
+import net.ouftech.oufmime.ui.theme.Green
+import net.ouftech.oufmime.ui.theme.MediumDimens
+import net.ouftech.oufmime.ui.theme.OufMimeTheme
+import net.ouftech.oufmime.ui.theme.Red
+import net.ouftech.oufmime.ui.views.library.AppIcon
+import net.ouftech.oufmime.ui.views.library.FullScreenColumn
+import net.ouftech.oufmime.ui.views.library.FullWidthRow
+import net.ouftech.oufmime.ui.views.library.ScoreBoardView
+import net.ouftech.oufmime.ui.views.library.SizedButton
 
 @Composable
 fun TurnEndScreen(
-    wordsPlayed: List<Pair<Word, Boolean>>,
-    dimens: Dimens,
+    model: TurnEndUiState,
     onWordChange: (Pair<Word, Boolean>) -> Unit,
     onNextClick: () -> Unit,
-    invertColors: Boolean
-) {
+) = with(model) {
     FullScreenColumn {
         val scoreBoard = getTurnEndScoreboardView(
             wordsPlayed = wordsPlayed,
             dimens = dimens,
-            invertColors = invertColors
+            currentTeam = currentTeam
         )
 
         if (dimens.isExpandedScreen) {
             TabletTurnEndView(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(0.8f),
                 scoreBoard = scoreBoard,
                 wordsPlayed = wordsPlayed,
                 dimens = dimens,
@@ -66,7 +84,7 @@ fun TurnEndScreen(
             )
         } else {
             PhoneTurnEndView(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(0.8f),
                 scoreBoard = scoreBoard,
                 wordsPlayed = wordsPlayed,
                 dimens = dimens,
@@ -74,11 +92,14 @@ fun TurnEndScreen(
             )
         }
 
-        SizedButton(
-            text = stringResource(id = R.string.next),
-            onClick = onNextClick,
-            dimens = MediumDimens
-        )
+        Box(modifier = Modifier.weight(0.1f)) {
+            SizedButton(
+                modifier = Modifier.align(Alignment.Center),
+                text = stringResource(id = R.string.next),
+                onClick = onNextClick,
+                dimens = MediumDimens
+            )
+        }
     }
 }
 
@@ -134,14 +155,14 @@ private fun TabletTurnEndView(
 private fun getTurnEndScoreboardView(
     wordsPlayed: List<Pair<Word, Boolean>>,
     dimens: Dimens,
-    invertColors: Boolean
+    currentTeam: Int,
 ): @Composable () -> Unit {
     val foundWordsCount = wordsPlayed.count { it.second }
     val missedWordsCount = wordsPlayed.count { !it.second }
 
     return {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            AppIcon(dimens = dimens, inverted = invertColors)
+            AppIcon(dimens = dimens, currentTeam = currentTeam)
 
             ScoreBoardView(
                 topLabel = stringResource(id = R.string.found),
@@ -149,7 +170,7 @@ private fun getTurnEndScoreboardView(
                 middleLabel = stringResource(id = R.string.missed),
                 middleScore = missedWordsCount,
                 dimens = dimens,
-                color = White
+                color = Accent
             )
         }
     }
@@ -162,10 +183,14 @@ private fun WordsListView(
     dimens: Dimens,
     onWordChange: (Pair<Word, Boolean>) -> Unit
 ) {
+    val boxShape = RoundedCornerShape(20.dp)
+
     LazyColumn(
         modifier = modifier
             .padding(vertical = dimens.paddingXLarge)
-            .background(color = White, shape = RoundedCornerShape(8.dp))
+            .shadow(dimens.defaultShadow, boxShape)
+            .clip(boxShape)
+            .background(color = White, shape = boxShape)
     ) {
         items(wordsPlayed) { word ->
             WordPlayedView(word = word, dimens = dimens, onClick = onWordChange)
@@ -178,12 +203,7 @@ private fun WordsListView(
 private fun TurnEndScreenPreviewPhone() {
     OufMimeTheme {
         TurnEndScreen(
-            wordsPlayed = listOf(
-                Pair(Word("Squid", Categories.ANIMALS, "en"), true),
-                Pair(Word("Blue Bear", Categories.ANIMALS, "en"), false)
-            ),
-            dimens = MediumDimens,
-            invertColors = false,
+            model = getStubUiModel(MediumDimens),
             onWordChange = { },
             onNextClick = { }
         )
@@ -195,12 +215,7 @@ private fun TurnEndScreenPreviewPhone() {
 private fun TurnEndScreenPreviewTablet() {
     OufMimeTheme {
         TurnEndScreen(
-            wordsPlayed = listOf(
-                Pair(Word("Squid", Categories.ANIMALS, "en"), true),
-                Pair(Word("Blue Bear", Categories.ANIMALS, "en"), false)
-            ),
-            dimens = ExpandedDimens,
-            invertColors = false,
+            model = getStubUiModel(ExpandedDimens),
             onWordChange = { },
             onNextClick = { }
         )
@@ -246,3 +261,18 @@ private fun WordPlayedPreview() {
         )
     }
 }
+
+data class TurnEndUiState(
+    val dimens: Dimens,
+    val currentTeam: Int,
+    val wordsPlayed: List<Pair<Word, Boolean>>,
+)
+
+private fun getStubUiModel(dimens: Dimens = MediumDimens) = TurnEndUiState(
+    dimens = dimens,
+    currentTeam = 0,
+    wordsPlayed = listOf(
+        Pair(Word("Squid", Categories.ANIMALS, "en"), true),
+        Pair(Word("Blue Bear", Categories.ANIMALS, "en"), false)
+    ),
+)
