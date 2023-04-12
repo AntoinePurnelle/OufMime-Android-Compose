@@ -34,6 +34,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import net.ouftech.oufmime.R
+import net.ouftech.oufmime.ui.model.MainActivityViewModel
 import net.ouftech.oufmime.ui.theme.BlueTeam
 import net.ouftech.oufmime.ui.theme.ExpandedDimens
 import net.ouftech.oufmime.ui.theme.MediumDimens
@@ -51,6 +52,7 @@ import net.ouftech.oufmime.ui.views.screens.WelcomeScreen
 import net.ouftech.oufmime.utils.LanguageUtils
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@Suppress("TooManyFunctions")
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainActivityViewModel by viewModel()

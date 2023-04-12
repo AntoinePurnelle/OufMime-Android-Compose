@@ -12,7 +12,7 @@
 * limitations under the License.
 */
 
-package net.ouftech.oufmime.ui
+package net.ouftech.oufmime.ui.model
 
 import android.app.Application
 import androidx.annotation.VisibleForTesting
@@ -20,15 +20,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.ouftech.oufmime.data.GameData
 import net.ouftech.oufmime.data.Word
-import net.ouftech.oufmime.data.WordsAccessUseCase
+import net.ouftech.oufmime.data.usecases.GetRandomWordsInCategoriesUseCase
+import net.ouftech.oufmime.data.usecases.InsertWordsUseCase
 import net.ouftech.oufmime.ui.theme.Dimens
 import net.ouftech.oufmime.utils.Logger
 
 @SuppressWarnings("TooManyFunctions")
 class MainActivityViewModel(
-    private val wordsAccessUseCase: WordsAccessUseCase,
+    private val insertWordsUseCase: InsertWordsUseCase,
+    private val getRandomWordsInCategoriesUseCase: GetRandomWordsInCategoriesUseCase,
     private val transformer: GameDataToUiStateTransformer,
     private val logger: Logger,
 ) : ViewModel() {
@@ -38,14 +39,14 @@ class MainActivityViewModel(
         private set
 
     fun init(application: Application) = viewModelScope.launch {
-        wordsAccessUseCase.insertWords(application.applicationContext)
+        insertWordsUseCase(application.applicationContext)
     }
 
     // region Game Lifecycle
 
     fun initGame() = with(gameData) {
         runBlocking {
-            words = wordsAccessUseCase.getRandomWordsInCategories(selectedCategories, wordsCount)
+            words = getRandomWordsInCategoriesUseCase(selectedCategories, wordsCount).words.toMutableList()
             logger.d("Selected Words (${words.size}) $words")
 
             currentRound = 0

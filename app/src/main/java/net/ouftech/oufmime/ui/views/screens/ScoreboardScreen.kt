@@ -13,6 +13,7 @@
 */
 
 @file:Suppress("TooManyFunctions")
+
 package net.ouftech.oufmime.ui.views.screens
 
 import androidx.compose.foundation.clickable
@@ -38,8 +39,6 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
-import net.ouftech.oufmime.ext.circleShadowedBackground
-import net.ouftech.oufmime.ext.roundedRectShadowedBackground
 import net.ouftech.oufmime.ui.theme.Accent
 import net.ouftech.oufmime.ui.theme.BlueTeamAccent
 import net.ouftech.oufmime.ui.theme.Dimens
@@ -51,6 +50,8 @@ import net.ouftech.oufmime.ui.views.library.FullScreenBox
 import net.ouftech.oufmime.ui.views.library.FullScreenColumn
 import net.ouftech.oufmime.ui.views.library.FullWidthRow
 import net.ouftech.oufmime.ui.views.library.SizedButton
+import net.ouftech.oufmime.utils.circleShadowedBackground
+import net.ouftech.oufmime.utils.roundedRectShadowedBackground
 
 @Composable
 fun ScoreboardScreen(
@@ -61,7 +62,6 @@ fun ScoreboardScreen(
 } else {
     PhoneScoreboardScreen(uiState, onNextClick)
 }
-
 
 @Composable
 private fun TabletScoreboardScreen(

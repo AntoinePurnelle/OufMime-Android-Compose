@@ -1,4 +1,4 @@
-package net.ouftech.oufmime.ext
+package net.ouftech.oufmime.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape

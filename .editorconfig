@@ -9,7 +9,7 @@ indent_size = unset
 
 # noinspection EditorConfigKeyCorrectness
 [*.{kt, kts}]
-ktlint_disabled_rules = import-ordering, no-wildcard-imports, trailing-comma-on-declaration-site, trailing-comma-on-call-site
+ktlint_disabled_rules = import-ordering, no-wildcard-imports, trailing-comma-on-declaration-site, trailing-comma-on-call-site, standard:no-blank-line-before-rbrace
 
 # noinspection EditorConfigKeyCorrectness
 [*.gradle.kts]

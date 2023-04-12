@@ -71,10 +71,6 @@ import kotlinx.coroutines.launch
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.data.Categories.ANIMALS
 import net.ouftech.oufmime.data.Word
-import net.ouftech.oufmime.ext.circleShadowedBackground
-import net.ouftech.oufmime.ext.createMediaPlayer
-import net.ouftech.oufmime.ext.playSound
-import net.ouftech.oufmime.ext.roundedRectShadowedBackground
 import net.ouftech.oufmime.ui.theme.Accent
 import net.ouftech.oufmime.ui.theme.AccentTransparent
 import net.ouftech.oufmime.ui.theme.Blue
@@ -89,6 +85,10 @@ import net.ouftech.oufmime.ui.theme.OufMimeTheme
 import net.ouftech.oufmime.ui.theme.Red
 import net.ouftech.oufmime.ui.views.library.FullScreenColumn
 import net.ouftech.oufmime.ui.views.library.FullWidthRow
+import net.ouftech.oufmime.utils.circleShadowedBackground
+import net.ouftech.oufmime.utils.createMediaPlayer
+import net.ouftech.oufmime.utils.playSound
+import net.ouftech.oufmime.utils.roundedRectShadowedBackground
 
 @Composable
 fun PlayScreen(

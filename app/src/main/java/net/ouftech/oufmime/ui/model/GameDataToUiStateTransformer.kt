@@ -1,8 +1,7 @@
-package net.ouftech.oufmime.ui
+package net.ouftech.oufmime.ui.model
 
 import androidx.compose.ui.graphics.Color
 import net.ouftech.oufmime.R
-import net.ouftech.oufmime.data.GameData
 import net.ouftech.oufmime.ui.theme.BlueTeam
 import net.ouftech.oufmime.ui.theme.Dimens
 import net.ouftech.oufmime.ui.theme.OrangeTeam

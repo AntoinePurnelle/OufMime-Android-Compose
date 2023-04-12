@@ -12,27 +12,39 @@
 * limitations under the License.
 */
 
-package net.ouftech.oufmime.data
+package net.ouftech.oufmime.data.usecases
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.catch
+import net.ouftech.oufmime.data.Categories
+import net.ouftech.oufmime.data.DataStoreManager
+import net.ouftech.oufmime.data.TranslatedWords
+import net.ouftech.oufmime.data.Word
+import net.ouftech.oufmime.data.WordLists
+import net.ouftech.oufmime.data.WordsRepository
 import net.ouftech.oufmime.utils.Logger
 import java.io.IOException
-import java.util.Locale
 
-interface WordsAccessUseCase {
-    suspend fun insertWords(context: Context)
-    suspend fun getRandomWordsInCategories(categories: Map<String, Boolean>, count: Int): MutableList<Word>
+interface InsertWordsUseCase {
+
+    suspend operator fun invoke(context: Context): Result
+
+    sealed interface Result {
+        object Success : Result
+        data class Error(val error: Exception) : Result
+    }
+
 }
 
-class WordsAccessUseCaseImpl(
+class InsertWordsUseCaseImpl(
     private val repository: WordsRepository,
     private val dataStoreManager: DataStoreManager,
     private val logger: Logger,
-) : WordsAccessUseCase {
+) : InsertWordsUseCase {
 
-    override suspend fun insertWords(context: Context) {
+    override suspend operator fun invoke(context: Context) = try {
         val jsonFileString = getJsonDataFromAsset(context)
 
         val words = Gson().fromJson(jsonFileString, WordLists::class.java)
@@ -49,6 +61,10 @@ class WordsAccessUseCaseImpl(
 
             logger.d("All Words (${allWords.size}) $allWords")
         }
+
+        InsertWordsUseCase.Result.Success
+    } catch (e: IOException) {
+        InsertWordsUseCase.Result.Error(e)
     }
 
     private suspend fun insertLanguageWords(language: String, words: TranslatedWords) {
@@ -73,18 +89,9 @@ class WordsAccessUseCaseImpl(
     private suspend fun insertListOfWords(category: Categories, wordsToSort: List<String>, language: String) =
         repository.insertWords(wordsToSort.map { Word(it, category, language) })
 
-    private fun getJsonDataFromAsset(context: Context) =
-        try {
-            context.assets.open("words.json").bufferedReader().use { it.readText() }
-        } catch (ioException: IOException) {
-            logger.e(ioException)
-            null
-        }
+    private fun getJsonDataFromAsset(context: Context) = context.assets.open(FILE_NAME).bufferedReader().use { it.readText() }
 
-    override suspend fun getRandomWordsInCategories(categories: Map<String, Boolean>, count: Int) =
-        repository.getRandomWordsInCategories(
-            categories.filter { it.value }.keys.toList(),
-            count,
-            Locale.getDefault().language
-        ).toMutableList()
+    companion object {
+        @VisibleForTesting const val FILE_NAME = "words.json"
+    }
 }

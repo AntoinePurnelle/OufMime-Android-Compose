@@ -12,7 +12,7 @@
 * limitations under the License.
 */
 
-package net.ouftech.oufmime.ext
+package net.ouftech.oufmime.utils
 
 import android.content.Context
 import android.media.AudioAttributes

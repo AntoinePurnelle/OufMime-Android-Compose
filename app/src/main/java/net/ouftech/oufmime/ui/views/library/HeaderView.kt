@@ -33,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.ouftech.oufmime.R
-import net.ouftech.oufmime.ext.roundedRectShadowedBackground
 import net.ouftech.oufmime.ui.theme.Accent
 import net.ouftech.oufmime.ui.theme.BlueTeam
 import net.ouftech.oufmime.ui.theme.Dimens
@@ -41,6 +40,7 @@ import net.ouftech.oufmime.ui.theme.ExpandedDimens
 import net.ouftech.oufmime.ui.theme.MediumDimens
 import net.ouftech.oufmime.ui.theme.OrangeTeam
 import net.ouftech.oufmime.ui.theme.OufMimeTheme
+import net.ouftech.oufmime.utils.roundedRectShadowedBackground
 
 @Composable
 fun HeaderView(

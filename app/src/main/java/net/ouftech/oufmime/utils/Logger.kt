@@ -20,5 +20,4 @@ class Logger {
         Log.e(callerClass, t.toString())
     }
 
-
 }

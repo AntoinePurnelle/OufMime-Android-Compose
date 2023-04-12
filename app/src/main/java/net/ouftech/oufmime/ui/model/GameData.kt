@@ -1,10 +1,12 @@
-package net.ouftech.oufmime.data
+package net.ouftech.oufmime.ui.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateMap
+import net.ouftech.oufmime.data.Categories
+import net.ouftech.oufmime.data.Word
 
 class GameData {
     var currentTeam by mutableStateOf(-1)
