@@ -14,32 +14,32 @@
 
 package net.ouftech.oufmime.ui.theme
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.lightColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color.Companion.White
 
-private val NoTeamColorPalette = lightColors(
+private val NoTeamColorPalette = lightColorScheme(
     primary = Orange,
-    primaryVariant = OrangeVariant,
-    secondary = White,
-    secondaryVariant = BlueVariant,
+    secondary = OrangeVariant,
+    tertiary = White,
+    onTertiary = Blue,
     background = DarkerGray,
 )
 
-private val Team0ColorPalette = lightColors(
+private val Team0ColorPalette = lightColorScheme(
     primary = Orange,
-    primaryVariant = OrangeVariant,
-    secondary = Blue,
-    secondaryVariant = BlueVariant,
+    secondary = OrangeVariant,
+    tertiary = Blue,
+    onTertiary = White,
     background = Orange,
 )
 
-private val Team1ColorPalette = lightColors(
+private val Team1ColorPalette = lightColorScheme(
     primary = Blue,
-    primaryVariant = BlueVariant,
-    secondary = Orange,
-    secondaryVariant = OrangeVariant,
+    secondary = BlueVariant,
+    tertiary = Orange,
+    onTertiary = White,
     background = Blue,
 )
 
@@ -48,7 +48,7 @@ fun OufMimeTheme(
     colorPalette: Int = 0,
     content: @Composable () -> Unit
 ) = MaterialTheme(
-    colors = when (colorPalette) {
+    colorScheme = when (colorPalette) {
         0 -> Team0ColorPalette
         1 -> Team1ColorPalette
         else -> NoTeamColorPalette

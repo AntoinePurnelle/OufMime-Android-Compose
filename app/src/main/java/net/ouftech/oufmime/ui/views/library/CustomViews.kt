@@ -30,16 +30,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
@@ -59,13 +58,13 @@ fun SizedButton(
     onClick: () -> Unit,
     text: String,
     textSize: ButtonsTextSize = MEDIUM,
-    textColor: Color = White,
-    backgroundColor: Color = MaterialTheme.colors.secondary,
+    textColor: Color = MaterialTheme.colorScheme.onTertiary,
+    backgroundColor: Color = MaterialTheme.colorScheme.tertiary,
     dimens: Dimens
 ) = Button(
     modifier = modifier,
     onClick = onClick,
-    colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor),
+    colors = ButtonDefaults.buttonColors(containerColor = backgroundColor),
     shape = RoundedCornerShape(50)
 ) {
     Text(
@@ -73,7 +72,7 @@ fun SizedButton(
         text = text.toUpperCase(Locale.current),
         color = textColor,
         fontSize = dimens.buttonDimens[textSize]!!,
-        style = MaterialTheme.typography.button,
+        style = MaterialTheme.typography.labelLarge,
         textAlign = TextAlign.Center
     )
 }
@@ -139,7 +138,7 @@ fun AppIcon(
             modifier = Modifier
                 .size(dimens.iconMedium)
                 .padding(dimens.paddingLarge)
-                .background(shape = CircleShape, color = MaterialTheme.colors.primary)
+                .background(shape = CircleShape, color = MaterialTheme.colorScheme.primary)
         )
 
         Icon(
@@ -163,7 +162,24 @@ fun AppIcon(
 
 @Preview
 @Composable
-private fun AppIconPreviewTeam0() {
+private fun SizedButtonPreviews() {
+    Column {
+        OufMimeTheme(colorPalette = 0) {
+            SizedButton(text = "Sized Button", onClick = {}, dimens = MediumDimens)
+        }
+        OufMimeTheme(colorPalette = 1) {
+            SizedButton(text = "Sized Button", onClick = {}, dimens = MediumDimens)
+        }
+        OufMimeTheme(colorPalette = -1) {
+            SizedButton(text = "Sized Button", onClick = {}, dimens = MediumDimens)
+        }
+    }
+
+}
+
+@Preview
+@Composable
+private fun AppIconPreviews() {
     Column {
         OufMimeTheme(colorPalette = 0) {
             AppIcon(dimens = MediumDimens, currentTeam = 0)
