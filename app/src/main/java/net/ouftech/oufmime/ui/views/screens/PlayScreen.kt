@@ -17,6 +17,7 @@
 package net.ouftech.oufmime.ui.views.screens
 
 import android.os.CountDownTimer
+import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
@@ -38,9 +39,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -58,8 +56,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -329,7 +327,7 @@ private fun ButtonsRow(
     AnswerButton(
         sound = R.raw.word_wrong,
         color = Red,
-        imageVector = Icons.Default.Close,
+        iconRes = R.drawable.ic_cross,
         contentDescription = stringResource(id = R.string.missed),
         dimens = dimens,
         onCLick = { onWordPlayed(false, false) }
@@ -338,7 +336,7 @@ private fun ButtonsRow(
     AnswerButton(
         sound = R.raw.word_ok,
         color = Green,
-        imageVector = Icons.Default.Check,
+        iconRes = R.drawable.ic_check,
         contentDescription = stringResource(id = R.string.found),
         dimens = dimens,
         onCLick = { onWordPlayed(true, false) }
@@ -349,7 +347,7 @@ private fun ButtonsRow(
 private fun AnswerButton(
     @RawRes sound: Int,
     color: Color,
-    imageVector: ImageVector,
+    @DrawableRes iconRes: Int,
     contentDescription: String?,
     dimens: Dimens,
     onCLick: () -> Unit
@@ -381,8 +379,10 @@ private fun AnswerButton(
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            modifier = Modifier.size(dimens.bigIconButton),
-            imageVector = imageVector,
+            modifier = Modifier
+                .padding(dimens.paddingLarge)
+                .fillMaxSize(),
+            painter = painterResource(id = iconRes),
             contentDescription = contentDescription,
             tint = White
         )
