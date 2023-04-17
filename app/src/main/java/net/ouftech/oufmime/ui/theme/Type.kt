@@ -26,7 +26,7 @@ val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily(Font(R.font.nunito)),
         fontWeight = FontWeight.Medium,
-        fontSize = MediumDimens.bodyText
+        fontSize = MediumDimens.bodyLarge
     ),
     labelLarge = TextStyle(
         fontFamily = FontFamily(Font(R.font.nunito)),

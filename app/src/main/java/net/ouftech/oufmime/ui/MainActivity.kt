@@ -18,13 +18,13 @@ import android.app.AlertDialog
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -35,20 +35,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.ui.model.MainActivityViewModel
-import net.ouftech.oufmime.ui.theme.BlueTeam
-import net.ouftech.oufmime.ui.theme.ExpandedDimens
-import net.ouftech.oufmime.ui.theme.MediumDimens
-import net.ouftech.oufmime.ui.theme.OrangeTeam
-import net.ouftech.oufmime.ui.theme.OufMimeTheme
-import net.ouftech.oufmime.ui.views.WindowSize
-import net.ouftech.oufmime.ui.views.rememberWindowSizeClass
-import net.ouftech.oufmime.ui.views.screens.PlayScreen
-import net.ouftech.oufmime.ui.views.screens.ScoreboardScreen
-import net.ouftech.oufmime.ui.views.screens.SettingsScreen
-import net.ouftech.oufmime.ui.views.screens.SettingsScreenListener
-import net.ouftech.oufmime.ui.views.screens.TurnEndScreen
-import net.ouftech.oufmime.ui.views.screens.TurnStartScreen
-import net.ouftech.oufmime.ui.views.screens.WelcomeScreen
+import net.ouftech.oufmime.ui.theme.ScreenConfiguration
+import net.ouftech.oufmime.ui.theme.ScreenConfiguredTheme
+import net.ouftech.oufmime.ui.views.screens.play.PlayScreen
+import net.ouftech.oufmime.ui.views.screens.scoreboard.ScoreboardScreen
+import net.ouftech.oufmime.ui.views.screens.settings.SettingsScreen
+import net.ouftech.oufmime.ui.views.screens.settings.SettingsScreenListener
+import net.ouftech.oufmime.ui.views.screens.turnend.TurnEndScreen
+import net.ouftech.oufmime.ui.views.screens.turnstart.TurnStartScreen
+import net.ouftech.oufmime.ui.views.screens.welcome.WelcomeScreen
 import net.ouftech.oufmime.utils.LanguageUtils
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -58,6 +53,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainActivityViewModel by viewModel()
     private lateinit var navController: NavHostController
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.init(application)
@@ -65,17 +61,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             LanguageUtils.updateResources(LocalContext.current)
 
-            viewModel.updateDimens(if (rememberWindowSizeClass() == WindowSize.Expanded) ExpandedDimens else MediumDimens)
             navController = rememberNavController()
-
             hideSystemUI()
 
-            OufMimeTheme(viewModel.colorPalette) {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    if (viewModel.colorPalette == -1) {
-                        NoTeamBackground()
-                    }
-
+            ScreenConfiguredTheme(ScreenConfiguration(calculateWindowSizeClass(this)), viewModel.colors) {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
                     NavHost(navController = navController, startDestination = WELCOME_SCREEN) {
                         composable(WELCOME_SCREEN) { NavWelcomeScreen() }
                         composable(TURN_START_SCREEN) { NavTurnStartScreen() }
@@ -86,19 +76,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }
-    }
-
-    @Composable
-    private fun NoTeamBackground() = Canvas(modifier = Modifier.fillMaxSize()) {
-        if (viewModel.dimens.isExpandedScreen) {
-            val midScreen = size.width / 2
-            drawRect(color = OrangeTeam, size = size.copy(width = midScreen))
-            drawRect(color = BlueTeam, topLeft = Offset(y = 0f, x = midScreen), size = size.copy(width = midScreen))
-        } else {
-            val midScreen = size.height / 2
-            drawRect(color = OrangeTeam, size = size.copy(height = midScreen))
-            drawRect(color = BlueTeam, topLeft = Offset(y = midScreen, x = 0f), size = size.copy(height = midScreen))
         }
     }
 
@@ -119,7 +96,6 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun NavWelcomeScreen() = WelcomeScreen(
-        dimens = viewModel.dimens,
         onStartClick = { startGame() },
         onSettingsClick = { navController.navigate(SETTINGS_SCREEN) }
     )
@@ -149,7 +125,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun NavTurnEndScreen() = TurnEndScreen(
-        model = viewModel.getTurnEndUiState(),
+        uiState = viewModel.getTurnEndUiState(),
         onWordChange = { changedWord -> viewModel.changeValueInPlayedWords(changedWord) },
         onNextClick = {
             viewModel.finishTurn()

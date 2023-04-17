@@ -16,6 +16,7 @@ package net.ouftech.oufmime.ui.model
 
 import android.app.Application
 import androidx.annotation.VisibleForTesting
+import androidx.compose.material3.ColorScheme
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -23,7 +24,9 @@ import kotlinx.coroutines.runBlocking
 import net.ouftech.oufmime.data.Word
 import net.ouftech.oufmime.data.usecases.GetRandomWordsInCategoriesUseCase
 import net.ouftech.oufmime.data.usecases.InsertWordsUseCase
-import net.ouftech.oufmime.ui.theme.Dimens
+import net.ouftech.oufmime.ui.theme.NoTeamColors
+import net.ouftech.oufmime.ui.theme.TeamBlueColors
+import net.ouftech.oufmime.ui.theme.TeamOrangeColors
 import net.ouftech.oufmime.utils.Logger
 
 @SuppressWarnings("TooManyFunctions")
@@ -35,8 +38,6 @@ class MainActivityViewModel(
 ) : ViewModel() {
 
     private var gameData = GameData()
-    var dimens: Dimens = Dimens()
-        private set
 
     fun init(application: Application) = viewModelScope.launch {
         insertWordsUseCase(application.applicationContext)
@@ -131,24 +132,23 @@ class MainActivityViewModel(
     val hasMoreRounds
         get() = gameData.hasMoreRounds
 
-    val colorPalette: Int
+    val colors: ColorScheme
         get() = when {
-            gameData.currentRoundFinished -> -1
-            else -> gameData.currentTeam
+            gameData.currentRoundFinished -> NoTeamColors
+            gameData.currentTeam == 0 -> TeamOrangeColors
+            gameData.currentTeam == 1 -> TeamBlueColors
+            else -> NoTeamColors
         }
 
-    fun getTurnStartUiState() = transformer.getTurnStartUiState(gameData, dimens)
+    fun getTurnStartUiState() = transformer.getTurnStartUiState(gameData)
 
-    fun getPlayScreenUiState() = transformer.getPlayScreenUiState(gameData, dimens)
+    fun getPlayScreenUiState() = transformer.getPlayScreenUiState(gameData)
 
-    fun getTurnEndUiState() = transformer.getTurnEndUiState(gameData, dimens)
+    fun getTurnEndUiState() = transformer.getTurnEndUiState(gameData)
 
-    fun getScoreboardScreenUiState() = transformer.getScoreboardScreenUiState(gameData, dimens)
+    fun getScoreboardScreenUiState() = transformer.getScoreboardScreenUiState(gameData)
 
-    fun getSettingsScreenUiState() = transformer.getSettingsScreenUiState(gameData, dimens)
-    fun updateDimens(dimens: Dimens) {
-        this.dimens = dimens
-    }
+    fun getSettingsScreenUiState() = transformer.getSettingsScreenUiState(gameData)
 
     @VisibleForTesting
     fun replaceGameData(gameData: GameData) {

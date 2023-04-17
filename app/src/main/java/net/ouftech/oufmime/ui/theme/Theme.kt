@@ -14,46 +14,61 @@
 
 package net.ouftech.oufmime.ui.theme
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 
-private val NoTeamColorPalette = lightColorScheme(
+val NoTeamColors = lightColorScheme(
     primary = Orange,
     secondary = OrangeVariant,
     tertiary = White,
     onTertiary = Blue,
-    background = DarkerGray,
+    surface = Black,
+    background = White
 )
 
-private val Team0ColorPalette = lightColorScheme(
+val TeamOrangeColors = lightColorScheme(
     primary = Orange,
     secondary = OrangeVariant,
     tertiary = Blue,
     onTertiary = White,
+    surface = Black,
     background = Orange,
+    surfaceVariant = Blue,
+    onSurfaceVariant = BlueLight,
 )
 
-private val Team1ColorPalette = lightColorScheme(
+val TeamBlueColors = lightColorScheme(
     primary = Blue,
     secondary = BlueVariant,
     tertiary = Orange,
     onTertiary = White,
+    surface = Black,
     background = Blue,
+    surfaceVariant = Orange,
+    onSurfaceVariant = OrangeDark,
 )
 
 @Composable
 fun OufMimeTheme(
-    colorPalette: Int = 0,
+    colorScheme: ColorScheme = NoTeamColors,
     content: @Composable () -> Unit
 ) = MaterialTheme(
-    colorScheme = when (colorPalette) {
-        0 -> Team0ColorPalette
-        1 -> Team1ColorPalette
-        else -> NoTeamColorPalette
-    },
+    colorScheme = colorScheme,
     typography = Typography,
     shapes = Shapes,
     content = content
 )
+
+@Composable
+fun ScreenConfiguredTheme(
+    screenConfiguration: ScreenConfiguration = ScreenConfiguration.MEDIUM,
+    colorScheme: ColorScheme = NoTeamColors,
+    content: @Composable () -> Unit
+) = CompositionLocalProvider(LocalScreenConfiguration provides screenConfiguration) {
+    OufMimeTheme(colorScheme, content)
+}

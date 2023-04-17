@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
 @Suppress("UnstableApiUsage")
@@ -72,11 +72,11 @@ dependencies {
     implementation("androidx.window:window:1.0.0")
 
     // Room
-    val roomVersion = "2.5.0"
+    val roomVersion = "2.5.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
 
     // Koin
     val koinVersion = "3.3.3"
@@ -90,6 +90,7 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3-window-size-class")
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")

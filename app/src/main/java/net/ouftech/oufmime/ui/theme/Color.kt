@@ -25,12 +25,9 @@ val BlueVariant = Color(0xAA000063)
 
 val OrangeTeam = Orange
 val BlueTeam = Blue
-val OrangeTeamAccent = Blue
-val BlueTeamAccent = Orange
 
 val Green = Color(0xFF4CAF50)
 val Red = Color(0xFFCA3000)
-val DarkerGray = Color(0xFF333333)
 
 val Accent = Blue
 val AccentTransparent = Color(0xAA000063)
