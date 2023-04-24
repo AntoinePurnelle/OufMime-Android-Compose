@@ -24,7 +24,7 @@
     <string name="describe">Describe</string>
     <string name="word">One word</string>
     <string name="mime">Mime</string>
-    <string name="team_x_plays">%s, play!</string>
+    <string name="team_x_plays">%s, go!</string>
     <string name="team_blue">Team Blue</string>
     <string name="team_orange">Team Orange</string>
     <string name="new_game">New game!</string>
@@ -53,16 +53,16 @@
 
     <string name="found">Found</string>
     <string name="missed">Missed</string>
-    <string name="to_play">To play</string>
 
     <string name="next">Next</string>
-
-    <string name="settings">Settings</string>
 
     <string name="switch_language_en" translatable="false">Switch to English</string>
     <string name="switch_language_fr" translatable="false">Passer en Français</string>
 
     <string name="duration">Turn duration (s)</string>
     <string name="words_count">Words count</string>
+
+    <string name="next_round_content_description">@string/next_round</string>
+    <string name="settings_content_description">Settings</string>
 
 </resources>

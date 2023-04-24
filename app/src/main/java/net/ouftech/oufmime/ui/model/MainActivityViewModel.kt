@@ -12,43 +12,42 @@
 * limitations under the License.
 */
 
-package net.ouftech.oufmime.ui
+package net.ouftech.oufmime.ui.model
 
 import android.app.Application
 import androidx.annotation.VisibleForTesting
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.material3.ColorScheme
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.ouftech.oufmime.R
-import net.ouftech.oufmime.data.GameData
 import net.ouftech.oufmime.data.Word
-import net.ouftech.oufmime.data.WordsAccessUseCase
-import net.ouftech.oufmime.ui.theme.Accent
-import net.ouftech.oufmime.ui.theme.Primary
-import net.ouftech.oufmime.ui.views.screens.TeamScoreboardUiModel
-import net.ouftech.oufmime.ui.views.screens.TurnStartUiModel
+import net.ouftech.oufmime.data.usecases.GetRandomWordsInCategoriesUseCase
+import net.ouftech.oufmime.data.usecases.InsertWordsUseCase
+import net.ouftech.oufmime.ui.theme.NoTeamColors
+import net.ouftech.oufmime.ui.theme.TeamBlueColors
+import net.ouftech.oufmime.ui.theme.TeamOrangeColors
 import net.ouftech.oufmime.utils.Logger
 
 @SuppressWarnings("TooManyFunctions")
 class MainActivityViewModel(
-    private val wordsAccessUseCase: WordsAccessUseCase,
-    private val logger: Logger
+    private val insertWordsUseCase: InsertWordsUseCase,
+    private val getRandomWordsInCategoriesUseCase: GetRandomWordsInCategoriesUseCase,
+    private val transformer: GameDataToUiStateTransformer,
+    private val logger: Logger,
 ) : ViewModel() {
 
     private var gameData = GameData()
 
     fun init(application: Application) = viewModelScope.launch {
-        wordsAccessUseCase.insertWords(application.applicationContext)
+        insertWordsUseCase(application.applicationContext)
     }
 
     // region Game Lifecycle
 
     fun initGame() = with(gameData) {
         runBlocking {
-            words = wordsAccessUseCase.getRandomWordsInCategories(selectedCategories, wordsCount)
+            words = getRandomWordsInCategoriesUseCase(selectedCategories, wordsCount).words.toMutableList()
             logger.d("Selected Words (${words.size}) $words")
 
             currentRound = 0
@@ -115,23 +114,13 @@ class MainActivityViewModel(
 
     // region Getters/Setters
 
-    fun getWordsPlayedInTurn() = gameData.wordsPlayedInTurn
-
-    fun getCurrentWord() = gameData.currentWord
-
-    fun getTimerTotalTime() = gameData.timerTotalTime
-
     fun setTimerTotalTime(time: Long) {
         gameData.timerTotalTime = time
     }
 
-    fun getSelectedCategories() = gameData.selectedCategories
-
     fun setCategorySelected(category: String, selected: Boolean) {
         gameData.selectedCategories[category] = selected
     }
-
-    fun getWordsCount() = gameData.wordsCount
 
     fun setWordsCount(wordsCount: Int) {
         gameData.wordsCount = wordsCount
@@ -141,54 +130,25 @@ class MainActivityViewModel(
         get() = gameData.wordsToPlay.size > 0
 
     val hasMoreRounds
-        get() = gameData.currentRound < 2
+        get() = gameData.hasMoreRounds
 
-    val wordsFoundInTurnCount
-        get() = gameData.wordsPlayedInTurn.count { it.second }
+    val colors: ColorScheme
+        get() = when {
+            gameData.currentRoundFinished -> NoTeamColors
+            gameData.currentTeam == 0 -> TeamOrangeColors
+            gameData.currentTeam == 1 -> TeamBlueColors
+            else -> NoTeamColors
+        }
 
-    val wordsMissedInTurnCount
-        get() = gameData.wordsPlayedInTurn.count { !it.second }
+    fun getTurnStartUiState() = transformer.getTurnStartUiState(gameData)
 
-    val wordsToPlayCount
-        get() = gameData.wordsToPlay.size
+    fun getPlayScreenUiState() = transformer.getPlayScreenUiState(gameData)
 
-    private fun getTeamCurrentRoundScore(team: Int) = getTeamRoundScore(team = team, round = gameData.currentRound)
+    fun getTurnEndUiState() = transformer.getTurnEndUiState(gameData)
 
-    private fun getTeamRoundScore(team: Int, round: Int) = if (gameData.currentRound < round) -1 else gameData.teamWords[team][round].size
+    fun getScoreboardScreenUiState() = transformer.getScoreboardScreenUiState(gameData)
 
-    private fun getTeamTotalScore(team: Int) = gameData.teamWords[team].sumOf { it.size }
-
-    val shouldInvertColors
-        get() = gameData.currentTeam == 0
-
-    private fun getTeamColor(team: Int) = when (team) {
-        0 -> Accent
-        1 -> Primary
-        else -> White
-    }
-
-    fun getTeamScoreboardUiModel(team: Int) = TeamScoreboardUiModel(
-        color = getTeamColor(team),
-        describeScore = getTeamRoundScore(team, 0),
-        wordScore = getTeamRoundScore(team, 1),
-        mimeScore = getTeamRoundScore(team, 2),
-        totalScore = getTeamTotalScore(team)
-    )
-
-    fun getTurnStartUiModel() = TurnStartUiModel(
-        currentRound = gameData.currentRound,
-        teamNameId = teamNameId,
-        blueTotalScore = getTeamTotalScore(0),
-        blueCurrentRoundScore = getTeamCurrentRoundScore(0),
-        orangeTotalScore = getTeamTotalScore(1),
-        orangeCurrentRoundScore = getTeamCurrentRoundScore(1)
-    )
-
-    val currentTeamColor
-        get() = if (!gameData.currentRoundFinished) getTeamColor(gameData.currentTeam) else White
-
-    private val teamNameId
-        get() = if (gameData.currentTeam == 0) R.string.team_blue else R.string.team_orange
+    fun getSettingsScreenUiState() = transformer.getSettingsScreenUiState(gameData)
 
     @VisibleForTesting
     fun replaceGameData(gameData: GameData) {

@@ -14,38 +14,61 @@
 
 package net.ouftech.oufmime.ui.theme
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.White
 
-private val InvertColorPalette = darkColors(
-    primary = Accent,
-    primaryVariant = AccentTransparent,
-    secondary = Primary,
+val NoTeamColors = lightColorScheme(
+    primary = Orange,
+    secondary = OrangeVariant,
+    tertiary = White,
+    onTertiary = Blue,
+    surface = Black,
+    background = White
 )
 
-private val LightColorPalette = lightColors(
-    primary = Primary,
-    primaryVariant = PrimaryDark,
-    secondary = Accent,
+val TeamOrangeColors = lightColorScheme(
+    primary = Orange,
+    secondary = OrangeVariant,
+    tertiary = Blue,
+    onTertiary = White,
+    surface = Black,
+    background = Orange,
+    surfaceVariant = Blue,
+    onSurfaceVariant = BlueLight,
+)
+
+val TeamBlueColors = lightColorScheme(
+    primary = Blue,
+    secondary = BlueVariant,
+    tertiary = Orange,
+    onTertiary = White,
+    surface = Black,
+    background = Blue,
+    surfaceVariant = Orange,
+    onSurfaceVariant = OrangeDark,
 )
 
 @Composable
 fun OufMimeTheme(
-    invert: Boolean = false,
+    colorScheme: ColorScheme = NoTeamColors,
     content: @Composable () -> Unit
-) {
-    val colors = if (invert) {
-        InvertColorPalette
-    } else {
-        LightColorPalette
-    }
+) = MaterialTheme(
+    colorScheme = colorScheme,
+    typography = Typography,
+    shapes = Shapes,
+    content = content
+)
 
-    MaterialTheme(
-        colors = colors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
+@Composable
+fun ScreenConfiguredTheme(
+    screenConfiguration: ScreenConfiguration = ScreenConfiguration.MEDIUM,
+    colorScheme: ColorScheme = NoTeamColors,
+    content: @Composable () -> Unit
+) = CompositionLocalProvider(LocalScreenConfiguration provides screenConfiguration) {
+    OufMimeTheme(colorScheme, content)
 }

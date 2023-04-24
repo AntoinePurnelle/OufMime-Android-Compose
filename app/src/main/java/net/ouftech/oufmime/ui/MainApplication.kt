@@ -12,9 +12,11 @@
 * limitations under the License.
 */
 
-package net.ouftech.oufmime
+package net.ouftech.oufmime.ui
 
 import android.app.Application
+import net.ouftech.oufmime.appModule
+import net.ouftech.oufmime.dbModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -28,6 +30,5 @@ class MainApplication : Application() {
             androidContext(this@MainApplication)
             modules(appModule, dbModule)
         }
-
     }
 }

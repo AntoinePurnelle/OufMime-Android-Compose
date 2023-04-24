@@ -14,77 +14,149 @@
 
 package net.ouftech.oufmime.ui.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import net.ouftech.oufmime.ui.theme.ButtonsTextSize.*
+import net.ouftech.oufmime.ui.theme.ButtonsTextSize.BIG
+import net.ouftech.oufmime.ui.theme.ButtonsTextSize.MEDIUM
+import net.ouftech.oufmime.ui.theme.ButtonsTextSize.SMALL
 
 @SuppressWarnings("LongParameterList")
-class Dimens(
-    val bodyText: TextUnit = 16.sp,
-    val titleText: TextUnit = 42.sp,
-    val bigTitleText: TextUnit = 64.sp,
-    val subtitleText: TextUnit = 20.sp,
-
-    val smallButtonText: TextUnit = 16.sp,
-    val mediumButtonText: TextUnit = 24.sp,
-    val bigButtonText: TextUnit = 32.sp,
-
-    val simpleScoreBoardWidth: Dp = 120.dp,
-    val fullScoreBoardWidth: Dp = 200.dp,
-
-    val paddingXSmall: Dp = 2.dp,
-    val paddingSmall: Dp = 4.dp,
-    val paddingMedium: Dp = 8.dp,
-    val paddingLarge: Dp = 16.dp,
-    val paddingXLarge: Dp = 32.dp,
-
-    val borderSmall: Dp = 1.dp,
-    val borderMedium: Dp = 2.dp,
-
-    val iconSmall: Dp = 100.dp,
-    val iconMedium: Dp = iconSmall,
-
-    val timerSize: Dp = 100.dp,
-    val timerStrokeWidth: Dp = 6.dp,
+data class Dimens(
+    val screenSize: ScreenSize
 ) {
+
+    val bodyLarge: TextUnit = bodyLargeSized.get(screenSize)
+    val bodyMedium: TextUnit = bodyMediumSized.get(screenSize)
+    val bodySmall: TextUnit = bodySmallSized.get(screenSize)
+    val titleText: TextUnit = titleTextSized.get(screenSize)
+    val bigTitleText: TextUnit = bigTitleTextSized.get(screenSize)
+    val subtitleText: TextUnit = subtitleTextSized.get(screenSize)
+    val wordCardWordText: TextUnit = wordCardWordTextSized.get(screenSize)
+    val wordCardCategoryText: TextUnit = wordCardCategoryTextSized.get(screenSize)
+    val cardDeckText: TextUnit = cardDeckTextSized.get(screenSize)
+
+    val smallButtonText: TextUnit = smallButtonTextSized.get(screenSize)
+    val mediumButtonText: TextUnit = mediumButtonTextSized.get(screenSize)
+    val bigButtonText: TextUnit = bigButtonTextSized.get(screenSize)
+
+    val simpleScoreBoardWidth: Dp = simpleScoreBoardWidthSized.get(screenSize)
+    val fullScoreBoardWidth: Dp = fullScoreBoardWidthSized.get(screenSize)
+
+    val paddingSmall: Dp = paddingSmallSized.get(screenSize)
+    val paddingMedium: Dp = paddingMediumSized.get(screenSize)
+    val paddingLarge: Dp = paddingLargeSized.get(screenSize)
+    val paddingXLarge: Dp = paddingXLargeSized.get(screenSize)
+    val paddingXXLarge: Dp = paddingXXLargeSized.get(screenSize)
+
+    val iconSmall: Dp = iconSmallSized.get(screenSize)
+    val iconMedium: Dp = iconMediumSized.get(screenSize)
+    val iconLarge: Dp = iconLargeSized.get(screenSize)
+
+    val smallIconButton: Dp = mediumIconButtonSized.get(screenSize)
+    val bigIconButton: Dp = largeIconButtonSized.get(screenSize)
+
+    val playWidgetsSize: Dp = playWidgetsSizeSized.get(screenSize)
+    val cardHeight: Dp = cardHeightSized.get(screenSize)
+    val cardWidth: Dp = cardWidthSized.get(screenSize)
+    val cardPadding: Dp = cardPaddingSized.get(screenSize)
+    val cardCornerRadius: Dp = cardCornerRadiusSized.get(screenSize)
+
+    val largeCardMaxWidth: Dp = largeCardMaxWidthSized.get(screenSize)
+    val wordsCardMaxWidth: Dp = wordsCardMaxWidthSized.get(screenSize)
+    val wordsCardMaxWidthOuterBounds: Dp = wordsCardMaxWidthOuterBoundsSized.get(screenSize)
+
     val buttonDimens = mapOf(
         SMALL to smallButtonText,
         MEDIUM to mediumButtonText,
         BIG to bigButtonText
     )
+
+    companion object {
+
+        val bodyLargeSized = SizedSp(20.sp, 30.sp, 40.sp)
+        val bodyMediumSized = SizedSp(16.sp, 24.sp, 32.sp)
+        val bodySmallSized = SizedSp(8.sp, 12.sp, 16.sp)
+        val titleTextSized = SizedSp(40.sp, 44.sp, 48.sp)
+        val bigTitleTextSized = SizedSp(64.sp, 80.sp, 96.sp)
+        val subtitleTextSized = SizedSp(20.sp, 30.sp, 40.sp)
+        val wordCardWordTextSized = SizedSp(50.sp, 75.sp, 100.sp)
+        val wordCardCategoryTextSized = SizedSp(32.sp, 48.sp, 64.sp)
+        val cardDeckTextSized = SizedSp(36.sp, 50.sp, 64.sp)
+
+        val smallButtonTextSized = SizedSp(16.sp, 24.sp, 32.sp)
+        val mediumButtonTextSized = SizedSp(24.sp, 32.sp, 40.sp)
+        val bigButtonTextSized = SizedSp(32.sp, 40.sp, 48.sp)
+
+        val simpleScoreBoardWidthSized = SizedDp(120.dp, 160.dp, 200.dp)
+        val fullScoreBoardWidthSized = SizedDp(200.dp, 300.dp, 350.dp, 500.dp, 500.dp)
+
+        val paddingSmallSized = SizedDp(4.dp, 6.dp, 8.dp)
+        val paddingMediumSized = SizedDp(8.dp, 12.dp, 16.dp)
+        val paddingLargeSized = SizedDp(16.dp, 24.dp, 32.dp)
+        val paddingXLargeSized = SizedDp(32.dp, 48.dp, 64.dp)
+        val paddingXXLargeSized = SizedDp(64.dp, 96.dp, 128.dp)
+
+        val iconSmallSized = SizedDp(24.dp, 32.dp, 40.dp)
+        val iconMediumSized = SizedDp(60.dp, 80.dp, 100.dp)
+        val iconLargeSized = SizedDp(80.dp, 110.dp, 140.dp)
+
+        val mediumIconButtonSized = iconMediumSized
+        val largeIconButtonSized = SizedDp(120.dp, 160.dp, 200.dp)
+
+        val playWidgetsSizeSized = SizedDp(100.dp, 130.dp, 160.dp)
+        val cardHeightSized = SizedDp(80.dp, 100.dp, 120.dp)
+        val cardWidthSized = SizedDp(60.dp, 80.dp, 100.dp)
+        val cardPaddingSized = SizedDp(4.dp, 5.dp, 6.dp)
+        val cardCornerRadiusSized = SizedDp(10.dp, 14.dp, 16.dp)
+
+        val largeCardMaxWidthSized = SizedDp(600.dp, 700.dp, 800.dp)
+        val wordsCardMaxWidthSized = SizedDp(400.dp, 700.dp, 800.dp)
+        val wordsCardMaxWidthOuterBoundsSized = SizedDp(500.dp, 800.dp, 900.dp)
+    }
 }
 
-val MediumDimens = Dimens()
+val CompactPortraitDimens = Dimens(ScreenSize.CP)
+val CompactLandscapeDimens = Dimens(ScreenSize.CL)
+val MediumDimens = Dimens(ScreenSize.M)
+val ExpandedPortraitDimens = Dimens(ScreenSize.EP)
+val ExpandedLandscapeDimens = Dimens(ScreenSize.EL)
 
-val ExpandedDimens = Dimens(
-    bodyText = 24.sp,
-    titleText = 56.sp,
-    bigTitleText = 96.sp,
-    subtitleText = 32.sp,
+@Composable
+fun getDimens() = LocalScreenConfiguration.current.dimens
 
-    smallButtonText = 24.sp,
-    mediumButtonText = 32.sp,
-    bigButtonText = 40.sp,
+data class SizedDp(
+    val cp: Dp,
+    val cl: Dp,
+    val m: Dp,
+    val ep: Dp,
+    val el: Dp,
+) {
+    constructor(c: Dp, m: Dp, e: Dp) : this(c, c, m, e, e)
 
-    simpleScoreBoardWidth = 200.dp,
-    fullScoreBoardWidth = 400.dp,
+    fun get(size: ScreenSize) = when (size) {
+        ScreenSize.CP -> cp
+        ScreenSize.CL -> cl
+        ScreenSize.M -> m
+        ScreenSize.EP -> ep
+        ScreenSize.EL -> el
+    }
+}
 
-    paddingXSmall = 4.dp,
-    paddingSmall = 8.dp,
-    paddingMedium = 16.dp,
-    paddingLarge = 32.dp,
-    paddingXLarge = 64.dp,
+data class SizedSp(
+    val c: TextUnit,
+    val m: TextUnit,
+    val e: TextUnit,
+) {
+    fun get(size: ScreenSize) = when (size) {
+        ScreenSize.CP, ScreenSize.CL -> c
+        ScreenSize.M -> m
+        ScreenSize.EP, ScreenSize.EL -> e
+    }
+}
 
-    borderSmall = 2.dp,
-    borderMedium = 4.dp,
-
-    iconSmall = 160.dp,
-    iconMedium = 200.dp,
-
-    timerSize = 160.dp,
-    timerStrokeWidth = 12.dp
-)
+enum class ScreenSize { CP, CL, M, EP, EL }
 
 enum class ButtonsTextSize { SMALL, MEDIUM, BIG }

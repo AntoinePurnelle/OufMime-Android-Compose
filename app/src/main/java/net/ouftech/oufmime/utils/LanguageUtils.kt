@@ -16,7 +16,7 @@ package net.ouftech.oufmime.utils
 
 import android.content.Context
 import android.content.res.Configuration
-import java.util.*
+import java.util.Locale
 
 object LanguageUtils {
 

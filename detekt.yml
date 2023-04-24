@@ -16,12 +16,19 @@ style:
     active: true
     ignoreAnnotated:
       - 'Preview'
+      - 'CompactPortraitPreview'
+      - 'CompactLandscapePreview'
+      - 'MediumPreview'
+      - 'ExpandedPortraitPreview'
+      - 'ExpandedLandscapePreview'
 complexity:
   LongParameterList:
     constructorThreshold: 20
     ignoreAnnotated: [ Composable ]
   LongMethod:
     threshold: 100
+  TooManyFunctions:
+    thresholdInFiles: 20
 naming:
   FunctionNaming:
     ignoreAnnotated: [ Composable ]

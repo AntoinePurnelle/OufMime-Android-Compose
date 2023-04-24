@@ -53,13 +53,13 @@
 
     <string name="found">Trouvés</string>
     <string name="missed">Manqués</string>
-    <string name="to_play">À jouer</string>
 
     <string name="next">Suivant</string>
 
-    <string name="settings">Paramètres</string>
-
     <string name="duration">Durée des tours (s)</string>
     <string name="words_count">Nombre de mots</string>
+
+    <string name="next_round_content_description">@string/next_round</string>
+    <string name="settings_content_description">Paramètres</string>
 
 </resources>

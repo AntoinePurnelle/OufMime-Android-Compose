@@ -14,6 +14,9 @@
 
 package net.ouftech.oufmime.data
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 interface WordsRepository {
     suspend fun insertWord(word: Word)
     suspend fun insertWords(words: List<Word>)
@@ -24,21 +27,25 @@ interface WordsRepository {
         count: Int,
         language: String
     ): List<Word>
-
 }
 
 class WordsRepositoryImpl(private val dao: WordsDao) : WordsRepository {
-    override suspend fun insertWord(word: Word) = dao.insertWord(word)
-    override suspend fun insertWords(words: List<Word>) = dao.insertWords(words)
+
+    override suspend fun insertWord(word: Word) = withContext(Dispatchers.IO) { dao.insertWord(word) }
+
+    override suspend fun insertWords(words: List<Word>) = withContext(Dispatchers.IO) { dao.insertWords(words) }
+
     override suspend fun getWord(
         word: String,
         language: String
-    ) = dao.getWord(word, language)
+    ) = withContext(Dispatchers.IO) { dao.getWord(word, language) }
 
-    override suspend fun getAllWords() = dao.getAllWords()
+    override suspend fun getAllWords() = withContext(Dispatchers.IO) { dao.getAllWords() }
+
     override suspend fun getRandomWordsInCategories(
         categories: List<String>,
         count: Int,
         language: String
-    ) = dao.getRandomWordsInCategories(categories, count, language)
+    ) = withContext(Dispatchers.IO) { dao.getRandomWordsInCategories(categories, count, language) }
+
 }

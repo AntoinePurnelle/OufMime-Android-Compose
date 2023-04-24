@@ -12,35 +12,43 @@
 * limitations under the License.
 */
 
-package net.ouftech.oufmime.ui.views.screens
+package net.ouftech.oufmime.ui.views.screens.turnstart
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import net.ouftech.oufmime.R
-import net.ouftech.oufmime.ui.theme.Dimens
-import net.ouftech.oufmime.ui.theme.ExpandedDimens
-import net.ouftech.oufmime.ui.theme.MediumDimens
-import net.ouftech.oufmime.ui.theme.OufMimeTheme
+import net.ouftech.oufmime.ui.model.Team
+import net.ouftech.oufmime.ui.theme.LocalScreenConfiguration
+import net.ouftech.oufmime.ui.theme.ScreenConfiguration
+import net.ouftech.oufmime.ui.theme.ScreenConfiguration.Companion.COMPACT_LANDSCAPE
+import net.ouftech.oufmime.ui.theme.ScreenConfiguration.Companion.COMPACT_PORTRAIT
+import net.ouftech.oufmime.ui.theme.ScreenConfiguration.Companion.EXPANDED_LANDSCAPE
+import net.ouftech.oufmime.ui.theme.ScreenConfiguration.Companion.EXPANDED_PORTRAIT
+import net.ouftech.oufmime.ui.theme.ScreenConfiguration.Companion.MEDIUM
+import net.ouftech.oufmime.ui.theme.ScreenConfiguredTheme
+import net.ouftech.oufmime.ui.views.library.Backgrounded
+import net.ouftech.oufmime.ui.views.library.CompactLandscapePreview
+import net.ouftech.oufmime.ui.views.library.CompactPortraitPreview
+import net.ouftech.oufmime.ui.views.library.ExpandedLandscapePreview
+import net.ouftech.oufmime.ui.views.library.ExpandedPortraitPreview
 import net.ouftech.oufmime.ui.views.library.FullScreenColumn
-import net.ouftech.oufmime.ui.views.library.HeaderView
+import net.ouftech.oufmime.ui.views.library.MediumPreview
 import net.ouftech.oufmime.ui.views.library.SizedButton
+
+// region Views
 
 @Composable
 fun TurnStartScreen(
-    dimens: Dimens,
-    invertColors: Boolean,
-    model: TurnStartUiModel,
+    model: TurnStartUiState,
     onStartClick: () -> Unit,
-) {
+) = Backgrounded {
     val roundName = stringResource(
         when (model.currentRound) {
             0 -> R.string.describe
@@ -49,14 +57,15 @@ fun TurnStartScreen(
         }
     )
 
+    val dimens = LocalScreenConfiguration.current.dimens
+
     FullScreenColumn {
         HeaderView(
             team1TotalScore = model.blueTotalScore,
             team1CurrentRoundScore = model.blueCurrentRoundScore,
             team2TotalScore = model.orangeTotalScore,
             team2CurrentRoundScore = model.orangeCurrentRoundScore,
-            dimens = dimens,
-            invertColors = invertColors
+            currentTeam = model.currentTeam
         )
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -67,7 +76,7 @@ fun TurnStartScreen(
                 ),
                 color = White,
                 fontSize = dimens.titleText,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             Text(
                 text = roundName.uppercase(),
@@ -84,39 +93,42 @@ fun TurnStartScreen(
                 id = R.string.team_x_plays,
                 stringResource(id = model.teamNameId)
             ),
-            dimens = dimens
         )
     }
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFFFF6F00,
-    name = "TurnStart - Phone",
-    device = Devices.PIXEL_4,
-    locale = "fr"
-)
-@Composable
-private fun TurnStartPreviewPhone() {
-    OufMimeTheme {
-        TurnStartScreen(MediumDimens, false, stubTurnStartUiModel) {}
-    }
-}
+// endregion Views
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFFFF6F00,
-    name = "TurnStart - Tablet",
-    device = Devices.PIXEL_C,
-)
-@Composable
-private fun TurnStartPreviewTablet() {
-    OufMimeTheme {
-        TurnStartScreen(ExpandedDimens, false, stubTurnStartUiModel) {}
-    }
-}
+// region Previews
 
-data class TurnStartUiModel(
+@CompactPortraitPreview
+@Composable
+private fun CompactPortraitPreviewTurnStartScreen() = TurnStartPreview(COMPACT_PORTRAIT, Team.Orange)
+
+@CompactLandscapePreview
+@Composable
+private fun CompactLandscapePreviewTurnStartScreen() = TurnStartPreview(COMPACT_LANDSCAPE, Team.Blue)
+
+@MediumPreview
+@Composable
+private fun MediumPreviewTurnStartScreen() = TurnStartPreview(MEDIUM, Team.Orange)
+
+@ExpandedPortraitPreview
+@Composable
+private fun ExpandedPortraitPreviewTurnStartScreen() = TurnStartPreview(EXPANDED_PORTRAIT, Team.Blue)
+
+@ExpandedLandscapePreview
+@Composable
+private fun ExpandedLandscapePreviewTurnStartScreen() = TurnStartPreview(EXPANDED_LANDSCAPE, Team.Orange)
+
+@Composable
+private fun TurnStartPreview(screenConfiguration: ScreenConfiguration, team: Team) =
+    ScreenConfiguredTheme(screenConfiguration, team.colors) { TurnStartScreen(getStubTurnStartUiState(team)) {} }
+
+// endregion Previews
+
+data class TurnStartUiState(
+    val currentTeam: Int,
     val currentRound: Int,
     @StringRes val teamNameId: Int,
     val blueTotalScore: Int,
@@ -125,5 +137,5 @@ data class TurnStartUiModel(
     val orangeCurrentRoundScore: Int,
 )
 
-private val stubTurnStartUiModel
-    get() = TurnStartUiModel(0, R.string.team_blue, 4, 2, 6, 3)
+private fun getStubTurnStartUiState(team: Team) = TurnStartUiState(team.value, 0, R.string.team_blue, 4, 2, 6, 3)
+

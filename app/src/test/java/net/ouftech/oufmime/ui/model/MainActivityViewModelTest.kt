@@ -12,7 +12,7 @@
 * limitations under the License.
 */
 
-package net.ouftech.oufmime.ui
+package net.ouftech.oufmime.ui.model
 
 import com.google.common.truth.Truth
 import io.mockk.*
@@ -20,18 +20,25 @@ import io.mockk.impl.annotations.MockK
 import junitparams.JUnitParamsRunner
 import junitparams.Parameters
 import net.ouftech.oufmime.data.Categories
-import net.ouftech.oufmime.data.GameData
 import net.ouftech.oufmime.data.Word
-import net.ouftech.oufmime.data.WordsAccessUseCase
+import net.ouftech.oufmime.data.usecases.GetRandomWordsInCategoriesUseCase
+import net.ouftech.oufmime.data.usecases.GetRandomWordsInCategoriesUseCase.Result
+import net.ouftech.oufmime.data.usecases.InsertWordsUseCase
 import net.ouftech.oufmime.utils.Logger
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@SuppressWarnings("UnusedPrivateMember")
 @RunWith(JUnitParamsRunner::class)
 class MainActivityViewModelTest {
 
-    @MockK private lateinit var wordsAccessUseCase: WordsAccessUseCase
+    @MockK private lateinit var insertWordsUseCase: InsertWordsUseCase
+
+    @MockK private lateinit var getRandomWordsInCategoriesUseCase: GetRandomWordsInCategoriesUseCase
+
+    @MockK private lateinit var transformer: GameDataToUiStateTransformer
+
     @MockK private lateinit var logger: Logger
 
     private lateinit var vm: MainActivityViewModel
@@ -39,15 +46,17 @@ class MainActivityViewModelTest {
 
     @Before
     fun setup() {
-        wordsAccessUseCase = mockk()
+        insertWordsUseCase = mockk()
+        getRandomWordsInCategoriesUseCase = mockk()
+        transformer = mockk()
         logger = mockk()
-        vm = MainActivityViewModel(wordsAccessUseCase, logger)
+        vm = MainActivityViewModel(insertWordsUseCase, getRandomWordsInCategoriesUseCase, transformer, logger)
         vm.replaceGameData(gameData)
     }
 
     private fun skipGameStart(wordsCount: Int = 40) {
         gameData.wordsCount = wordsCount
-        coEvery { wordsAccessUseCase.getRandomWordsInCategories(any(), wordsCount) } returns getWordsList(wordsCount)
+        coEvery { getRandomWordsInCategoriesUseCase(any(), wordsCount) } returns Result(getWordsList(wordsCount))
         every { logger.d(any()) } just Runs
         vm.initGame()
         clearAllMocks()
@@ -65,7 +74,7 @@ class MainActivityViewModelTest {
         val words = getWordsList(wordsCount)
 
         gameData.wordsCount = wordsCount
-        coEvery { wordsAccessUseCase.getRandomWordsInCategories(any(), wordsCount) } returns words
+        coEvery { getRandomWordsInCategoriesUseCase(any(), wordsCount) } returns Result(words)
         every { logger.d(any()) } just Runs
 
         // WHEN
@@ -73,7 +82,7 @@ class MainActivityViewModelTest {
 
         // THEN
         coVerify {
-            wordsAccessUseCase.getRandomWordsInCategories(any(), wordsCount)
+            getRandomWordsInCategoriesUseCase(any(), wordsCount)
         }
 
         Truth.assertThat(gameData.words).isEqualTo(words)
@@ -206,7 +215,6 @@ class MainActivityViewModelTest {
         Word(it.toString(), Categories.values().random(), "en")
     }.toMutableList()
 
-
     private fun getEmptyTeamWords() = arrayOf(
         arrayOf(mutableListOf<Word>(), mutableListOf(), mutableListOf()),
         arrayOf(mutableListOf(), mutableListOf(), mutableListOf())
@@ -223,5 +231,4 @@ class MainActivityViewModelTest {
         listOf(false, false, false),
         listOf(false, true, false),
     )
-
 }
