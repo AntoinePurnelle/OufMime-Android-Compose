@@ -12,8 +12,8 @@ android {
         applicationId = "net.ouftech.oufmime"
         minSdk = 26
         targetSdk = 33
-        versionCode = 5
-        versionName = "2.0"
+        versionCode = 6
+        versionName = "2.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
