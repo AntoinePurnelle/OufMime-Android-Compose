@@ -61,10 +61,10 @@ fun TurnStartScreen(
 
     FullScreenColumn {
         HeaderView(
-            team1TotalScore = model.blueTotalScore,
-            team1CurrentRoundScore = model.blueCurrentRoundScore,
-            team2TotalScore = model.orangeTotalScore,
-            team2CurrentRoundScore = model.orangeCurrentRoundScore,
+            team1TotalScore = model.orangeTotalScore,
+            team1CurrentRoundScore = model.orangeCurrentRoundScore,
+            team2TotalScore = model.blueTotalScore,
+            team2CurrentRoundScore = model.blueCurrentRoundScore,
             currentTeam = model.currentTeam
         )
 
