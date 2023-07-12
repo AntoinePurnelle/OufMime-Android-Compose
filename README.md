@@ -10,7 +10,7 @@ What started in 2020 as a support for a family game, became my playground to exp
 * DataStore
 * Room DB
 * Custom ScreenConfiguration Locale with sized dimens to better handle screen sizes
-* Custom Previw Interface to auto generate previews in different configurations
+* Custom Preview Interface to auto generate previews in different configurations
 
 ## Game description
 OufMime is a family game where two teams will try to guess the most words.
@@ -21,4 +21,4 @@ It is played in three rounds:
    the one to guess. Teammates have only one guess per word
 3. Still using the same set, the player has to mime the word. He can make sounds but cannot pronounce a word. Teammates have as many guess as they want
 
-Available in English and Frend (UI + Words)
+Available in English and French (UI + Words)
