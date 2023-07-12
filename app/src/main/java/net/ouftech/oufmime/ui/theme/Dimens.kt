@@ -77,7 +77,7 @@ data class Dimens(
     companion object {
 
         val bodyLargeSized = SizedSp(20.sp, 30.sp, 40.sp)
-        val bodyMediumSized = SizedSp(16.sp, 24.sp, 32.sp)
+        val bodyMediumSized = SizedSp(20.sp, 28.sp, 36.sp)
         val bodySmallSized = SizedSp(8.sp, 12.sp, 16.sp)
         val titleTextSized = SizedSp(40.sp, 44.sp, 48.sp)
         val bigTitleTextSized = SizedSp(64.sp, 80.sp, 96.sp)
@@ -101,7 +101,7 @@ data class Dimens(
 
         val iconSmallSized = SizedDp(24.dp, 32.dp, 40.dp)
         val iconMediumSized = SizedDp(60.dp, 80.dp, 100.dp)
-        val iconLargeSized = SizedDp(80.dp, 110.dp, 140.dp)
+        val iconLargeSized = SizedDp(60.dp, 110.dp, 140.dp)
 
         val mediumIconButtonSized = iconMediumSized
         val largeIconButtonSized = SizedDp(120.dp, 160.dp, 200.dp)

@@ -30,9 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import net.ouftech.oufmime.R
 import net.ouftech.oufmime.ui.theme.BlueTeam
@@ -133,9 +130,7 @@ private fun ScoreText(
 ) = Text(
     text = text,
     color = White,
-    fontFamily = FontFamily(Font(R.font.nunito)),
-    fontWeight = FontWeight.Medium,
-    fontSize = getDimens().bodyLarge
+    style = MaterialTheme.typography.bodyMedium,
 )
 
 // endregion Views

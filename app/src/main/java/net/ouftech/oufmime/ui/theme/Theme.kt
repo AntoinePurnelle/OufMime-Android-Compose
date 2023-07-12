@@ -56,10 +56,11 @@ val TeamBlueColors = lightColorScheme(
 @Composable
 fun OufMimeTheme(
     colorScheme: ColorScheme = NoTeamColors,
+    screenConfiguration: ScreenConfiguration,
     content: @Composable () -> Unit
 ) = MaterialTheme(
     colorScheme = colorScheme,
-    typography = Typography,
+    typography = getTypography(screenConfiguration.dimens),
     shapes = Shapes,
     content = content
 )
@@ -70,5 +71,5 @@ fun ScreenConfiguredTheme(
     colorScheme: ColorScheme = NoTeamColors,
     content: @Composable () -> Unit
 ) = CompositionLocalProvider(LocalScreenConfiguration provides screenConfiguration) {
-    OufMimeTheme(colorScheme, content)
+    OufMimeTheme(colorScheme, screenConfiguration, content)
 }

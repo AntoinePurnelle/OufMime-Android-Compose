@@ -18,19 +18,44 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import net.ouftech.oufmime.R
 
-// Set of Material typography styles to start with
-val Typography = Typography(
+val Nunito = FontFamily(
+    Font(R.font.nunito_regular),
+    Font(R.font.nunito_regular, weight = FontWeight.Normal),
+    Font(R.font.nunito_italic, weight = FontWeight.Normal, style = FontStyle.Italic),
+    Font(R.font.nunito_black, weight = FontWeight.Black),
+    Font(R.font.nunito_black_italic, weight = FontWeight.Black, style = FontStyle.Italic),
+    Font(R.font.nunito_bold, weight = FontWeight.Bold),
+    Font(R.font.nunito_bold_italic, weight = FontWeight.Bold, style = FontStyle.Italic),
+    Font(R.font.nunito_extra_bold, weight = FontWeight.ExtraBold),
+    Font(R.font.nunito_extra_bold_italic, weight = FontWeight.ExtraBold, style = FontStyle.Italic),
+    Font(R.font.nunito_extra_light, weight = FontWeight.ExtraLight),
+    Font(R.font.nunito_extra_light_italic, weight = FontWeight.ExtraLight, style = FontStyle.Italic),
+    Font(R.font.nunito_light, weight = FontWeight.Light),
+    Font(R.font.nunito_light_italic, weight = FontWeight.Light, style = FontStyle.Italic),
+    Font(R.font.nunito_medium, weight = FontWeight.Medium),
+    Font(R.font.nunito_medium_italic, weight = FontWeight.Medium, style = FontStyle.Italic),
+    Font(R.font.nunito_semi_bold, weight = FontWeight.SemiBold),
+    Font(R.font.nunito_semi_bold_italic, weight = FontWeight.SemiBold, style = FontStyle.Italic),
+)
+
+fun getTypography(dimens: Dimens) = Typography(
     bodyLarge = TextStyle(
-        fontFamily = FontFamily(Font(R.font.nunito)),
+        fontFamily = Nunito,
         fontWeight = FontWeight.Medium,
-        fontSize = MediumDimens.bodyLarge
+        fontSize = dimens.bodyLarge
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = Nunito,
+        fontWeight = FontWeight.Medium,
+        fontSize = dimens.bodyMedium
     ),
     labelLarge = TextStyle(
-        fontFamily = FontFamily(Font(R.font.nunito)),
-        fontWeight = FontWeight.Black,
-        fontSize = MediumDimens.smallButtonText
+        fontFamily = Nunito,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = dimens.smallButtonText
     )
 )
